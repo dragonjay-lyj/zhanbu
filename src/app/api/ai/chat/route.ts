@@ -166,7 +166,7 @@ export async function POST(req: NextRequest) {
             balance_after: newBalance,
             type: "consume",
             description: `AI 对话 (${chatMode.name})`,
-            reference_type: "ai_chat",
+            reference_id: `ai_chat:${mode}`,
         })
 
         // 返回流式响应

@@ -108,15 +108,17 @@ export async function getSiteConfig(): Promise<{
     keywords: string
 }> {
     const settings = await getSettings([
+        "site_name",
         "app_name",
+        "site_description",
         "app_description",
         "app_url",
         "app_keywords"
     ])
 
     return {
-        name: settings.app_name || process.env.NEXT_PUBLIC_APP_NAME || "ZhanBu 占卜",
-        description: settings.app_description || "AI 智能占卜平台",
+        name: settings.site_name || settings.app_name || process.env.NEXT_PUBLIC_APP_NAME || "ZhanBu 占卜",
+        description: settings.site_description || settings.app_description || "AI 智能占卜平台",
         url: settings.app_url || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
         keywords: settings.app_keywords || "占卜,八字,塔罗,紫微斗数,AI",
     }

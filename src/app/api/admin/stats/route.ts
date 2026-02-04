@@ -18,9 +18,9 @@ export async function GET() {
 
         // 检查是否为管理员
         const { data: profile } = await supabase
-            .from("profiles")
+            .from("users")
             .select("role")
-            .eq("id", userId)
+            .eq("clerk_id", userId)
             .single()
 
         if (profile?.role !== "admin") {
@@ -34,12 +34,12 @@ export async function GET() {
 
         // 总用户数
         const { count: totalUsers } = await supabase
-            .from("profiles")
+            .from("users")
             .select("*", { count: "exact", head: true })
 
         // 今日新增用户
         const { count: todayUsers } = await supabase
-            .from("profiles")
+            .from("users")
             .select("*", { count: "exact", head: true })
             .gte("created_at", startOfToday)
 
@@ -82,9 +82,9 @@ export async function GET() {
             .from("fortunes")
             .select(`
         id,
-        type,
+        fortune_type,
         created_at,
-        user:profiles(email, full_name)
+        user:users(email, name)
       `)
             .order("created_at", { ascending: false })
             .limit(10)
@@ -99,7 +99,14 @@ export async function GET() {
                 premiumUsers: premiumUsers || 0,
                 monthlyOrders: monthlyOrders || 0,
                 monthlyRevenue: totalRevenue,
-                recentActivities: recentActivities || [],
+                recentActivities: (recentActivities || []).map((activity) => ({
+                    id: activity.id,
+                    type: activity.fortune_type,
+                    created_at: activity.created_at,
+                    user: activity.user
+                        ? { email: activity.user.email, full_name: activity.user.name }
+                        : null,
+                })),
             },
         })
     } catch (error) {

@@ -6,6 +6,7 @@ const isPublicRoute = createRouteMatcher([
     '/sign-in(.*)',
     '/sign-up(.*)',
     '/api/webhooks(.*)',
+    '/api/payment/callback(.*)',
     // 占卜功能页面对外开放（但部分功能需要登录）
     '/bazi(.*)',
     '/ziwei(.*)',

@@ -15,18 +15,10 @@ CREATE TABLE IF NOT EXISTS membership_plans (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 系统配置表
-CREATE TABLE IF NOT EXISTS system_settings (
-    key TEXT PRIMARY KEY,
-    value JSONB NOT NULL,
-    description TEXT,
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
 -- 订单表
 CREATE TABLE IF NOT EXISTS orders (
     id TEXT PRIMARY KEY,
-    user_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES users(clerk_id) ON DELETE CASCADE,
     plan_id TEXT NOT NULL REFERENCES membership_plans(id),
     amount INTEGER NOT NULL,
     payment_method TEXT,
@@ -41,7 +33,7 @@ CREATE TABLE IF NOT EXISTS orders (
 -- 会员表
 CREATE TABLE IF NOT EXISTS memberships (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE UNIQUE,
+    user_id TEXT NOT NULL REFERENCES users(clerk_id) ON DELETE CASCADE UNIQUE,
     plan_id TEXT NOT NULL REFERENCES membership_plans(id),
     expires_at TIMESTAMPTZ NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -51,7 +43,7 @@ CREATE TABLE IF NOT EXISTS memberships (
 -- 用户配额使用记录
 CREATE TABLE IF NOT EXISTS quota_usage (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES users(clerk_id) ON DELETE CASCADE,
     date DATE NOT NULL DEFAULT CURRENT_DATE,
     used_count INTEGER NOT NULL DEFAULT 0,
     UNIQUE(user_id, date)
@@ -75,17 +67,6 @@ ON CONFLICT (id) DO UPDATE SET
     sort_order = EXCLUDED.sort_order,
     updated_at = NOW();
 
--- 插入默认系统设置
-INSERT INTO system_settings (key, value, description) VALUES
-('site_name', '"占卜网"', '网站名称'),
-('site_description', '"专业在线占卜平台"', '网站描述'),
-('payment_url', '"https://goofish.com/item/xxx"', '闲鱼支付链接'),
-('ai_model', '"deepseek-chat"', 'AI 模型'),
-('ai_max_tokens', '2000', 'AI 最大 tokens'),
-('maintenance_mode', 'false', '维护模式'),
-('registration_enabled', 'true', '开放注册')
-ON CONFLICT (key) DO NOTHING;
-
 -- 索引
 CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id);
 CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
@@ -94,7 +75,6 @@ CREATE INDEX IF NOT EXISTS idx_quota_usage_user_date ON quota_usage(user_id, dat
 
 -- RLS 策略
 ALTER TABLE membership_plans ENABLE ROW LEVEL SECURITY;
-ALTER TABLE system_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE memberships ENABLE ROW LEVEL SECURITY;
 ALTER TABLE quota_usage ENABLE ROW LEVEL SECURITY;
@@ -103,26 +83,21 @@ ALTER TABLE quota_usage ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "membership_plans_read" ON membership_plans FOR SELECT USING (true);
 -- 会员套餐：管理员可写
 CREATE POLICY "membership_plans_admin" ON membership_plans FOR ALL USING (
-    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid()::text AND role = 'admin')
-);
-
--- 系统设置：管理员可读写
-CREATE POLICY "system_settings_admin" ON system_settings FOR ALL USING (
-    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid()::text AND role = 'admin')
+    EXISTS (SELECT 1 FROM users WHERE clerk_id = auth.uid()::text AND role = 'admin')
 );
 
 -- 订单：用户只能看自己的
 CREATE POLICY "orders_user_read" ON orders FOR SELECT USING (user_id = auth.uid()::text);
 -- 订单：管理员可查看全部
 CREATE POLICY "orders_admin" ON orders FOR ALL USING (
-    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid()::text AND role = 'admin')
+    EXISTS (SELECT 1 FROM users WHERE clerk_id = auth.uid()::text AND role = 'admin')
 );
 
 -- 会员：用户只能看自己的
 CREATE POLICY "memberships_user_read" ON memberships FOR SELECT USING (user_id = auth.uid()::text);
 -- 会员：管理员可管理
 CREATE POLICY "memberships_admin" ON memberships FOR ALL USING (
-    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid()::text AND role = 'admin')
+    EXISTS (SELECT 1 FROM users WHERE clerk_id = auth.uid()::text AND role = 'admin')
 );
 
 -- 配额：用户只能看自己的

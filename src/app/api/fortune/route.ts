@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
+import { auth } from "@clerk/nextjs/server"
 import { createServerClient } from "@/lib/supabase/server"
+import { getDbUserIdByClerkId } from "@/lib/auth/user"
 
 // 支持的占卜类型
 const DIVINATION_TYPES = [
@@ -30,16 +32,16 @@ const TABLE_MAP: Record<DivinationType, string> = {
  */
 export async function GET(request: NextRequest) {
     try {
-        const supabase = await createServerClient()
-
-        // 获取当前用户
-        const {
-            data: { user },
-        } = await supabase.auth.getUser()
-
-        if (!user) {
+        const { userId } = await auth()
+        if (!userId) {
             return NextResponse.json({ error: "未授权访问" }, { status: 401 })
         }
+        const dbUserId = await getDbUserIdByClerkId(userId)
+        if (!dbUserId) {
+            return NextResponse.json({ error: "用户未同步" }, { status: 404 })
+        }
+
+        const supabase = await createServerClient()
 
         // 解析查询参数
         const searchParams = request.nextUrl.searchParams
@@ -62,7 +64,7 @@ export async function GET(request: NextRequest) {
             const { data, error, count } = await supabase
                 .from(tableName)
                 .select("*", { count: "exact" })
-                .eq("user_id", user.id)
+                .eq("user_id", dbUserId)
                 .order("created_at", { ascending: false })
                 .range(offset, offset + limit - 1)
 
@@ -84,7 +86,7 @@ export async function GET(request: NextRequest) {
             const { data, error, count } = await supabase
                 .from("fortunes")
                 .select("*", { count: "exact" })
-                .eq("user_id", user.id)
+                .eq("user_id", dbUserId)
                 .order("created_at", { ascending: false })
                 .range(offset, offset + limit - 1)
 
@@ -115,16 +117,16 @@ export async function GET(request: NextRequest) {
  */
 export async function DELETE(request: NextRequest) {
     try {
-        const supabase = await createServerClient()
-
-        // 获取当前用户
-        const {
-            data: { user },
-        } = await supabase.auth.getUser()
-
-        if (!user) {
+        const { userId } = await auth()
+        if (!userId) {
             return NextResponse.json({ error: "未授权访问" }, { status: 401 })
         }
+        const dbUserId = await getDbUserIdByClerkId(userId)
+        if (!dbUserId) {
+            return NextResponse.json({ error: "用户未同步" }, { status: 404 })
+        }
+
+        const supabase = await createServerClient()
 
         const { id, type } = await request.json()
 
@@ -149,7 +151,7 @@ export async function DELETE(request: NextRequest) {
             .from(tableName)
             .delete()
             .eq("id", id)
-            .eq("user_id", user.id)
+            .eq("user_id", dbUserId)
 
         if (error) {
             console.error("删除记录失败:", error)
@@ -164,7 +166,7 @@ export async function DELETE(request: NextRequest) {
             .from("fortunes")
             .delete()
             .eq("record_id", id)
-            .eq("user_id", user.id)
+            .eq("user_id", dbUserId)
 
         return NextResponse.json({ success: true })
     } catch (error) {

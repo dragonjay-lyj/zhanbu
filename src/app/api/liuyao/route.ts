@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
+import { auth } from "@clerk/nextjs/server"
 import { createServerClient } from "@/lib/supabase/server"
+import { getDbUserIdByClerkId } from "@/lib/auth/user"
 
 // 八卦数据
 const BA_GUA: Record<string, { element: string; nature: string }> = {
@@ -45,15 +47,16 @@ interface LiuyaoRequest {
  */
 export async function POST(request: NextRequest) {
     try {
-        const supabase = await createServerClient()
-
-        const {
-            data: { user },
-        } = await supabase.auth.getUser()
-
-        if (!user) {
+        const { userId } = await auth()
+        if (!userId) {
             return NextResponse.json({ error: "未授权访问" }, { status: 401 })
         }
+        const dbUserId = await getDbUserIdByClerkId(userId)
+        if (!dbUserId) {
+            return NextResponse.json({ error: "用户未同步" }, { status: 404 })
+        }
+
+        const supabase = await createServerClient()
 
         const body: LiuyaoRequest = await request.json()
         const { question, category, lines, method } = body
@@ -122,11 +125,11 @@ export async function POST(request: NextRequest) {
         const { data: record, error: insertError } = await supabase
             .from("liuyao_records")
             .insert({
-                user_id: user.id,
+                user_id: dbUserId,
                 question,
-                category,
+                question_category: category,
                 cast_method: method,
-                lines_data: lines,
+                yao_data: lines,
                 hexagram_result: hexagramResult,
             } as never)
             .select()
@@ -142,7 +145,7 @@ export async function POST(request: NextRequest) {
 
         // 同时在 fortunes 表创建记录
         await supabase.from("fortunes").insert({
-            user_id: user.id,
+            user_id: dbUserId,
             fortune_type: "liuyao",
             record_id: (record as { id: string }).id,
             summary: `${benGua.name}${bianGua ? " → " + bianGua.name : ""}`,
@@ -239,15 +242,16 @@ ${changingLinesDesc}
  */
 export async function GET(request: NextRequest) {
     try {
-        const supabase = await createServerClient()
-
-        const {
-            data: { user },
-        } = await supabase.auth.getUser()
-
-        if (!user) {
+        const { userId } = await auth()
+        if (!userId) {
             return NextResponse.json({ error: "未授权访问" }, { status: 401 })
         }
+        const dbUserId = await getDbUserIdByClerkId(userId)
+        if (!dbUserId) {
+            return NextResponse.json({ error: "用户未同步" }, { status: 404 })
+        }
+
+        const supabase = await createServerClient()
 
         const searchParams = request.nextUrl.searchParams
         const id = searchParams.get("id")
@@ -258,7 +262,7 @@ export async function GET(request: NextRequest) {
                 .from("liuyao_records")
                 .select("*")
                 .eq("id", id)
-                .eq("user_id", user.id)
+                .eq("user_id", dbUserId)
                 .single()
 
             if (error) {
@@ -273,7 +277,7 @@ export async function GET(request: NextRequest) {
             const { data, error, count } = await supabase
                 .from("liuyao_records")
                 .select("*", { count: "exact" })
-                .eq("user_id", user.id)
+                .eq("user_id", dbUserId)
                 .order("created_at", { ascending: false })
                 .limit(limit)
 

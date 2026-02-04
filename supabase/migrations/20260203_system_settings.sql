@@ -21,6 +21,10 @@ INSERT INTO system_settings (key, value, description, category, is_public) VALUE
 ('app_name', 'ZhanBu 占卜', '网站名称', 'site', true),
 ('app_description', 'AI 智能占卜平台', '网站描述', 'site', true),
 ('app_keywords', '占卜,八字,塔罗,紫微斗数,AI', '网站关键词', 'site', true),
+('site_name', 'ZhanBu 占卜', '网站名称', 'site', true),
+('site_description', 'AI 智能占卜平台', '网站描述', 'site', true),
+-- 支付配置
+('payment_url', '', '闲鱼支付链接', 'payment', false),
 -- 功能开关
 ('enable_ai_analysis', 'true', '启用 AI 分析功能', 'feature', false),
 ('enable_community', 'true', '启用社区功能', 'feature', false),

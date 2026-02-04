@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { createServerClient } from "@/lib/supabase/server"
+import { getDbUserIdByClerkId } from "@/lib/auth/user"
 
 /**
  * 获取用户占卜历史
@@ -12,6 +13,11 @@ export async function GET(request: NextRequest) {
 
         if (!userId) {
             return NextResponse.json({ error: "未授权访问" }, { status: 401 })
+        }
+
+        const dbUserId = await getDbUserIdByClerkId(userId)
+        if (!dbUserId) {
+            return NextResponse.json({ error: "用户未同步" }, { status: 404 })
         }
 
         const supabase = await createServerClient()
@@ -28,14 +34,14 @@ export async function GET(request: NextRequest) {
         let query = supabase
             .from("fortunes")
             .select("*", { count: "exact" })
-            .eq("user_id", userId)
+            .eq("user_id", dbUserId)
 
         if (type) {
-            query = query.eq("type", type)
+            query = query.eq("fortune_type", type)
         }
 
         if (search) {
-            query = query.or(`question.ilike.%${search}%,title.ilike.%${search}%`)
+            query = query.or(`title.ilike.%${search}%,summary.ilike.%${search}%`)
         }
 
         const { data: records, count, error } = await query
@@ -47,10 +53,16 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: "获取历史记录失败" }, { status: 500 })
         }
 
+        const formattedRecords = (records || []).map((record) => ({
+            ...record,
+            type: record.fortune_type,
+            question: record.summary || record.title || "",
+        }))
+
         return NextResponse.json({
             success: true,
             data: {
-                records: records || [],
+                records: formattedRecords,
                 total: count || 0,
                 page,
                 limit,
@@ -91,7 +103,7 @@ export async function DELETE(request: NextRequest) {
             .from("fortunes")
             .delete()
             .eq("id", recordId)
-            .eq("user_id", userId)
+            .eq("user_id", dbUserId)
 
         if (error) {
             console.error("删除记录错误:", error)

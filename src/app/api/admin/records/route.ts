@@ -18,9 +18,9 @@ export async function GET(request: NextRequest) {
 
         // 检查是否为管理员
         const { data: profile } = await supabase
-            .from("profiles")
+            .from("users")
             .select("role")
-            .eq("id", userId)
+            .eq("clerk_id", userId)
             .single()
 
         if (profile?.role !== "admin") {
@@ -40,15 +40,15 @@ export async function GET(request: NextRequest) {
             .from("fortunes")
             .select(`
         *,
-        user:profiles(email, full_name)
+        user:users(email, name)
       `, { count: "exact" })
 
         if (type) {
-            query = query.eq("type", type)
+            query = query.eq("fortune_type", type)
         }
 
         if (search) {
-            query = query.or(`question.ilike.%${search}%,title.ilike.%${search}%`)
+            query = query.or(`title.ilike.%${search}%,summary.ilike.%${search}%`)
         }
 
         const { data: records, count, error } = await query
@@ -60,10 +60,22 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: "获取记录失败" }, { status: 500 })
         }
 
+        const formattedRecords = (records || []).map((record) => ({
+            ...record,
+            type: record.fortune_type,
+            question: record.summary || record.title || "",
+            user: record.user
+                ? {
+                    email: record.user.email,
+                    full_name: record.user.name,
+                }
+                : null,
+        }))
+
         return NextResponse.json({
             success: true,
             data: {
-                records,
+                records: formattedRecords,
                 total: count || 0,
                 page,
                 limit,
@@ -94,9 +106,9 @@ export async function DELETE(request: NextRequest) {
 
         // 检查是否为管理员
         const { data: profile } = await supabase
-            .from("profiles")
+            .from("users")
             .select("role")
-            .eq("id", userId)
+            .eq("clerk_id", userId)
             .single()
 
         if (profile?.role !== "admin") {

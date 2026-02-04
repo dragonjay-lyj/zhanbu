@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
         // 检查用户积分余额
         const { data: credits } = await supabase
             .from("user_credits")
-            .select("balance")
+            .select("balance, total_spent")
             .eq("user_id", userId)
             .single()
 
@@ -217,7 +217,7 @@ export async function POST(request: NextRequest) {
             .from("user_credits")
             .update({
                 balance: newBalance,
-                total_spent: (credits?.balance || 0) + AI_INTERPRET_COST,
+                total_spent: (credits?.total_spent || 0) + AI_INTERPRET_COST,
                 updated_at: new Date().toISOString(),
             })
             .eq("user_id", userId)
@@ -229,7 +229,7 @@ export async function POST(request: NextRequest) {
             balance_after: newBalance,
             type: "consume",
             description: `AI ${type} 解读`,
-            reference_type: "ai_interpret",
+            reference_id: `ai_interpret:${type}`,
         })
 
         // 记录 AI 使用量

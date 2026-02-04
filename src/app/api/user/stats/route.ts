@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { createServerClient } from "@/lib/supabase/server"
+import { getDbUserIdByClerkId } from "@/lib/auth/user"
 
 /**
  * 获取用户占卜统计
@@ -14,6 +15,11 @@ export async function GET() {
             return NextResponse.json({ error: "未授权访问" }, { status: 401 })
         }
 
+        const dbUserId = await getDbUserIdByClerkId(userId)
+        if (!dbUserId) {
+            return NextResponse.json({ error: "用户未同步" }, { status: 404 })
+        }
+
         const supabase = await createServerClient()
         const now = new Date()
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
@@ -22,24 +28,24 @@ export async function GET() {
         const { count: totalFortunes } = await supabase
             .from("fortunes")
             .select("*", { count: "exact", head: true })
-            .eq("user_id", userId)
+            .eq("user_id", dbUserId)
 
         // 本月占卜次数
         const { count: monthlyFortunes } = await supabase
             .from("fortunes")
             .select("*", { count: "exact", head: true })
-            .eq("user_id", userId)
+            .eq("user_id", dbUserId)
             .gte("created_at", startOfMonth)
 
         // 最爱占卜类型
         const { data: typeStats } = await supabase
             .from("fortunes")
-            .select("type")
-            .eq("user_id", userId)
+            .select("fortune_type")
+            .eq("user_id", dbUserId)
 
         const typeCounts: Record<string, number> = {}
         typeStats?.forEach((item) => {
-            typeCounts[item.type] = (typeCounts[item.type] || 0) + 1
+            typeCounts[item.fortune_type] = (typeCounts[item.fortune_type] || 0) + 1
         })
 
         const favoriteType = Object.entries(typeCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || null
@@ -56,10 +62,18 @@ export async function GET() {
         // 最近占卜
         const { data: recentFortunes } = await supabase
             .from("fortunes")
-            .select("id, type, title, question, created_at")
-            .eq("user_id", userId)
+            .select("id, fortune_type, title, summary, created_at")
+            .eq("user_id", dbUserId)
             .order("created_at", { ascending: false })
             .limit(5)
+
+        const formattedRecent = (recentFortunes || []).map((fortune) => ({
+            id: fortune.id,
+            type: fortune.fortune_type,
+            title: fortune.title,
+            question: fortune.summary,
+            created_at: fortune.created_at,
+        }))
 
         return NextResponse.json({
             success: true,
@@ -67,7 +81,7 @@ export async function GET() {
                 totalFortunes: totalFortunes || 0,
                 monthlyFortunes: monthlyFortunes || 0,
                 favoriteType: favoriteType ? typeLabels[favoriteType] || favoriteType : null,
-                recentFortunes: recentFortunes || [],
+                recentFortunes: formattedRecent,
             },
         })
     } catch (error) {

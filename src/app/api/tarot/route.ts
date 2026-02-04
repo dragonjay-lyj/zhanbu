@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
+import { auth } from "@clerk/nextjs/server"
 import { createServerClient } from "@/lib/supabase/server"
+import { getDbUserIdByClerkId } from "@/lib/auth/user"
 
 // 塔罗牌数据
 const MAJOR_ARCANA = [
@@ -53,15 +55,16 @@ interface TarotRequest {
  */
 export async function POST(request: NextRequest) {
     try {
-        const supabase = await createServerClient()
-
-        const {
-            data: { user },
-        } = await supabase.auth.getUser()
-
-        if (!user) {
+        const { userId } = await auth()
+        if (!userId) {
             return NextResponse.json({ error: "未授权访问" }, { status: 401 })
         }
+        const dbUserId = await getDbUserIdByClerkId(userId)
+        if (!dbUserId) {
+            return NextResponse.json({ error: "用户未同步" }, { status: 404 })
+        }
+
+        const supabase = await createServerClient()
 
         const body: TarotRequest = await request.json()
         const { cards, spread, question, style = "standard" } = body
@@ -114,11 +117,11 @@ ${cardDescriptions}
         const { data: record, error: insertError } = await supabase
             .from("tarot_records")
             .insert({
-                user_id: user.id,
+                user_id: dbUserId,
                 question,
                 spread_type: spread,
-                cards_drawn: cardDetails,
-                interpretation_style: style,
+                cards: cardDetails,
+                reading_style: style,
             } as never)
             .select()
             .single()
@@ -133,7 +136,7 @@ ${cardDescriptions}
 
         // 同时在 fortunes 表创建记录
         await supabase.from("fortunes").insert({
-            user_id: user.id,
+            user_id: dbUserId,
             fortune_type: "tarot",
             record_id: (record as { id: string }).id,
             summary: `${spread} - ${cardDetails.map((c) => c.name).join("、")}`,
@@ -203,15 +206,16 @@ ${cardDescriptions}
  */
 export async function GET(request: NextRequest) {
     try {
-        const supabase = await createServerClient()
-
-        const {
-            data: { user },
-        } = await supabase.auth.getUser()
-
-        if (!user) {
+        const { userId } = await auth()
+        if (!userId) {
             return NextResponse.json({ error: "未授权访问" }, { status: 401 })
         }
+        const dbUserId = await getDbUserIdByClerkId(userId)
+        if (!dbUserId) {
+            return NextResponse.json({ error: "用户未同步" }, { status: 404 })
+        }
+
+        const supabase = await createServerClient()
 
         const searchParams = request.nextUrl.searchParams
         const id = searchParams.get("id")
@@ -223,7 +227,7 @@ export async function GET(request: NextRequest) {
                 .from("tarot_records")
                 .select("*")
                 .eq("id", id)
-                .eq("user_id", user.id)
+                .eq("user_id", dbUserId)
                 .single()
 
             if (error) {
@@ -239,7 +243,7 @@ export async function GET(request: NextRequest) {
             const { data, error, count } = await supabase
                 .from("tarot_records")
                 .select("*", { count: "exact" })
-                .eq("user_id", user.id)
+                .eq("user_id", dbUserId)
                 .order("created_at", { ascending: false })
                 .limit(limit)
 

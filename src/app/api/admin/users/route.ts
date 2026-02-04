@@ -69,8 +69,8 @@ export async function GET(request: NextRequest) {
         // 获取会员信息
         const clerkIds = (users || []).map(u => u.clerk_id)
         const { data: memberships } = await supabase
-            .from("user_memberships")
-            .select("*")
+            .from("memberships")
+            .select("user_id, plan_id, expires_at")
             .in("user_id", clerkIds)
 
         // 合并数据
@@ -138,7 +138,7 @@ export async function PATCH(request: NextRequest) {
         if (isPremium !== undefined) {
             if (isPremium && planId) {
                 // 设置为会员
-                await supabase.from("user_memberships").upsert({
+                await supabase.from("memberships").upsert({
                     user_id: targetUserId,
                     plan_id: planId,
                     expires_at: expiresAt || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
@@ -147,7 +147,7 @@ export async function PATCH(request: NextRequest) {
             } else {
                 // 取消会员
                 await supabase
-                    .from("user_memberships")
+                    .from("memberships")
                     .delete()
                     .eq("user_id", targetUserId)
             }
