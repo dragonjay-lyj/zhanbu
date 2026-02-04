@@ -1,26 +1,376 @@
 @import "tailwindcss";
 
+/* 
+ * 占卜网站设计令牌
+ * 风格：Liquid Glass（深色神秘主题）
+ * 调色板：深紫渐变 + 金色点缀
+ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* 核心颜色 - 浅色模式 */
+  --background: 0 0% 100%;
+  --foreground: 270 50% 10%;
+
+  /* 神秘紫色系 */
+  --primary: 270 70% 50%;
+  --primary-foreground: 0 0% 100%;
+
+  /* 金色点缀 */
+  --secondary: 45 80% 50%;
+  --secondary-foreground: 270 50% 10%;
+
+  /* 卡片和表面 */
+  --card: 270 30% 98%;
+  --card-foreground: 270 50% 10%;
+
+  --popover: 270 30% 98%;
+  --popover-foreground: 270 50% 10%;
+
+  /* 柔和色 */
+  --muted: 270 20% 95%;
+  --muted-foreground: 270 20% 40%;
+
+  /* 强调色 */
+  --accent: 270 40% 95%;
+  --accent-foreground: 270 50% 10%;
+
+  /* 状态色 */
+  --destructive: 0 70% 50%;
+  --destructive-foreground: 0 0% 100%;
+
+  /* 边框和输入框 */
+  --border: 270 20% 90%;
+  --input: 270 20% 90%;
+  --ring: 270 70% 50%;
+
+  /* 图表色 */
+  --chart-1: 270 70% 50%;
+  --chart-2: 45 80% 50%;
+  --chart-3: 200 70% 50%;
+  --chart-4: 340 70% 50%;
+  --chart-5: 160 70% 50%;
+
+  /* 侧边栏 */
+  --sidebar: 270 30% 97%;
+  --sidebar-foreground: 270 50% 10%;
+  --sidebar-primary: 270 70% 50%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 270 40% 92%;
+  --sidebar-accent-foreground: 270 50% 10%;
+  --sidebar-border: 270 20% 90%;
+  --sidebar-ring: 270 70% 50%;
+
+  /* 圆角 */
+  --radius: 0.75rem;
 }
 
+.dark {
+  /* 核心颜色 - 深色模式（神秘占卜主题） */
+  --background: 270 50% 5%;
+  --foreground: 270 10% 95%;
+
+  /* 神秘紫色系 */
+  --primary: 270 70% 60%;
+  --primary-foreground: 270 50% 5%;
+
+  /* 金色点缀 */
+  --secondary: 45 80% 55%;
+  --secondary-foreground: 270 50% 5%;
+
+  /* 卡片（玻璃拟态） */
+  --card: 270 40% 10%;
+  --card-foreground: 270 10% 95%;
+
+  --popover: 270 40% 10%;
+  --popover-foreground: 270 10% 95%;
+
+  /* 柔和色 */
+  --muted: 270 30% 15%;
+  --muted-foreground: 270 15% 60%;
+
+  /* 强调色 */
+  --accent: 270 40% 15%;
+  --accent-foreground: 270 10% 95%;
+
+  /* 状态色 */
+  --destructive: 0 70% 45%;
+  --destructive-foreground: 0 0% 100%;
+
+  /* 边框和输入框 */
+  --border: 270 30% 20%;
+  --input: 270 30% 15%;
+  --ring: 270 70% 60%;
+
+  /* 图表色 */
+  --chart-1: 270 70% 60%;
+  --chart-2: 45 80% 55%;
+  --chart-3: 200 70% 55%;
+  --chart-4: 340 70% 55%;
+  --chart-5: 160 70% 55%;
+
+  /* 侧边栏 */
+  --sidebar: 270 45% 8%;
+  --sidebar-foreground: 270 10% 95%;
+  --sidebar-primary: 270 70% 60%;
+  --sidebar-primary-foreground: 270 50% 5%;
+  --sidebar-accent: 270 40% 15%;
+  --sidebar-accent-foreground: 270 10% 95%;
+  --sidebar-border: 270 30% 18%;
+  --sidebar-ring: 270 70% 60%;
+}
+
+/* Tailwind v4 主题配置 */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+
+  --font-sans: 'Noto Sans TC', system-ui, sans-serif;
+  --font-serif: 'Noto Serif TC', Georgia, serif;
+  --font-mono: ui-monospace, monospace;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* 基础样式 */
+* {
+  border-color: hsl(var(--border));
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-sans);
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.7);
+}
+
+/* 玻璃拟态效果 */
+.glass {
+  background: hsl(var(--card) / 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid hsl(var(--border) / 0.5);
+}
+
+.dark .glass {
+  background: hsl(var(--card) / 0.6);
+  backdrop-filter: blur(16px);
+  border: 1px solid hsl(var(--border) / 0.3);
+}
+
+/* 神秘光晕效果 */
+.glow {
+  box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+}
+
+.glow-gold {
+  box-shadow: 0 0 20px hsl(var(--secondary) / 0.3);
+}
+
+/* 渐变文字效果 */
+.text-gradient {
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* 神秘背景渐变 */
+.bg-mystic {
+  background: linear-gradient(135deg,
+      hsl(270 50% 5%) 0%,
+      hsl(270 45% 10%) 50%,
+      hsl(280 40% 8%) 100%);
+}
+
+/* 星空粒子背景（使用 CSS 实现） */
+.bg-stars {
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, hsl(var(--primary) / 0.8), transparent),
+    radial-gradient(2px 2px at 40px 70px, hsl(var(--secondary) / 0.6), transparent),
+    radial-gradient(1px 1px at 90px 40px, hsl(var(--primary) / 0.5), transparent),
+    radial-gradient(2px 2px at 130px 80px, hsl(var(--secondary) / 0.4), transparent),
+    radial-gradient(1px 1px at 160px 120px, hsl(var(--primary) / 0.6), transparent);
+  background-repeat: repeat;
+  background-size: 200px 150px;
+}
+
+/* 动画 */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 40px hsl(var(--primary) / 0.5);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg,
+      hsl(var(--muted)) 0%,
+      hsl(var(--primary) / 0.3) 50%,
+      hsl(var(--muted)) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+}
+
+/* 减少动画（无障碍） */
+@media (prefers-reduced-motion: reduce) {
+
+  .animate-float,
+  .animate-pulse-glow,
+  .animate-shimmer {
+    animation: none;
+  }
+}
+
+/* 命盘网格样式 */
+.fortune-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 2px;
+  aspect-ratio: 1;
+}
+
+.fortune-cell {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.fortune-cell:hover {
+  background: hsl(var(--accent));
+  cursor: pointer;
+}
+
+/* 紫微斗数命宫位置 */
+.ziwei-palace {
+  font-family: var(--font-serif);
+  font-weight: 600;
+}
+
+/* 八卦符号样式 */
+.yao-line {
+  height: 6px;
+  background: hsl(var(--foreground));
+  margin: 4px 0;
+  border-radius: 2px;
+}
+
+.yao-line.yin {
+  background: linear-gradient(to right,
+      hsl(var(--foreground)) 0%,
+      hsl(var(--foreground)) 40%,
+      transparent 40%,
+      transparent 60%,
+      hsl(var(--foreground)) 60%,
+      hsl(var(--foreground)) 100%);
+}
+
+/* 塔罗牌样式 */
+.tarot-card {
+  aspect-ratio: 2/3;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, hsl(var(--card)), hsl(var(--muted)));
+  border: 2px solid hsl(var(--border));
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.tarot-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px hsl(var(--primary) / 0.3);
+}
+
+.tarot-card.reversed {
+  transform: rotate(180deg);
 }
