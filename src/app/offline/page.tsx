@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { WifiOff, Home, RefreshCw } from "lucide-react"
+import { WifiOff, Home } from "lucide-react"
+import { ReloadButton } from "@/components/offline/reload-button"
 
 /**
  * 离线页面
@@ -44,13 +45,7 @@ export default function OfflinePage() {
 
                 {/* 动作按钮 */}
                 <div className="flex gap-4 justify-center">
-                    <button
-                        onClick={() => window.location.reload()}
-                        className="inline-flex items-center px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-lg transition"
-                    >
-                        <RefreshCw className="w-5 h-5 mr-2" />
-                        刷新页面
-                    </button>
+                    <ReloadButton />
                     <Link
                         href="/"
                         className="inline-flex items-center px-6 py-3 border border-slate-600 hover:bg-slate-700 rounded-lg transition"

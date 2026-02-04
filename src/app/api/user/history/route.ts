@@ -89,6 +89,11 @@ export async function DELETE(request: NextRequest) {
             return NextResponse.json({ error: "未授权访问" }, { status: 401 })
         }
 
+        const dbUserId = await getDbUserIdByClerkId(userId)
+        if (!dbUserId) {
+            return NextResponse.json({ error: "用户未同步" }, { status: 404 })
+        }
+
         const supabase = await createServerClient()
 
         const { searchParams } = new URL(request.url)

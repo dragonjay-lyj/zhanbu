@@ -99,14 +99,20 @@ export async function GET() {
                 premiumUsers: premiumUsers || 0,
                 monthlyOrders: monthlyOrders || 0,
                 monthlyRevenue: totalRevenue,
-                recentActivities: (recentActivities || []).map((activity) => ({
-                    id: activity.id,
-                    type: activity.fortune_type,
-                    created_at: activity.created_at,
-                    user: activity.user
-                        ? { email: activity.user.email, full_name: activity.user.name }
-                        : null,
-                })),
+                recentActivities: (recentActivities || []).map((activity) => {
+                    const user = Array.isArray(activity.user)
+                        ? activity.user[0]
+                        : activity.user
+
+                    return {
+                        id: activity.id,
+                        type: activity.fortune_type,
+                        created_at: activity.created_at,
+                        user: user
+                            ? { email: user.email, full_name: user.name }
+                            : null,
+                    }
+                }),
             },
         })
     } catch (error) {

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { driver, Driver, DriveStep } from "driver.js"
+import type { AllowedButtons, Config } from "driver.js"
 import "driver.js/dist/driver.css"
 
 // 首页引导步骤
@@ -76,9 +77,9 @@ const divinationSteps: DriveStep[] = [
 ]
 
 // 引导配置
-const defaultConfig = {
+const defaultConfig: Config = {
     showProgress: true,
-    showButtons: ["next", "previous", "close"] as const,
+    showButtons: ["next", "previous", "close"] as AllowedButtons[],
     nextBtnText: "下一步",
     prevBtnText: "上一步",
     doneBtnText: "完成",

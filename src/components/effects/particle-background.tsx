@@ -1,9 +1,9 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
-import Particles from "@tsparticles/react"
+import { useEffect, useState } from "react"
+import Particles, { initParticlesEngine } from "@tsparticles/react"
 import { loadSlim } from "@tsparticles/slim"
-import type { Container, Engine, ISourceOptions } from "@tsparticles/engine"
+import type { ISourceOptions } from "@tsparticles/engine"
 
 interface ParticleBackgroundProps {
     className?: string
@@ -18,13 +18,22 @@ export function ParticleBackground({ className = "", theme = "mystical" }: Parti
     const [init, setInit] = useState(false)
 
     // 初始化粒子引擎
-    const particlesInit = useCallback(async (engine: Engine) => {
-        await loadSlim(engine)
-        setInit(true)
+    useEffect(() => {
+        initParticlesEngine(async (engine) => {
+            await loadSlim(engine)
+        }).then(() => {
+            setInit(true)
+        })
     }, [])
 
     // 粒子配置
     const getOptions = (): ISourceOptions => {
+        const baseLinks = {
+            enable: true,
+            distance: 150,
+            opacity: 0.2,
+            width: 1,
+        }
         const baseOptions: ISourceOptions = {
             fullScreen: { enable: false },
             fpsLimit: 60,
@@ -61,12 +70,7 @@ export function ParticleBackground({ className = "", theme = "mystical" }: Parti
                         default: "bounce",
                     },
                 },
-                links: {
-                    enable: true,
-                    distance: 150,
-                    opacity: 0.2,
-                    width: 1,
-                },
+                links: baseLinks,
             },
             detectRetina: true,
         }
@@ -82,7 +86,7 @@ export function ParticleBackground({ className = "", theme = "mystical" }: Parti
                             value: ["#8B5CF6", "#EC4899", "#6366F1", "#F59E0B"],
                         },
                         links: {
-                            ...baseOptions.particles?.links,
+                            ...baseLinks,
                             color: "#8B5CF6",
                         },
                     },
@@ -99,7 +103,7 @@ export function ParticleBackground({ className = "", theme = "mystical" }: Parti
                             value: ["#FFFFFF", "#94A3B8", "#CBD5E1"],
                         },
                         links: {
-                            ...baseOptions.particles?.links,
+                            ...baseLinks,
                             color: "#94A3B8",
                         },
                     },
@@ -116,7 +120,7 @@ export function ParticleBackground({ className = "", theme = "mystical" }: Parti
                             value: ["#6366F1", "#8B5CF6", "#A855F7"],
                         },
                         links: {
-                            ...baseOptions.particles?.links,
+                            ...baseLinks,
                             color: "#6366F1",
                         },
                     },
@@ -128,11 +132,12 @@ export function ParticleBackground({ className = "", theme = "mystical" }: Parti
     }
 
     return (
-        <Particles
-            id="tsparticles"
-            className={`absolute inset-0 -z-10 ${className}`}
-            init={particlesInit}
-            options={getOptions()}
-        />
+        init ? (
+            <Particles
+                id="tsparticles"
+                className={`absolute inset-0 -z-10 ${className}`}
+                options={getOptions()}
+            />
+        ) : null
     )
 }
