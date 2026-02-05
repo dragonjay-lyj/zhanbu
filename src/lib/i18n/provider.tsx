@@ -8,6 +8,7 @@ import {
     getTranslations,
     Translations,
     t as translate,
+    localeConfig,
 } from "./config"
 
 interface I18nContextType {
@@ -18,6 +19,21 @@ interface I18nContextType {
 }
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined)
+
+const LOCALE_COOKIE_NAME = "locale"
+const LOCALE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365
+
+function readLocaleCookie(): Locale | null {
+    if (typeof document === "undefined") return null
+    const match = document.cookie.match(new RegExp(`(?:^|; )${LOCALE_COOKIE_NAME}=([^;]*)`))
+    const value = match ? decodeURIComponent(match[1]) : null
+    return value && locales.includes(value as Locale) ? (value as Locale) : null
+}
+
+function writeLocaleCookie(locale: Locale) {
+    if (typeof document === "undefined") return
+    document.cookie = `${LOCALE_COOKIE_NAME}=${encodeURIComponent(locale)}; Path=/; Max-Age=${LOCALE_COOKIE_MAX_AGE}`
+}
 
 interface I18nProviderProps {
     children: ReactNode
@@ -37,23 +53,34 @@ export function I18nProvider({ children, initialLocale }: I18nProviderProps) {
             setLocaleState(savedLocale)
             setTranslations(getTranslations(savedLocale))
         } else {
-            // 检测浏览器语言
-            const browserLang = navigator.language
-            const matchedLocale = locales.find(
-                (l) => browserLang.startsWith(l) || browserLang.startsWith(l.split("-")[0])
-            )
-            if (matchedLocale) {
-                setLocaleState(matchedLocale)
-                setTranslations(getTranslations(matchedLocale))
+            const cookieLocale = readLocaleCookie()
+            if (cookieLocale) {
+                setLocaleState(cookieLocale)
+                setTranslations(getTranslations(cookieLocale))
+            } else {
+                // 检测浏览器语言
+                const browserLang = navigator.language
+                const matchedLocale = locales.find(
+                    (l) => browserLang.startsWith(l) || browserLang.startsWith(l.split("-")[0])
+                )
+                if (matchedLocale) {
+                    setLocaleState(matchedLocale)
+                    setTranslations(getTranslations(matchedLocale))
+                }
             }
         }
     }, [])
+
+    useEffect(() => {
+        document.documentElement.lang = locale
+        document.documentElement.dir = localeConfig[locale]?.dir || "ltr"
+    }, [locale])
 
     const setLocale = (newLocale: Locale) => {
         setLocaleState(newLocale)
         setTranslations(getTranslations(newLocale))
         localStorage.setItem("locale", newLocale)
-        document.documentElement.lang = newLocale
+        writeLocaleCookie(newLocale)
     }
 
     const t = (key: string) => translate(translations, key)

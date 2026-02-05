@@ -19,6 +19,7 @@ import { Sidebar } from "./sidebar"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageSwitcher } from "@/components/language-switcher"
 import { useCreditsOptional } from "@/lib/credits/provider"
+import { useTranslation } from "@/lib/i18n"
 
 /**
  * 主导航栏组件
@@ -28,6 +29,7 @@ export function Navbar() {
     const { isSignedIn, isLoaded, user } = useUser()
     const { signOut } = useClerk()
     const creditsContext = useCreditsOptional()
+    const { t } = useTranslation()
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-lg supports-[backdrop-filter]:bg-background/60">
@@ -39,7 +41,7 @@ export function Navbar() {
                             variant="ghost"
                             size="icon"
                             className="md:hidden cursor-pointer"
-                            aria-label="打开菜单"
+                            aria-label={t("nav.menuOpen")}
                         >
                             <Menu className="h-5 w-5" />
                         </Button>
@@ -65,25 +67,25 @@ export function Navbar() {
                         href="/bazi"
                         className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
                     >
-                        八字排盘
+                        {t("nav.bazi")}
                     </Link>
                     <Link
                         href="/ziwei"
                         className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
                     >
-                        紫微斗数
+                        {t("nav.ziwei")}
                     </Link>
                     <Link
                         href="/tarot"
                         className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
                     >
-                        塔罗占卜
+                        {t("nav.tarot")}
                     </Link>
                     <Link
                         href="/daily"
                         className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
                     >
-                        每日运势
+                        {t("nav.daily")}
                     </Link>
                 </nav>
 
@@ -118,7 +120,7 @@ export function Navbar() {
                                         <DropdownMenuTrigger asChild>
                                             <Button variant="ghost" className="gap-2 px-2 cursor-pointer">
                                                 <Avatar className="h-8 w-8">
-                                                    <AvatarImage src={user?.imageUrl} alt={user?.fullName || "用户"} />
+                                                    <AvatarImage src={user?.imageUrl} alt={user?.fullName || t("nav.userFallback")} />
                                                     <AvatarFallback>
                                                         {user?.firstName?.charAt(0) || "U"}
                                                     </AvatarFallback>
@@ -129,7 +131,7 @@ export function Navbar() {
                                         <DropdownMenuContent align="end" className="w-56">
                                             <DropdownMenuLabel>
                                                 <div className="flex flex-col">
-                                                    <span>{user?.fullName || "用户"}</span>
+                                                    <span>{user?.fullName || t("nav.userFallback")}</span>
                                                     <span className="text-xs text-muted-foreground font-normal">
                                                         {user?.primaryEmailAddress?.emailAddress}
                                                     </span>
@@ -139,26 +141,26 @@ export function Navbar() {
                                             <DropdownMenuItem asChild>
                                                 <Link href="/profile" className="cursor-pointer">
                                                     <User className="mr-2 h-4 w-4" />
-                                                    个人中心
+                                                    {t("nav.profile")}
                                                 </Link>
                                             </DropdownMenuItem>
                                             <DropdownMenuItem asChild>
                                                 <Link href="/history" className="cursor-pointer">
                                                     <History className="mr-2 h-4 w-4" />
-                                                    历史记录
+                                                    {t("nav.history")}
                                                 </Link>
                                             </DropdownMenuItem>
                                             <DropdownMenuItem asChild>
                                                 <Link href="/pricing" className="cursor-pointer">
                                                     <Crown className="mr-2 h-4 w-4 text-amber-500" />
-                                                    升级会员
+                                                    {t("nav.pricing")}
                                                 </Link>
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem asChild>
                                                 <Link href="/admin" className="cursor-pointer">
                                                     <Settings className="mr-2 h-4 w-4" />
-                                                    管理后台
+                                                    {t("nav.admin")}
                                                 </Link>
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
@@ -167,7 +169,7 @@ export function Navbar() {
                                                 className="cursor-pointer text-destructive focus:text-destructive"
                                             >
                                                 <LogOut className="mr-2 h-4 w-4" />
-                                                退出登录
+                                                {t("nav.signOut")}
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
@@ -176,12 +178,12 @@ export function Navbar() {
                                 <div className="flex items-center gap-2">
                                     <SignInButton mode="modal">
                                         <Button variant="ghost" size="sm" className="cursor-pointer hidden sm:inline-flex">
-                                            登录
+                                            {t("nav.signIn")}
                                         </Button>
                                     </SignInButton>
                                     <SignUpButton mode="modal">
                                         <Button size="sm" className="cursor-pointer">
-                                            注册
+                                            {t("nav.signUp")}
                                         </Button>
                                     </SignUpButton>
                                 </div>

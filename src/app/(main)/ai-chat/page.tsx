@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { cn } from "@/lib/utils"
+import { useI18n, useTranslation, formatMessage } from "@/lib/i18n"
 import { useUser } from "@clerk/nextjs"
 
 // 对话模式
@@ -26,6 +27,8 @@ interface Message {
 
 export default function AiChatPage() {
     const { isSignedIn } = useUser()
+    const { locale } = useI18n()
+    const { t, translations } = useTranslation()
     const [modes, setModes] = useState<ChatMode[]>([])
     const [selectedMode, setSelectedMode] = useState<string>("general")
     const [messages, setMessages] = useState<Message[]>([])
@@ -77,6 +80,7 @@ export default function AiChatPage() {
                     message: userMessage,
                     mode: selectedMode,
                     history: messages,
+                    locale,
                 }),
             })
 
@@ -142,7 +146,7 @@ export default function AiChatPage() {
             console.error("发送消息失败:", error)
             setMessages(prev => [
                 ...prev,
-                { role: "assistant", content: `抱歉，遇到了一些问题：${(error as Error).message}` },
+                { role: "assistant", content: `${t("common.error")}: ${(error as Error).message}` },
             ])
         } finally {
             setIsLoading(false)
@@ -169,14 +173,14 @@ export default function AiChatPage() {
                     <Bot className="w-8 h-8 text-white" />
                 </div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
-                    AI 占卜大师
+                    {t("ai.chat.title")}
                 </h1>
                 <p className="text-muted-foreground mt-2">
-                    与 AI 对话，解答您的命运困惑
+                    {t("ai.chat.subtitle")}
                 </p>
                 <div className="flex items-center justify-center gap-1 mt-2 text-xs text-muted-foreground">
                     <Coins className="h-3 w-3" />
-                    <span>每条消息消耗 {costPerMessage} 积分</span>
+                    <span>{formatMessage(t("ai.chat.costPerMessage"), { cost: costPerMessage })}</span>
                 </div>
             </div>
 
@@ -185,7 +189,7 @@ export default function AiChatPage() {
                 <Card className="mb-6 border-yellow-200 bg-yellow-50 dark:bg-yellow-950/20">
                     <CardContent className="pt-6 text-center">
                         <p className="text-yellow-700 dark:text-yellow-400">
-                            请先登录后使用 AI 对话占卜功能
+                            {t("ai.chat.loginTip")}
                         </p>
                     </CardContent>
                 </Card>
@@ -196,16 +200,18 @@ export default function AiChatPage() {
                 <Alert variant="destructive" className="mb-6">
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription className="flex items-center justify-between">
-                        <span>
-                            积分不足！需要 {insufficientCredits.required} 积分，
-                            当前余额 {insufficientCredits.current} 积分
-                        </span>
-                        <Link href="/pricing">
-                            <Button size="sm" variant="outline" className="ml-2">
-                                充值积分
-                            </Button>
-                        </Link>
-                    </AlertDescription>
+                            <span>
+                                {formatMessage(t("ai.chat.insufficient"), {
+                                    required: insufficientCredits.required,
+                                    current: insufficientCredits.current,
+                                })}
+                            </span>
+                            <Link href="/pricing">
+                                <Button size="sm" variant="outline" className="ml-2">
+                                    {t("ai.chat.recharge")}
+                                </Button>
+                            </Link>
+                        </AlertDescription>
                 </Alert>
             )}
 
@@ -221,18 +227,18 @@ export default function AiChatPage() {
                         )}
                         onClick={() => setSelectedMode(mode.id)}
                     >
-                        {mode.name}
+                        {t(`ai.modes.${mode.id}`)}
                     </Badge>
                 ))}
                 <div className="flex-1" />
                 <Button variant="ghost" size="sm" onClick={newChat} className="gap-1">
                     <MessageSquarePlus className="w-4 h-4" />
-                    新对话
+                    {t("ai.chat.newChat")}
                 </Button>
                 {messages.length > 0 && (
                     <Button variant="ghost" size="sm" onClick={clearChat} className="gap-1 text-destructive">
                         <Trash2 className="w-4 h-4" />
-                        清空
+                        {t("ai.chat.clear")}
                     </Button>
                 )}
             </div>
@@ -243,18 +249,12 @@ export default function AiChatPage() {
                     {messages.length === 0 ? (
                         <div className="h-full flex flex-col items-center justify-center text-center">
                             <Sparkles className="w-12 h-12 text-muted-foreground mb-4" />
-                            <h3 className="font-medium text-lg">开始您的占卜之旅</h3>
+                            <h3 className="font-medium text-lg">{t("ai.chat.startTitle")}</h3>
                             <p className="text-muted-foreground text-sm mt-2 max-w-md">
-                                您可以问我关于感情、事业、财运、健康等方面的问题，
-                                我会用占卜的智慧为您解答。
+                                {t("ai.chat.startSubtitle")}
                             </p>
                             <div className="flex flex-wrap justify-center gap-2 mt-6">
-                                {[
-                                    "我的感情运势如何？",
-                                    "今年事业发展怎样？",
-                                    "最近财运好吗？",
-                                    "我适合什么职业？",
-                                ].map((prompt) => (
+                                {(translations.ai as { chat?: { promptSamples?: string[] } })?.chat?.promptSamples?.map((prompt) => (
                                     <Badge
                                         key={prompt}
                                         variant="secondary"
@@ -324,7 +324,7 @@ export default function AiChatPage() {
                     <div className="flex gap-2">
                         <Input
                             ref={inputRef}
-                            placeholder={isSignedIn ? "输入您的问题..." : "请先登录"}
+                            placeholder={isSignedIn ? t("ai.chat.inputPlaceholder") : t("ai.chat.inputLoginPlaceholder")}
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}

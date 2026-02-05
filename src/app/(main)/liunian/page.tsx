@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
+import { useTranslation, formatMessage } from "@/lib/i18n"
 
 // 运势数据类型
 interface LiunianResult {
@@ -32,6 +33,7 @@ const levelColors: Record<string, string> = {
 }
 
 export default function LiunianPage() {
+    const { t } = useTranslation()
     const [birthYear, setBirthYear] = useState("")
     const [targetYear, setTargetYear] = useState(new Date().getFullYear())
     const [isLoading, setIsLoading] = useState(false)
@@ -102,7 +104,7 @@ export default function LiunianPage() {
                                     )}
                                     style={{ height: `${height}%` }}
                                 />
-                                <span className="text-xs mt-1">{item.month}月</span>
+                                <span className="text-xs mt-1">{item.month}{t("pages.liunian.monthSuffix")}</span>
                             </div>
                         )
                     })}
@@ -119,10 +121,10 @@ export default function LiunianPage() {
                     <TrendingUp className="w-8 h-8 text-white" />
                 </div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                    流年运势
+                    {t("pages.liunian.title")}
                 </h1>
                 <p className="text-muted-foreground mt-2">
-                    查看年度运势走向，把握人生节奏
+                    {t("pages.liunian.description")}
                 </p>
             </div>
 
@@ -130,15 +132,15 @@ export default function LiunianPage() {
             {!result && (
                 <Card className="max-w-md mx-auto">
                     <CardHeader>
-                        <CardTitle>输入您的出生年份</CardTitle>
-                        <CardDescription>我们将为您分析流年运势</CardDescription>
+                        <CardTitle>{t("pages.liunian.inputTitle")}</CardTitle>
+                        <CardDescription>{t("pages.liunian.inputDescription")}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div>
-                            <Label>出生年份</Label>
+                            <Label>{t("pages.liunian.birthYearLabel")}</Label>
                             <Input
                                 type="number"
-                                placeholder="如 1990"
+                                placeholder={t("pages.liunian.birthYearPlaceholder")}
                                 value={birthYear}
                                 onChange={(e) => setBirthYear(e.target.value)}
                             />
@@ -153,7 +155,7 @@ export default function LiunianPage() {
                             ) : (
                                 <TrendingUp className="w-4 h-4 mr-2" />
                             )}
-                            开始分析
+                            {t("pages.liunian.startAnalyze")}
                         </Button>
                     </CardContent>
                 </Card>
@@ -170,11 +172,11 @@ export default function LiunianPage() {
                         <div className="text-center">
                             <div className="flex items-center gap-2">
                                 <Calendar className="w-5 h-5 text-primary" />
-                                <span className="text-2xl font-bold">{result.targetYear}年</span>
-                                <Badge variant="outline">{result.ganzhi}年</Badge>
+                                <span className="text-2xl font-bold">{formatMessage(t("pages.liunian.yearLabel"), { year: result.targetYear })}</span>
+                                <Badge variant="outline">{formatMessage(t("pages.liunian.yearLabel"), { year: result.ganzhi })}</Badge>
                             </div>
                             <p className="text-sm text-muted-foreground">
-                                {result.birthYear}年生人 · {result.age}岁
+                                {formatMessage(t("pages.liunian.birthInfo"), { birthYear: result.birthYear, age: result.age })}
                             </p>
                         </div>
                         <Button variant="ghost" size="icon" onClick={() => changeYear(1)}>
@@ -185,19 +187,19 @@ export default function LiunianPage() {
                     {/* 综合运势 */}
                     <Card className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
                         <CardContent className="p-6 text-center">
-                            <div className="text-5xl font-bold mb-2">{result.overall.score}分</div>
+                            <div className="text-5xl font-bold mb-2">{result.overall.score}{t("pages.liunian.scoreUnit")}</div>
                             <Badge className={levelColors[result.overall.level]}>
                                 {result.overall.level}
                             </Badge>
-                            <p className="mt-4 text-white/90">年度综合运势评分</p>
+                            <p className="mt-4 text-white/90">{t("pages.liunian.overallScoreLabel")}</p>
                         </CardContent>
                     </Card>
 
                     {/* 月度运势曲线 */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>月度运势曲线</CardTitle>
-                            <CardDescription>全年12个月运势走向</CardDescription>
+                            <CardTitle>{t("pages.liunian.monthlyTitle")}</CardTitle>
+                            <CardDescription>{t("pages.liunian.monthlyDescription")}</CardDescription>
                         </CardHeader>
                         <CardContent>
                             {isLoading ? (
@@ -222,7 +224,7 @@ export default function LiunianPage() {
                                             data.score >= 70 ? "text-green-600" :
                                                 data.score >= 50 ? "text-blue-600" : "text-red-600"
                                         )}>
-                                            {data.score}分
+                                            {data.score}{t("pages.liunian.scoreUnit")}
                                         </span>
                                     </CardTitle>
                                 </CardHeader>
@@ -237,7 +239,7 @@ export default function LiunianPage() {
                     {/* 年度建议 */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>💡 年度开运建议</CardTitle>
+                            <CardTitle>{t("pages.liunian.adviceTitle")}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <ul className="space-y-2">
@@ -257,7 +259,7 @@ export default function LiunianPage() {
                         onClick={() => setResult(null)}
                         className="w-full"
                     >
-                        重新输入
+                        {t("pages.liunian.reset")}
                     </Button>
                 </div>
             )}

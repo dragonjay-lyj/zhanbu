@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
+import { useTranslation, formatMessage } from "@/lib/i18n"
 
 // 签种类型
 interface SignType {
@@ -37,6 +38,7 @@ const levelColors: Record<string, string> = {
 }
 
 export default function QianwenPage() {
+    const { t } = useTranslation()
     const [signTypes, setSignTypes] = useState<SignType[]>([])
     const [selectedType, setSelectedType] = useState<SignType | null>(null)
     const [isShaking, setIsShaking] = useState(false)
@@ -99,10 +101,10 @@ export default function QianwenPage() {
                     <span className="text-3xl">🎋</span>
                 </div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-red-600 bg-clip-text text-transparent">
-                    抽签占卜
+                    {t("pages.qianwen.title")}
                 </h1>
                 <p className="text-muted-foreground mt-2">
-                    诚心祈愿，抽取神灵指引
+                    {t("pages.qianwen.subtitle")}
                 </p>
             </div>
 
@@ -125,7 +127,7 @@ export default function QianwenPage() {
                                     {type.description}
                                 </p>
                                 <p className="text-xs text-muted-foreground mt-2">
-                                    共 {type.total} 签
+                                    {formatMessage(t("pages.qianwen.count"), { total: type.total })}
                                 </p>
                             </CardContent>
                         </Card>
@@ -142,8 +144,8 @@ export default function QianwenPage() {
                             <Sparkles className="w-8 h-8 text-yellow-500 animate-pulse" />
                         </div>
                     </div>
-                    <p className="text-xl font-medium mt-8 animate-pulse">诚心祈愿中...</p>
-                    <p className="text-sm text-muted-foreground mt-2">请静心等待神灵指引</p>
+                    <p className="text-xl font-medium mt-8 animate-pulse">{t("pages.qianwen.shaking.title")}</p>
+                    <p className="text-sm text-muted-foreground mt-2">{t("pages.qianwen.shaking.subtitle")}</p>
                 </div>
             )}
 
@@ -151,7 +153,7 @@ export default function QianwenPage() {
             {selectedType && isLoading && !isShaking && (
                 <div className="flex flex-col items-center justify-center py-16">
                     <Loader2 className="w-12 h-12 animate-spin text-primary" />
-                    <p className="text-lg mt-4">正在解读签文...</p>
+                    <p className="text-lg mt-4">{t("pages.qianwen.loading")}</p>
                 </div>
             )}
 
@@ -166,7 +168,9 @@ export default function QianwenPage() {
                         )}>
                             <div className="text-6xl mb-2">{selectedType.icon}</div>
                             <h2 className="text-2xl font-bold">{selectedType.name}</h2>
-                            <div className="text-4xl font-bold mt-2">第 {sign.number} 签</div>
+                            <div className="text-4xl font-bold mt-2">
+                                {formatMessage(t("pages.qianwen.result.number"), { number: sign.number })}
+                            </div>
                             <Badge className="mt-3 text-lg px-4 py-1 bg-white/20 hover:bg-white/30">
                                 {sign.level}
                             </Badge>
@@ -177,7 +181,7 @@ export default function QianwenPage() {
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
-                                📜 签诗
+                                {t("pages.qianwen.sections.poemTitle")}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -193,9 +197,9 @@ export default function QianwenPage() {
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
-                                💡 解签
+                                {t("pages.qianwen.sections.interpretTitle")}
                             </CardTitle>
-                            <CardDescription>此签寓意解读</CardDescription>
+                            <CardDescription>{t("pages.qianwen.sections.interpretDesc")}</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <p className="text-muted-foreground leading-relaxed">
@@ -210,14 +214,14 @@ export default function QianwenPage() {
                             variant="outline"
                             onClick={goBack}
                         >
-                            换一种签
+                            {t("pages.qianwen.actions.change")}
                         </Button>
                         <Button
                             onClick={redraw}
                             className="bg-gradient-to-r from-amber-500 to-red-500 hover:from-amber-600 hover:to-red-600"
                         >
                             <RotateCcw className="w-4 h-4 mr-2" />
-                            再抽一签
+                            {t("pages.qianwen.actions.redraw")}
                         </Button>
                     </div>
                 </div>

@@ -33,6 +33,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
 import { AIAnalysisSection } from "@/components/ai/ai-analysis-section"
+import { useTranslation, formatMessage } from "@/lib/i18n"
 
 // 九宫飞星基础
 const FLYING_STARS = [
@@ -114,6 +115,7 @@ interface FengShuiResult {
  * 玄空风水排盘页面
  */
 export default function FengshuiPage() {
+    const { t } = useTranslation()
     const [step, setStep] = useState<"input" | "result">("input")
     const [result, setResult] = useState<FengShuiResult | null>(null)
     const [isLoading, setIsLoading] = useState(false)
@@ -210,9 +212,9 @@ export default function FengshuiPage() {
                     <Home className="h-8 w-8 text-emerald-500" />
                 </div>
                 <div>
-                    <h1 className="font-serif text-3xl font-bold">玄空风水排盘</h1>
+                    <h1 className="font-serif text-3xl font-bold">{t("pages.fengshui.title")}</h1>
                     <p className="text-muted-foreground">
-                        九宫飞星、宅运分析、方位吉凶
+                        {t("pages.fengshui.subtitle")}
                     </p>
                 </div>
             </div>
@@ -221,14 +223,14 @@ export default function FengshuiPage() {
                 <div className="space-y-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle>宅运信息</CardTitle>
+                            <CardTitle>{t("pages.fengshui.sections.input.title")}</CardTitle>
                             <CardDescription>
-                                请输入建宅年份和坐向信息
+                                {t("pages.fengshui.sections.input.description")}
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="space-y-2">
-                                <Label>建宅/入住年份</Label>
+                                <Label>{t("pages.fengshui.labels.year")}</Label>
                                 <Select
                                     value={form.watch("year")}
                                     onValueChange={(v) => form.setValue("year", v)}
@@ -239,7 +241,10 @@ export default function FengshuiPage() {
                                     <SelectContent>
                                         {Array.from({ length: 60 }, (_, i) => 1980 + i).map((year) => (
                                             <SelectItem key={year} value={year.toString()} className="cursor-pointer">
-                                                {year}年 (第{getPeriod(year)}运)
+                                                {formatMessage(t("pages.fengshui.options.year"), {
+                                                    year,
+                                                    period: getPeriod(year),
+                                                })}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
@@ -248,7 +253,7 @@ export default function FengshuiPage() {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label>坐山</Label>
+                                    <Label>{t("pages.fengshui.labels.mountain")}</Label>
                                     <Select
                                         value={form.watch("mountain")}
                                         onValueChange={(v) => form.setValue("mountain", v)}
@@ -267,7 +272,7 @@ export default function FengshuiPage() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label>朝向</Label>
+                                    <Label>{t("pages.fengshui.labels.facing")}</Label>
                                     <Select
                                         value={form.watch("facing")}
                                         onValueChange={(v) => form.setValue("facing", v)}
@@ -290,7 +295,7 @@ export default function FengshuiPage() {
                                 <div className="flex items-start gap-2">
                                     <Info className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
                                     <div className="text-sm text-muted-foreground">
-                                        坐山是建筑背后的方向，朝向是建筑正面的方向。例如坐北朝南的房子，坐山为子，朝向为午。
+                                        {t("pages.fengshui.help")}
                                     </div>
                                 </div>
                             </div>
@@ -306,12 +311,12 @@ export default function FengshuiPage() {
                         {isLoading ? (
                             <>
                                 <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                                排盘中...
+                                {t("pages.fengshui.actions.calculating")}
                             </>
                         ) : (
                             <>
                                 <Grid3X3 className="mr-2 h-4 w-4" />
-                                开始排盘
+                                {t("pages.fengshui.actions.start")}
                             </>
                         )}
                     </Button>
@@ -321,21 +326,30 @@ export default function FengshuiPage() {
                     {/* 基本信息 */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>宅运概况</CardTitle>
+                            <CardTitle>{t("pages.fengshui.sections.summary.title")}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="flex flex-wrap gap-4">
                                 <div className="flex items-center gap-2">
-                                    <span className="text-muted-foreground">年份:</span>
-                                    <Badge variant="outline">{result.year}年</Badge>
+                                    <span className="text-muted-foreground">{t("pages.fengshui.summary.year")}</span>
+                                    <Badge variant="outline">
+                                        {formatMessage(t("pages.fengshui.summary.yearValue"), { year: result.year })}
+                                    </Badge>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-muted-foreground">元运:</span>
-                                    <Badge>第{result.period}运</Badge>
+                                    <span className="text-muted-foreground">{t("pages.fengshui.summary.period")}</span>
+                                    <Badge>
+                                        {formatMessage(t("pages.fengshui.summary.periodValue"), { period: result.period })}
+                                    </Badge>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-muted-foreground">坐向:</span>
-                                    <Badge variant="secondary">坐{result.mountain}向{result.facing}</Badge>
+                                    <span className="text-muted-foreground">{t("pages.fengshui.summary.orientation")}</span>
+                                    <Badge variant="secondary">
+                                        {formatMessage(t("pages.fengshui.summary.orientationValue"), {
+                                            mountain: result.mountain,
+                                            facing: result.facing,
+                                        })}
+                                    </Badge>
                                 </div>
                             </div>
                         </CardContent>
@@ -346,7 +360,7 @@ export default function FengshuiPage() {
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Grid3X3 className="h-5 w-5" />
-                                玄空飞星盘
+                                {t("pages.fengshui.sections.chart.title")}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -392,15 +406,15 @@ export default function FengshuiPage() {
                             <div className="mt-4 flex justify-center gap-4 text-sm">
                                 <div className="flex items-center gap-1">
                                     <div className="w-3 h-3 rounded-full bg-current text-muted-foreground" />
-                                    <span>山星</span>
+                                    <span>{t("pages.fengshui.chart.mountainStar")}</span>
                                 </div>
                                 <div className="flex items-center gap-1">
                                     <div className="w-4 h-4 rounded-full bg-current text-primary" />
-                                    <span>运星</span>
+                                    <span>{t("pages.fengshui.chart.periodStar")}</span>
                                 </div>
                                 <div className="flex items-center gap-1">
                                     <div className="w-3 h-3 rounded-full bg-current text-muted-foreground" />
-                                    <span>向星</span>
+                                    <span>{t("pages.fengshui.chart.facingStar")}</span>
                                 </div>
                             </div>
                         </CardContent>
@@ -410,7 +424,7 @@ export default function FengshuiPage() {
                     <div className="grid md:grid-cols-2 gap-4">
                         <Card className="border-green-500/20">
                             <CardHeader>
-                                <CardTitle className="text-green-500">财位</CardTitle>
+                                <CardTitle className="text-green-500">{t("pages.fengshui.positions.wealth.title")}</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className="flex flex-wrap gap-2">
@@ -419,14 +433,14 @@ export default function FengshuiPage() {
                                     ))}
                                 </div>
                                 <p className="text-sm text-muted-foreground mt-2">
-                                    适合摆放财箱、保险柜或绿植
+                                    {t("pages.fengshui.positions.wealth.desc")}
                                 </p>
                             </CardContent>
                         </Card>
 
                         <Card className="border-purple-500/20">
                             <CardHeader>
-                                <CardTitle className="text-purple-500">文昌位</CardTitle>
+                                <CardTitle className="text-purple-500">{t("pages.fengshui.positions.study.title")}</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className="flex flex-wrap gap-2">
@@ -435,14 +449,14 @@ export default function FengshuiPage() {
                                     ))}
                                 </div>
                                 <p className="text-sm text-muted-foreground mt-2">
-                                    适合设置书房或学习区域
+                                    {t("pages.fengshui.positions.study.desc")}
                                 </p>
                             </CardContent>
                         </Card>
 
                         <Card className="border-pink-500/20">
                             <CardHeader>
-                                <CardTitle className="text-pink-500">桃花位</CardTitle>
+                                <CardTitle className="text-pink-500">{t("pages.fengshui.positions.peach.title")}</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className="flex flex-wrap gap-2">
@@ -451,14 +465,14 @@ export default function FengshuiPage() {
                                     ))}
                                 </div>
                                 <p className="text-sm text-muted-foreground mt-2">
-                                    有利人缘和感情运势
+                                    {t("pages.fengshui.positions.peach.desc")}
                                 </p>
                             </CardContent>
                         </Card>
 
                         <Card className="border-red-500/20">
                             <CardHeader>
-                                <CardTitle className="text-red-500">病符位</CardTitle>
+                                <CardTitle className="text-red-500">{t("pages.fengshui.positions.sickness.title")}</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className="flex flex-wrap gap-2">
@@ -467,14 +481,14 @@ export default function FengshuiPage() {
                                     ))}
                                 </div>
                                 <p className="text-sm text-muted-foreground mt-2">
-                                    建议摆放铜葫芦或六帝钱化解
+                                    {t("pages.fengshui.positions.sickness.desc")}
                                 </p>
                             </CardContent>
                         </Card>
                     </div>
 
                     {/* AI 解读 */}
-                    <AIAnalysisSection type="general" title="AI 风水分析" />
+                    <AIAnalysisSection type="general" title={t("pages.fengshui.aiTitle")} />
 
                     <div className="text-center">
                         <Button
@@ -486,7 +500,7 @@ export default function FengshuiPage() {
                             className="cursor-pointer"
                         >
                             <RefreshCw className="mr-2 h-4 w-4" />
-                            重新排盘
+                            {t("pages.fengshui.actions.reset")}
                         </Button>
                     </div>
                 </div>

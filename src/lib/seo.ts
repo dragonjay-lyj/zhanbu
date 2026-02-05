@@ -1,18 +1,34 @@
 import type { Metadata, Viewport } from "next"
+import { defaultLocale, getTranslations, t as translate, type Locale } from "@/lib/i18n"
 
 // 基础网站信息
-const siteName = "占卜网 - 专业在线占卜平台"
-const siteDescription = "占卜网提供专业的八字排盘、紫微斗数、塔罗占卜、六爻排盘、梅花易数、奇门遁甲、玄空风水等在线占卜服务，AI智能解读，传承千年智慧。"
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://zhanbu.com"
+const defaultSiteInfo = {
+    siteName: "占卜网 - 专业在线占卜平台",
+    siteDescription: "占卜网提供专业的八字排盘、紫微斗数、塔罗占卜、六爻排盘、梅花易数、奇门遁甲、玄空风水等在线占卜服务，AI智能解读，传承千年智慧。",
+    shortName: "占卜网",
+}
+
+function getSiteInfo(locale: Locale = defaultLocale) {
+    const translations = getTranslations(locale)
+    const name = translate(translations, "seo.siteName")
+    const description = translate(translations, "seo.siteDescription")
+    const shortName = translate(translations, "seo.shortName")
+    return {
+        siteName: name.startsWith("seo.") ? defaultSiteInfo.siteName : name,
+        siteDescription: description.startsWith("seo.") ? defaultSiteInfo.siteDescription : description,
+        shortName: shortName.startsWith("seo.") ? defaultSiteInfo.shortName : shortName,
+    }
+}
 
 // 默认元数据
 export const defaultMetadata: Metadata = {
     metadataBase: new URL(siteUrl),
     title: {
-        default: siteName,
+        default: getSiteInfo().siteName,
         template: `%s | 占卜网`,
     },
-    description: siteDescription,
+    description: getSiteInfo().siteDescription,
     keywords: [
         "占卜",
         "八字",
@@ -42,9 +58,9 @@ export const defaultMetadata: Metadata = {
         locale: "zh_CN",
         alternateLocale: ["en_US", "zh_TW", "ja_JP"],
         url: siteUrl,
-        siteName: "占卜网",
-        title: siteName,
-        description: siteDescription,
+        siteName: getSiteInfo().shortName,
+        title: getSiteInfo().siteName,
+        description: getSiteInfo().siteDescription,
         images: [
             {
                 url: "/og-image.png",
@@ -56,8 +72,8 @@ export const defaultMetadata: Metadata = {
     },
     twitter: {
         card: "summary_large_image",
-        title: siteName,
-        description: siteDescription,
+        title: getSiteInfo().siteName,
+        description: getSiteInfo().siteDescription,
         images: ["/og-image.png"],
         creator: "@zhanbu",
     },
@@ -116,24 +132,26 @@ interface PageMetadataOptions {
     image?: string
     noIndex?: boolean
     pathname?: string
+    locale?: Locale
 }
 
 export function generatePageMetadata(options: PageMetadataOptions): Metadata {
-    const { title, description, keywords, image, noIndex, pathname } = options
+    const { title, description, keywords, image, noIndex, pathname, locale } = options
+    const siteInfo = getSiteInfo(locale)
 
     return {
         title,
-        description: description || siteDescription,
+        description: description || siteInfo.siteDescription,
         keywords: keywords ? [...keywords, "占卜", "命理"] : undefined,
         openGraph: {
             title,
-            description: description || siteDescription,
+            description: description || siteInfo.siteDescription,
             url: pathname ? `${siteUrl}${pathname}` : siteUrl,
             images: image ? [{ url: image, width: 1200, height: 630 }] : undefined,
         },
         twitter: {
             title,
-            description: description || siteDescription,
+            description: description || siteInfo.siteDescription,
             images: image ? [image] : undefined,
         },
         robots: noIndex
@@ -149,13 +167,14 @@ export function generatePageMetadata(options: PageMetadataOptions): Metadata {
 
 // 结构化数据生成器
 export function generateStructuredData() {
+    const siteInfo = getSiteInfo()
     return {
         "@context": "https://schema.org",
         "@type": "WebSite",
-        name: "占卜网",
+        name: siteInfo.shortName,
         alternateName: ["ZhanBu", "在线占卜平台"],
         url: siteUrl,
-        description: siteDescription,
+        description: siteInfo.siteDescription,
         potentialAction: {
             "@type": "SearchAction",
             target: {
@@ -166,7 +185,7 @@ export function generateStructuredData() {
         },
         publisher: {
             "@type": "Organization",
-            name: "占卜网",
+            name: siteInfo.shortName,
             url: siteUrl,
             logo: {
                 "@type": "ImageObject",

@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { createAdminClient } from "@/lib/supabase/server"
+import { defaultLocale, getTranslations, locales, t as translate, type Locale } from "@/lib/i18n"
 
 /**
  * AI 对话占卜 API - 流式响应
@@ -57,6 +58,42 @@ const chatModes = {
     },
 }
 
+const LOCALE_INSTRUCTIONS: Record<Locale, string> = {
+    "zh-CN": "请用简体中文回答。",
+    "zh-TW": "請用繁體中文回答。",
+    en: "Please respond in English.",
+    ja: "日本語で回答してください。",
+}
+
+function matchAcceptLanguage(headerValue: string | null): Locale | null {
+    if (!headerValue) return null
+    const parts = headerValue.split(",").map((part) => part.trim().split(";")[0])
+    for (const lang of parts) {
+        const lower = lang.toLowerCase()
+        if (lower.startsWith("zh")) {
+            if (lower.includes("tw") || lower.includes("hk") || lower.includes("mo")) {
+                return "zh-TW"
+            }
+            return "zh-CN"
+        }
+        if (lower.startsWith("ja")) return "ja"
+        if (lower.startsWith("en")) return "en"
+    }
+    return null
+}
+
+function resolveLocale(req: NextRequest, bodyLocale?: string): Locale {
+    if (bodyLocale && locales.includes(bodyLocale as Locale)) {
+        return bodyLocale as Locale
+    }
+    const cookieLocale = req.cookies.get("locale")?.value
+    if (cookieLocale && locales.includes(cookieLocale as Locale)) {
+        return cookieLocale as Locale
+    }
+    const headerLocale = matchAcceptLanguage(req.headers.get("accept-language"))
+    return headerLocale || defaultLocale
+}
+
 export async function POST(req: NextRequest) {
     try {
         const { userId } = await auth()
@@ -95,7 +132,7 @@ export async function POST(req: NextRequest) {
         }
 
         const body = await req.json()
-        const { message, mode = "general", history = [] } = body
+        const { message, mode = "general", history = [], locale: bodyLocale } = body
 
         if (!message) {
             return new Response(JSON.stringify({ error: "请输入您的问题" }), {
@@ -116,9 +153,14 @@ export async function POST(req: NextRequest) {
         }
 
         // 构建消息
+        const locale = resolveLocale(req, bodyLocale)
         const chatMode = chatModes[mode as keyof typeof chatModes] || chatModes.general
+        const translations = getTranslations(locale)
+        const modeLabel = translate(translations, `ai.modes.${mode}`)
+        const modeName = modeLabel.startsWith("ai.modes.") ? chatMode.name : modeLabel
+        const languageInstruction = LOCALE_INSTRUCTIONS[locale] || LOCALE_INSTRUCTIONS[defaultLocale]
         const messages = [
-            { role: "system", content: chatMode.systemPrompt },
+            { role: "system", content: `${chatMode.systemPrompt}\n\n${languageInstruction}` },
             ...history.slice(-10), // 保留最近10条对话
             { role: "user", content: message },
         ]
@@ -165,7 +207,7 @@ export async function POST(req: NextRequest) {
             amount: -AI_CHAT_COST,
             balance_after: newBalance,
             type: "consume",
-            description: `AI 对话 (${chatMode.name})`,
+            description: `AI Chat (${modeName || chatMode.name})`,
             reference_id: `ai_chat:${mode}`,
         })
 
@@ -189,11 +231,16 @@ export async function POST(req: NextRequest) {
 }
 
 // 获取对话模式列表
-export async function GET() {
-    const modes = Object.entries(chatModes).map(([id, mode]) => ({
-        id,
-        name: mode.name,
-    }))
+export async function GET(req: NextRequest) {
+    const locale = resolveLocale(req)
+    const translations = getTranslations(locale)
+    const modes = Object.entries(chatModes).map(([id, mode]) => {
+        const label = translate(translations, `ai.modes.${id}`)
+        return {
+            id,
+            name: label.startsWith("ai.modes.") ? mode.name : label,
+        }
+    })
 
     return new Response(JSON.stringify({
         success: true,

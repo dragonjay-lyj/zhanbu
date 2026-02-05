@@ -8,7 +8,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useI18n, locales, localeConfig, type Locale } from "@/lib/i18n"
+import { useI18n, useTranslation, locales, localeConfig, type Locale } from "@/lib/i18n"
 
 interface LanguageSwitcherProps {
     variant?: "icon" | "full"
@@ -16,13 +16,14 @@ interface LanguageSwitcherProps {
 
 export function LanguageSwitcher({ variant = "icon" }: LanguageSwitcherProps) {
     const { locale, setLocale } = useI18n()
+    const { t } = useTranslation()
 
     const currentLocale = localeConfig[locale]
 
     if (variant === "full") {
         return (
             <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">语言</span>
+                <span className="text-sm text-muted-foreground">{t("language.label")}</span>
                 <div className="flex items-center gap-1">
                     {locales.map((loc) => (
                         <Button
@@ -45,7 +46,7 @@ export function LanguageSwitcher({ variant = "icon" }: LanguageSwitcherProps) {
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="cursor-pointer">
                     <Globe className="h-5 w-5" />
-                    <span className="sr-only">切换语言</span>
+                    <span className="sr-only">{t("language.switcherLabel")}</span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">

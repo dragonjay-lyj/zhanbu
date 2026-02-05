@@ -27,6 +27,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
+import { useTranslation, formatMessage } from "@/lib/i18n"
 
 // 十二地支
 const DI_ZHI = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -38,7 +39,7 @@ const WU_XING = ["金", "木", "水", "火", "土"]
 // 时辰数据
 const hours = Array.from({ length: 12 }, (_, i) => ({
     value: i.toString(),
-    label: DI_ZHI[i] + "时",
+    zhi: DI_ZHI[i],
 }))
 
 interface JinkoujueFormData {
@@ -64,6 +65,7 @@ interface JinkoujueResult {
  * 金口诀排盘页面
  */
 export default function JinkoujuePage() {
+    const { t } = useTranslation()
     const { isSignedIn, user } = useUser()
     const [result, setResult] = useState<JinkoujueResult | null>(null)
     const [isLoading, setIsLoading] = useState(false)
@@ -90,9 +92,44 @@ export default function JinkoujuePage() {
             jiangShen: { name: "将神", zhi: DI_ZHI[(hourIdx + 4) % 12], general: TWELVE_GENERALS[(hourIdx + 4) % 12] },
             guiShen: { name: "贵神", zhi: DI_ZHI[(hourIdx + 8) % 12], general: TWELVE_GENERALS[(hourIdx + 8) % 12] },
             renYuan: { name: "人元", zhi: "甲", general: "天乙贵人" },
-            analysis: "此课吉凶参半，地分与将神相生，主事有贵人相助，但需防小人暗害。",
+            analysis: t("pages.jinkouque.analysis.sample"),
             wuxing: WU_XING[hourIdx % 5],
         }
+    }
+
+    const getDirectionLabel = (wuxing: string) => {
+        switch (wuxing) {
+            case "金":
+                return t("pages.jinkouque.ai.directions.west")
+            case "木":
+                return t("pages.jinkouque.ai.directions.east")
+            case "水":
+                return t("pages.jinkouque.ai.directions.north")
+            case "火":
+                return t("pages.jinkouque.ai.directions.south")
+            default:
+                return t("pages.jinkouque.ai.directions.center")
+        }
+    }
+
+    const buildAiAnalysis = (data: JinkoujueResult) => {
+        const name = user?.firstName || t("nav.userFallback")
+        return [
+            formatMessage(t("pages.jinkouque.ai.greeting"), { name }),
+            t("pages.jinkouque.ai.intro"),
+            formatMessage(t("pages.jinkouque.ai.lines.line1"), {
+                difen: data.difen.zhi,
+                jiangShen: data.jiangShen.zhi,
+                guiShen: data.guiShen.zhi,
+                renYuan: data.renYuan.zhi,
+            }),
+            t("pages.jinkouque.ai.lines.line2"),
+            formatMessage(t("pages.jinkouque.ai.lines.line3"), {
+                wuxing: data.wuxing,
+                direction: getDirectionLabel(data.wuxing),
+            }),
+            t("pages.jinkouque.ai.lines.line4"),
+        ].join("\n\n")
     }
 
     const onSubmit = async (data: JinkoujueFormData) => {
@@ -112,9 +149,9 @@ export default function JinkoujuePage() {
                     <Fingerprint className="h-8 w-8 text-orange-500" />
                 </div>
                 <div>
-                    <h1 className="font-serif text-3xl font-bold">金口诀排盘</h1>
+                    <h1 className="font-serif text-3xl font-bold">{t("pages.jinkouque.title")}</h1>
                     <p className="text-muted-foreground">
-                        大六壬精简版，掌中乾坤，决断如神
+                        {t("pages.jinkouque.subtitle")}
                     </p>
                 </div>
             </div>
@@ -123,11 +160,11 @@ export default function JinkoujuePage() {
                 <TabsList className="grid w-full max-w-md grid-cols-2">
                     <TabsTrigger value="input" className="cursor-pointer">
                         <Hand className="mr-2 h-4 w-4" />
-                        起课设置
+                        {t("pages.jinkouque.tabs.input")}
                     </TabsTrigger>
                     <TabsTrigger value="result" disabled={!result} className="cursor-pointer">
                         <Sparkles className="mr-2 h-4 w-4" />
-                        课局结果
+                        {t("pages.jinkouque.tabs.result")}
                     </TabsTrigger>
                 </TabsList>
 
@@ -137,24 +174,24 @@ export default function JinkoujuePage() {
                         <div className="grid gap-6 md:grid-cols-2">
                             {/* 问题描述 */}
                             <Card className="md:col-span-2">
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2">
-                                        <Target className="h-5 w-5" />
-                                        占问事项
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <Input
-                                        placeholder="请简要描述您想占问的事项"
-                                        {...form.register("question")}
-                                    />
-                                </CardContent>
-                            </Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Target className="h-5 w-5" />
+                                    {t("pages.jinkouque.sections.question")}
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <Input
+                                    placeholder={t("pages.jinkouque.placeholders.question")}
+                                    {...form.register("question")}
+                                />
+                            </CardContent>
+                        </Card>
 
                             {/* 起课方式 */}
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>起课方式</CardTitle>
+                                    <CardTitle>{t("pages.jinkouque.sections.method")}</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="flex gap-4">
@@ -165,7 +202,7 @@ export default function JinkoujuePage() {
                                                 {...form.register("method")}
                                                 className="w-4 h-4"
                                             />
-                                            <span>时间起课</span>
+                                            <span>{t("pages.jinkouque.methods.time")}</span>
                                         </label>
                                         <label className="flex items-center gap-2 cursor-pointer">
                                             <input
@@ -174,7 +211,7 @@ export default function JinkoujuePage() {
                                                 {...form.register("method")}
                                                 className="w-4 h-4"
                                             />
-                                            <span>指掌起课</span>
+                                            <span>{t("pages.jinkouque.methods.finger")}</span>
                                         </label>
                                     </div>
                                 </CardContent>
@@ -185,21 +222,21 @@ export default function JinkoujuePage() {
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2">
                                         <Clock className="h-5 w-5" />
-                                        起课时间
+                                        {t("pages.jinkouque.sections.time")}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <Label>月</Label>
+                                            <Label>{t("pages.jinkouque.labels.month")}</Label>
                                             <Input {...form.register("month")} />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>日</Label>
+                                            <Label>{t("pages.jinkouque.labels.day")}</Label>
                                             <Input {...form.register("day")} />
                                         </div>
                                         <div className="space-y-2 col-span-2">
-                                            <Label>时辰</Label>
+                                            <Label>{t("pages.jinkouque.labels.hour")}</Label>
                                             <Select
                                                 value={form.watch("hour")}
                                                 onValueChange={(v) => form.setValue("hour", v)}
@@ -210,7 +247,7 @@ export default function JinkoujuePage() {
                                                 <SelectContent>
                                                     {hours.map((hour) => (
                                                         <SelectItem key={hour.value} value={hour.value} className="cursor-pointer">
-                                                            {hour.label}
+                                                            {formatMessage(t("pages.jinkouque.options.hour"), { value: hour.zhi })}
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>
@@ -232,12 +269,12 @@ export default function JinkoujuePage() {
                                         {isLoading ? (
                                             <>
                                                 <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                                                排课中...
+                                                {t("pages.jinkouque.actions.calculating")}
                                             </>
                                         ) : (
                                             <>
                                                 <Fingerprint className="mr-2 h-4 w-4" />
-                                                起课排盘
+                                                {t("pages.jinkouque.actions.start")}
                                             </>
                                         )}
                                     </Button>
@@ -254,8 +291,8 @@ export default function JinkoujuePage() {
                             {/* 四位一体 */}
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>金口四位</CardTitle>
-                                    <CardDescription>人元、贵神、将神、地分</CardDescription>
+                                    <CardTitle>{t("pages.jinkouque.sections.fourPositions.title")}</CardTitle>
+                                    <CardDescription>{t("pages.jinkouque.sections.fourPositions.desc")}</CardDescription>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="flex flex-col items-center gap-4 max-w-xs mx-auto">
@@ -290,7 +327,7 @@ export default function JinkoujuePage() {
                             {/* 五行分析 */}
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>五行所属</CardTitle>
+                                    <CardTitle>{t("pages.jinkouque.sections.wuxing")}</CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="text-center">
@@ -302,7 +339,7 @@ export default function JinkoujuePage() {
                             {/* 基础分析 */}
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>基础分析</CardTitle>
+                                    <CardTitle>{t("pages.jinkouque.sections.analysis")}</CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <p className="text-muted-foreground">{result.analysis}</p>
@@ -319,7 +356,7 @@ export default function JinkoujuePage() {
                                         <div className="space-y-4">
                                             <div className="flex items-center gap-2">
                                                 <Brain className="h-5 w-5 text-primary" />
-                                                <h3 className="font-semibold">AI 智能解读</h3>
+                                                <h3 className="font-semibold">{t("pages.jinkouque.ai.title")}</h3>
                                             </div>
                                             {aiAnalysis ? (
                                                 <p className="text-sm text-muted-foreground whitespace-pre-wrap">
@@ -330,7 +367,7 @@ export default function JinkoujuePage() {
                                                     onClick={async () => {
                                                         setIsAnalyzing(true)
                                                         await new Promise(resolve => setTimeout(resolve, 2000))
-                                                        setAiAnalysis(`您好，${user?.firstName || "用户"}！\n\n根据此金口诀课局分析：\n\n1. 地分${result.difen.zhi}，将神${result.jiangShen.zhi}，贵神${result.guiShen.zhi}，人元${result.renYuan.zhi}。\n\n2. 四位相生相克关系显示事情发展顺利，有贵人相助。\n\n3. 五行属${result.wuxing}，利于${result.wuxing === "金" ? "西方" : result.wuxing === "木" ? "东方" : result.wuxing === "水" ? "北方" : result.wuxing === "火" ? "南方" : "中央"}求财谋事。\n\n4. 建议动作时机以辰、戌时为佳。`)
+                                                        setAiAnalysis(buildAiAnalysis(result))
                                                         setIsAnalyzing(false)
                                                     }}
                                                     disabled={isAnalyzing}
@@ -339,12 +376,12 @@ export default function JinkoujuePage() {
                                                     {isAnalyzing ? (
                                                         <>
                                                             <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                                                            AI 分析中...
+                                                            {t("pages.jinkouque.ai.analyzing")}
                                                         </>
                                                     ) : (
                                                         <>
                                                             <Sparkles className="mr-2 h-4 w-4" />
-                                                            获取 AI 深度解读
+                                                            {t("pages.jinkouque.ai.action")}
                                                         </>
                                                     )}
                                                 </Button>
@@ -353,12 +390,12 @@ export default function JinkoujuePage() {
                                     ) : (
                                         <div className="text-center">
                                             <Sparkles className="h-8 w-8 text-muted-foreground mx-auto mb-4" />
-                                            <h3 className="font-semibold mb-2">AI 深度解读</h3>
+                                            <h3 className="font-semibold mb-2">{t("pages.jinkouque.ai.loginTitle")}</h3>
                                             <p className="text-sm text-muted-foreground mb-4">
-                                                登录后获取 AI 智能分析
+                                                {t("pages.jinkouque.ai.loginDesc")}
                                             </p>
                                             <Button variant="outline" className="cursor-pointer" asChild>
-                                                <a href="/sign-in">登录获取解读</a>
+                                                <a href="/sign-in">{t("pages.jinkouque.ai.loginAction")}</a>
                                             </Button>
                                         </div>
                                     )}
@@ -372,7 +409,7 @@ export default function JinkoujuePage() {
                                     className="cursor-pointer"
                                 >
                                     <RefreshCw className="mr-2 h-4 w-4" />
-                                    重新起课
+                                    {t("pages.jinkouque.actions.reset")}
                                 </Button>
                             </div>
                         </div>

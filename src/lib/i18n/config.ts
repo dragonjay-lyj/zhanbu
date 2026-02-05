@@ -1,3 +1,7 @@
+import { extendedTranslations } from "./extended-translations"
+import { zhTW } from "./zh-tw"
+import { ja } from "./ja"
+
 // 支持的语言
 export const locales = ["zh-CN", "zh-TW", "en", "ja"] as const
 export type Locale = (typeof locales)[number]
@@ -43,81 +47,7 @@ export const localeConfig: Record<
 
 // 翻译类型
 export interface Translations {
-    common: {
-        loading: string
-        error: string
-        success: string
-        cancel: string
-        confirm: string
-        save: string
-        delete: string
-        edit: string
-        back: string
-        next: string
-        previous: string
-        search: string
-        noResults: string
-        viewMore: string
-        login: string
-        logout: string
-        register: string
-    }
-    nav: {
-        home: string
-        bazi: string
-        ziwei: string
-        liuyao: string
-        meihua: string
-        tarot: string
-        daily: string
-        huangli: string
-        qimen: string
-        fengshui: string
-        relationship: string
-        history: string
-        profile: string
-        settings: string
-        admin: string
-    }
-    home: {
-        hero: {
-            title: string
-            subtitle: string
-            cta: string
-        }
-        features: {
-            title: string
-            items: {
-                title: string
-                description: string
-            }[]
-        }
-    }
-    divination: {
-        question: string
-        questionPlaceholder: string
-        startDivination: string
-        result: string
-        interpretation: string
-        aiInterpretation: string
-        getAiInterpretation: string
-        loginToGetAi: string
-        restart: string
-        saveResult: string
-        shareResult: string
-    }
-    auth: {
-        loginTitle: string
-        registerTitle: string
-        email: string
-        password: string
-        confirmPassword: string
-        forgotPassword: string
-        noAccount: string
-        hasAccount: string
-        loginWithGoogle: string
-        loginWithGithub: string
-    }
+    [key: string]: unknown
 }
 
 // 中文简体翻译
@@ -140,6 +70,19 @@ export const zhCN: Translations = {
         login: "登录",
         logout: "退出登录",
         register: "注册",
+        retry: "重试",
+        refresh: "刷新",
+        submit: "提交",
+        reset: "重置",
+        start: "开始",
+        close: "关闭",
+        copy: "复制",
+        copied: "已复制",
+        loadingShort: "加载中",
+    },
+    language: {
+        label: "语言",
+        switcherLabel: "切换语言",
     },
     nav: {
         home: "首页",
@@ -157,6 +100,87 @@ export const zhCN: Translations = {
         profile: "个人中心",
         settings: "设置",
         admin: "后台管理",
+        menuOpen: "打开菜单",
+        userFallback: "用户",
+        pricing: "升级会员",
+        signIn: "登录",
+        signUp: "注册",
+        signOut: "退出登录",
+    },
+    sidebar: {
+        logo: "ZhanBu 占卜",
+        advanced: "高级功能",
+        sections: {
+            home: "首页",
+            bazi: "八字命理",
+            ziwei: "紫微斗数",
+            liuyao: "六爻占卜",
+            tarot: "塔罗占卜",
+            relationship: "关系分析",
+            huangli: "黄历查询",
+            fortune: "运势预测",
+            traditional: "传统占卜",
+            smart: "智能服务",
+            community: "占卜社区",
+        },
+        items: {
+            bazi: "八字排盘",
+            daily: "每日运势",
+            marriage: "合婚分析",
+            ziwei: "紫微排盘",
+            liuyao: "六爻排盘",
+            meihua: "梅花易数",
+            tarot: "塔罗解读",
+            relationshipBusiness: "商业合作",
+            relationshipFriendship: "闺蜜分析",
+            relationshipInLaw: "婆媳关系",
+            relationshipParentChild: "亲子关系",
+            relationshipWorkplace: "职场关系",
+            zodiac: "星座运势",
+            shengxiao: "生肖运程",
+            liunian: "流年运势",
+            qianwen: "抽签占卜",
+            jiemeng: "周公解梦",
+            zeji: "择吉选日",
+            name: "姓名测算",
+            aiChat: "AI 对话",
+            community: "占卜社区",
+        },
+        descriptions: {
+            bazi: "AI 智能八字分析",
+            daily: "每日吉凶预测",
+            marriage: "八字配对分析",
+            ziwei: "十二宫位深度解析",
+            liuyao: "铜钱摇卦预测",
+            meihua: "心易决策分析",
+            tarot: "多种牌阵解读",
+            relationshipBusiness: "合伙人匹配分析",
+            relationshipFriendship: "友谊契合度分析",
+            relationshipInLaw: "家庭关系分析",
+            relationshipParentChild: "教育指导分析",
+            relationshipWorkplace: "上下级关系分析",
+            zodiac: "十二星座运势预测",
+            shengxiao: "十二生肖年运月运",
+            liunian: "年度运势走向",
+            dailyFortune: "今日运势指引",
+            qianwen: "观音灵签、月老灵签",
+            jiemeng: "梦境解析",
+            zeji: "婚嫁、开业吉日",
+            name: "五格剖象姓名分析",
+            aiChat: "AI 占卜大师",
+        },
+        advancedItems: {
+            qimen: "奇门遁甲",
+            liuren: "大六壬",
+            jinkouque: "金口诀",
+            fengshui: "玄空风水",
+        },
+        footer: {
+            profile: "个人中心",
+            history: "历史记录",
+            pricing: "升级会员",
+            admin: "管理后台",
+        },
     },
     home: {
         hero: {
@@ -173,6 +197,37 @@ export const zhCN: Translations = {
                 { title: "六爻预测", description: "古老易学，解答疑惑" },
             ],
         },
+        sections: {
+            modulesTitle: "功能模块",
+            modulesSubtitle: "多种占卜系统，满足您不同的命理分析需求",
+            aiBadge: "AI 技术",
+            aiTitle: "AI 智能解读",
+            aiSubtitle: "融合传统命理智慧与现代人工智能技术，为您提供更精准、更深入的命理分析",
+            journeyTitle: "开始您的命理探索之旅",
+            journeySubtitle: "无论是了解自己、探索人际关系，还是寻求决策指引，ZhanBu 都能为您提供帮助。",
+            disclaimer: "占卜结果仅供参考娱乐，不构成任何决策建议。命运掌握在自己手中，愿您活出精彩人生。",
+        },
+        heroExtra: {
+            tagline: "AI 智能命理平台",
+            brand: "ZhanBu 占卜",
+            headline: "探索命运的奥秘",
+            description: "融合紫微斗数、八字命理、六爻占卜、塔罗牌等多种传统智慧，结合现代 AI 技术，为您提供全面、精准的命理分析与人生指引。",
+            primaryCta: "开始探索",
+            secondaryCta: "紫微排盘",
+        },
+        modules: [
+            { title: "八字命理", description: "精准分析四柱八字，解读五行平衡与人生运势" },
+            { title: "紫微斗数", description: "十二宫位深度解析，揭示命盘核心结构" },
+            { title: "六爻占卜", description: "铜钱摇卦预测，解答具体问题的未来走向" },
+            { title: "塔罗占卜", description: "多种牌阵解读，聆听潜意识的声音" },
+            { title: "关系分析", description: "商业、友谊、亲子等多维度关系契合度分析" },
+            { title: "黄历查询", description: "传统中国黄历，查询各类活动的吉日" },
+        ],
+        aiFeatures: [
+            { title: "智能解读", description: "结合传统与现代 AI 技术，提供深度命理分析" },
+            { title: "即时反馈", description: "无需等待，AI 系统即时生成专业解读" },
+            { title: "隐私保护", description: "严格保护用户数据，安全可靠" },
+        ],
     },
     divination: {
         question: "您的问题",
@@ -199,6 +254,1298 @@ export const zhCN: Translations = {
         loginWithGoogle: "使用 Google 登录",
         loginWithGithub: "使用 GitHub 登录",
     },
+    ai: {
+        chat: {
+            title: "AI 占卜大师",
+            subtitle: "与 AI 对话，解答您的命运困惑",
+            costPerMessage: "每条消息消耗 {cost} 积分",
+            loginTip: "请先登录后使用 AI 对话占卜功能",
+            insufficient: "积分不足！需要 {required} 积分，当前余额 {current} 积分",
+            recharge: "充值积分",
+            newChat: "新对话",
+            clear: "清空",
+            startTitle: "开始您的占卜之旅",
+            startSubtitle: "您可以问我关于感情、事业、财运、健康等方面的问题，我会用占卜的智慧为您解答。",
+            promptSamples: [
+                "我的感情运势如何？",
+                "今年事业发展怎样？",
+                "最近财运好吗？",
+                "我适合什么职业？",
+            ],
+            inputPlaceholder: "输入您的问题...",
+            inputLoginPlaceholder: "请先登录",
+        },
+        analysis: {
+            title: "AI 深度解读",
+            loginPrompt: "登录后获取 AI 智能分析，深入解读您的命盘特质",
+            costLabel: "消耗 {cost} 积分",
+            insufficient: "积分不足！需要 {required} 积分，当前余额 {current} 积分",
+            recharge: "充值积分",
+            refresh: "重新解读",
+            used: "本次消耗 {used} 积分",
+            retry: "重试",
+            analyzing: "AI 分析中...",
+            fetch: "获取 AI 深度解读",
+            loginAction: "登录获取解读",
+            greeting: "您好，{name}！\n\n",
+            request: "请给出详细的解读。",
+        },
+        modes: {
+            general: "综合占卜",
+            love: "感情姻缘",
+            career: "事业财运",
+            health: "健康运势",
+        },
+    },
+    errors: {
+        network: "网络错误，请稍后重试",
+        unknown: "服务器内部错误",
+        notFoundTitle: "页面走丢了",
+        notFoundDesc: "您访问的页面可能已被移动、删除，或者从未存在过。",
+        notFoundHint: "不如试试以下操作？",
+        notFoundRecommendation: "也许您正在寻找以下功能？",
+        offlineTitle: "您当前处于离线状态",
+        offlineSubtitle: "请检查您的网络连接，或者尝试以下操作：",
+        globalTitle: "应用发生严重错误",
+        globalDesc: "很抱歉，应用遇到了无法恢复的错误。请刷新页面重试。",
+    },
+    offline: {
+        tips: [
+            "检查 Wi-Fi 或移动数据是否已开启",
+            "尝试切换网络或重启路由器",
+            "等待网络恢复后刷新页面",
+        ],
+        actions: {
+            home: "返回首页",
+        },
+        cached: "部分已缓存的内容在离线状态下仍可访问",
+    },
+    notFound: {
+        home: "返回首页",
+        community: "浏览社区",
+        recommended: [
+            { name: "八字排盘", href: "/bazi" },
+            { name: "塔罗占卜", href: "/tarot" },
+            { name: "紫微斗数", href: "/ziwei" },
+            { name: "每日运势", href: "/daily" },
+            { name: "AI 对话", href: "/ai-chat" },
+        ],
+    },
+    globalError: {
+        reload: "重新加载",
+        backHome: "返回首页",
+        errorId: "错误标识",
+    },
+    pages: {
+        ...extendedTranslations["zh-CN"].pages,
+        name: {
+            ...extendedTranslations["zh-CN"].pages.name,
+            formTitle: "输入姓名",
+            formDescription: "请输入您要测算的姓名（支持单姓和复姓）",
+            surnameLabel: "姓氏",
+            surnamePlaceholder: "如：王、欧阳",
+            givenNameLabel: "名字",
+            givenNamePlaceholder: "如：建国、小明",
+            errorIncomplete: "请输入完整的姓名",
+            errorFailed: "计算失败",
+            errorNetwork: "网络错误，请稍后重试",
+            calculating: "计算中...",
+            start: "开始测算",
+            totalStrokesLabel: "总笔画：{total} 画",
+            totalScoreLabel: "综合评分",
+            sancaiTitle: "三才配置",
+            sancaiScoreLabel: "三才评分：{score} 分",
+            sancaiLabels: { tian: "天", ren: "人", di: "地" },
+            wugeTitle: "五格详解",
+            wugeLabels: {
+                tianGe: "天格",
+                renGe: "人格",
+                diGe: "地格",
+                waiGe: "外格",
+                zongGe: "总格",
+            },
+            wugeDesc: {
+                tianGe: "代表先天运势，由姓氏决定",
+                renGe: "代表主运，影响一生运势",
+                diGe: "代表前运，影响中年前",
+                waiGe: "代表副运，影响人际关系",
+                zongGe: "代表后运，影响中年后",
+            },
+            reset: "重新测算",
+        },
+        zodiac: {
+            ...extendedTranslations["zh-CN"].pages.zodiac,
+            wealth: "财富",
+            switchSign: "切换星座",
+            overall: "综合运势",
+            luckyNumber: "幸运数字",
+            luckyColor: "幸运颜色",
+            luckyDirection: "幸运方位",
+            loveFortune: "爱情运势",
+            careerFortune: "事业运势",
+            wealthFortune: "财富运势",
+            healthFortune: "健康运势",
+            scoreUnit: "分",
+            elementSuffix: "象星座",
+        },
+        liunian: {
+            ...extendedTranslations["zh-CN"].pages.liunian,
+            inputTitle: "输入您的出生年份",
+            inputDescription: "我们将为您分析流年运势",
+            birthYearLabel: "出生年份",
+            birthYearPlaceholder: "如 1990",
+            startAnalyze: "开始分析",
+            yearLabel: "{year}年",
+            birthInfo: "{birthYear}年生人 · {age}岁",
+            overallScoreLabel: "年度综合运势评分",
+            monthlyTitle: "月度运势曲线",
+            monthlyDescription: "全年12个月运势走向",
+            adviceTitle: "💡 年度开运建议",
+            reset: "重新输入",
+            scoreUnit: "分",
+            monthSuffix: "月",
+        },
+        community: {
+            ...extendedTranslations["zh-CN"].pages.community,
+            postButton: "发布帖子",
+            dialogTitle: "发布新帖子",
+            dialogDescription: "分享你的占卜经验或提出问题",
+            titleLabel: "标题",
+            titlePlaceholder: "输入帖子标题",
+            categoryLabel: "分类",
+            contentLabel: "内容",
+            contentPlaceholder: "详细描述...",
+            submit: "发布",
+            categories: "分类",
+            searchPlaceholder: "搜索帖子",
+            allPosts: "全部帖子",
+            empty: "暂无帖子，快来发布第一个吧！",
+            time: {
+                justNow: "刚刚",
+                minutesAgo: "{value}分钟前",
+                hoursAgo: "{value}小时前",
+                daysAgo: "{value}天前",
+            },
+        },
+        relationship: {
+            title: "关系分析",
+            subtitle: "AI 智能分析双方命盘，揭示关系契合度",
+            types: {
+                marriage: { title: "合婚分析", desc: "分析两人婚姻契合度" },
+                motherInLaw: { title: "婆媳关系", desc: "分析婆媳相处模式" },
+                business: { title: "商业合作", desc: "分析商业伙伴契合度" },
+                friendship: { title: "友谊分析", desc: "分析朋友间的友谊质量" },
+                workplace: { title: "职场关系", desc: "分析同事或上下级关系" },
+            },
+            form: {
+                person1: "第一人信息",
+                person2: "第二人信息",
+                daughterInLaw: "媳妇信息",
+                motherInLaw: "婆婆信息",
+            },
+            labels: {
+                name: "姓名",
+                gender: "性别",
+                year: "年",
+                month: "月",
+                day: "日",
+                hour: "时辰",
+                lunar: "农历日期",
+            },
+            placeholders: {
+                name: "请输入姓名",
+            },
+            gender: {
+                male: "男",
+                female: "女",
+            },
+            options: {
+                month: "{value}月",
+                day: "{value}日",
+            },
+            sections: {
+                type: "选择分析类型",
+                overall: "综合契合度",
+                breakdown: "分项分析",
+                strengths: "关系优势",
+                challenges: "需要注意",
+                advice: "专家建议",
+            },
+            actions: {
+                analyzing: "分析中...",
+                start: "开始分析",
+                reset: "重新分析",
+            },
+            scoreLevels: {
+                excellent: "极佳",
+                good: "良好",
+                fair: "一般",
+                caution: "需注意",
+            },
+            scoreUnit: "{value}分",
+            aiTitle: "AI 关系分析",
+        },
+        marriage: {
+            title: "八字合婚",
+            subtitle: "输入双方生辰，分析姻缘契合度",
+            sections: {
+                male: "男方生辰",
+                female: "女方生辰",
+                shengxiaoAnalysis: "生肖配对分析",
+                wuxingAnalysis: "五行互补分析",
+                maleWuxing: "男方五行分布",
+                femaleWuxing: "女方五行分布",
+                maleBazi: "男方八字",
+                femaleBazi: "女方八字",
+            },
+            labels: {
+                birthYear: "出生年份",
+                birthMonth: "出生月份",
+                birthDay: "出生日期",
+                birthHourOptional: "出生时辰（可选）",
+            },
+            placeholders: {
+                year: "如 1990",
+                yearFemale: "如 1992",
+                month: "1-12",
+                day: "1-31",
+                hour: "0-23",
+            },
+            actions: {
+                analyzing: "正在分析...",
+                start: "开始合婚分析",
+                reset: "重新分析",
+            },
+            tabs: {
+                shengxiao: "生肖配对",
+                wuxing: "五行互补",
+                bazi: "八字详情",
+            },
+            result: {
+                zodiac: "属{value}",
+            },
+            scoreUnit: "{value}分",
+        },
+        jiemeng: {
+            title: "周公解梦",
+            subtitle: "输入梦境关键词，解读梦的寓意",
+            search: {
+                placeholder: "输入梦境关键词，如：蛇、飞、水...",
+            },
+            actions: {
+                search: "解梦",
+            },
+            result: {
+                title: "梦见{keyword}",
+                source: "周公解梦典籍解读",
+                interpretationTitle: "梦境解读",
+                fortuneTitle: "🔮 运势预示",
+                adviceTitle: "💡 建议",
+            },
+            related: {
+                title: "相关梦境",
+            },
+            suggestions: {
+                title: "您可能想搜索",
+                subtitle: "未找到「{keyword}」的精确解释，以下是相关结果",
+            },
+            empty: "未找到相关解释，请尝试其他关键词",
+            categories: {
+                title: "热门梦境分类",
+            },
+        },
+        qianwen: {
+            title: "抽签占卜",
+            subtitle: "诚心祈愿，抽取神灵指引",
+            count: "共 {total} 签",
+            shaking: {
+                title: "诚心祈愿中...",
+                subtitle: "请静心等待神灵指引",
+            },
+            loading: "正在解读签文...",
+            result: {
+                number: "第 {number} 签",
+            },
+            sections: {
+                poemTitle: "📜 签诗",
+                interpretTitle: "💡 解签",
+                interpretDesc: "此签寓意解读",
+            },
+            actions: {
+                change: "换一种签",
+                redraw: "再抽一签",
+            },
+        },
+        fengshui: {
+            title: "玄空风水排盘",
+            subtitle: "九宫飞星、宅运分析、方位吉凶",
+            sections: {
+                input: {
+                    title: "宅运信息",
+                    description: "请输入建宅年份和坐向信息",
+                },
+                summary: {
+                    title: "宅运概况",
+                },
+                chart: {
+                    title: "玄空飞星盘",
+                },
+            },
+            labels: {
+                year: "建宅/入住年份",
+                mountain: "坐山",
+                facing: "朝向",
+            },
+            options: {
+                year: "{year}年 (第{period}运)",
+            },
+            help: "坐山是建筑背后的方向，朝向是建筑正面的方向。例如坐北朝南的房子，坐山为子，朝向为午。",
+            actions: {
+                calculating: "排盘中...",
+                start: "开始排盘",
+                reset: "重新排盘",
+            },
+            summary: {
+                year: "年份:",
+                period: "元运:",
+                orientation: "坐向:",
+                yearValue: "{year}年",
+                periodValue: "第{period}运",
+                orientationValue: "坐{mountain}向{facing}",
+            },
+            chart: {
+                mountainStar: "山星",
+                periodStar: "运星",
+                facingStar: "向星",
+            },
+            positions: {
+                wealth: {
+                    title: "财位",
+                    desc: "适合摆放财箱、保险柜或绿植",
+                },
+                study: {
+                    title: "文昌位",
+                    desc: "适合设置书房或学习区域",
+                },
+                peach: {
+                    title: "桃花位",
+                    desc: "有利人缘和感情运势",
+                },
+                sickness: {
+                    title: "病符位",
+                    desc: "建议摆放铜葫芦或六帝钱化解",
+                },
+            },
+            aiTitle: "AI 风水分析",
+        },
+        zeji: {
+            title: "择吉选日",
+            subtitle: "根据传统黄历，为您挑选良辰吉日",
+            actions: {
+                back: "← 选择其他事项",
+            },
+            monthHeader: "{year}年{month}月",
+            dateLabel: "{month}月{day}日",
+            current: {
+                title: "{name}吉日",
+                count: "本月共有 {count} 个吉日",
+            },
+            sections: {
+                recommended: "推荐吉日",
+                details: "日期详情",
+            },
+            labels: {
+                yi: "✅ 宜",
+                ji: "❌ 忌",
+            },
+            empty: "本月暂无推荐吉日",
+            emptyDetail: "点击左侧日期查看详情",
+        },
+        qimen: {
+            title: "高级排盘",
+            subtitle: "奇门遁甲、大六壬、金口诀等古法数术",
+            panTypes: {
+                qimen: "奇门遁甲",
+                liuren: "大六壬",
+                jinkou: "金口诀",
+            },
+            cards: {
+                qimen: {
+                    title: "奇门遁甲排盘",
+                    description: "以九宫、八门、九星、八神为核心的古代数术",
+                },
+                liuren: {
+                    title: "大六壬排盘",
+                    description: "以天地盘、四课三传为核心的预测术",
+                },
+                jinkou: {
+                    title: "金口诀排盘",
+                    description: "又称大六壬金口诀，简便实用的预测方法",
+                },
+            },
+            sections: {
+                time: "排盘时间",
+                summaryTitle: "{name}盘",
+                grid: "九宫盘",
+            },
+            time: {
+                current: "当前时间",
+                custom: "自定义时间",
+            },
+            labels: {
+                year: "年",
+                month: "月",
+                day: "日",
+                hour: "时辰",
+                gong: "{value}宫",
+                zhiFu: "值符",
+                zhiShi: "值使",
+            },
+            options: {
+                month: "{value}月",
+                day: "{value}日",
+                hour: "{value}时",
+            },
+            actions: {
+                calculating: "排盘中...",
+                start: "开始排盘",
+                reset: "重新排盘",
+            },
+            summary: {
+                datetime: "{year}年{month}月{day}日 {hour}时",
+                yearPillar: "年柱:",
+                monthPillar: "月柱:",
+                dayPillar: "日柱:",
+                hourPillar: "时柱:",
+                ju: "局数:",
+                juValue: "{yuan} {ju}局",
+            },
+            aiTitle: "AI 奇门遁甲解读",
+        },
+        liuren: {
+            title: "大六壬排盘",
+            subtitle: "三式之一，以日月星辰推演人事吉凶",
+            tabs: {
+                input: "起课设置",
+                result: "课局结果",
+            },
+            sections: {
+                question: "占问事项",
+                time: "起课时间",
+                timeDesc: "大六壬以时辰起课，时辰准确至关重要",
+                siKe: "四课",
+                sanChuan: "三传",
+                analysis: "基础分析",
+            },
+            labels: {
+                year: "年",
+                month: "月",
+                day: "日",
+                hour: "时辰",
+                dayGan: "日干",
+                dayZhi: "日支",
+            },
+            placeholders: {
+                question: "请简要描述您想占问的事项",
+            },
+            options: {
+                hour: "{value}时",
+            },
+            actions: {
+                calculating: "排课中...",
+                start: "起课排盘",
+                reset: "重新起课",
+            },
+            analysis: {
+                sample: "此课为涉害课，主事多阻碍，需耐心等待时机。贵人在东方，财运可期。",
+            },
+            ai: {
+                title: "AI 智能解读",
+                action: "获取 AI 深度解读",
+                analyzing: "AI 分析中...",
+                loginTitle: "AI 深度解读",
+                loginDesc: "登录后获取 AI 智能分析",
+                loginAction: "登录获取解读",
+                greeting: "您好，{name}！",
+                intro: "根据此大六壬课局分析：",
+                lines: {
+                    line1: "1. 日干{riGan}日支{riZhi}，三传{sanChuan}。",
+                    line2: "2. 此课为涉害课，主事有阻碍，但终能成功。",
+                    line3: "3. 贵人临午位，利于南方求财谋事。",
+                    line4: "4. 建议在卯时或午时行动为佳。",
+                },
+            },
+        },
+        jinkouque: {
+            title: "金口诀排盘",
+            subtitle: "大六壬精简版，掌中乾坤，决断如神",
+            tabs: {
+                input: "起课设置",
+                result: "课局结果",
+            },
+            sections: {
+                question: "占问事项",
+                method: "起课方式",
+                time: "起课时间",
+                fourPositions: {
+                    title: "金口四位",
+                    desc: "人元、贵神、将神、地分",
+                },
+                wuxing: "五行所属",
+                analysis: "基础分析",
+            },
+            labels: {
+                month: "月",
+                day: "日",
+                hour: "时辰",
+            },
+            placeholders: {
+                question: "请简要描述您想占问的事项",
+            },
+            methods: {
+                time: "时间起课",
+                finger: "指掌起课",
+            },
+            options: {
+                hour: "{value}时",
+            },
+            actions: {
+                calculating: "排课中...",
+                start: "起课排盘",
+                reset: "重新起课",
+            },
+            analysis: {
+                sample: "此课吉凶参半，地分与将神相生，主事有贵人相助，但需防小人暗害。",
+            },
+            ai: {
+                title: "AI 智能解读",
+                action: "获取 AI 深度解读",
+                analyzing: "AI 分析中...",
+                loginTitle: "AI 深度解读",
+                loginDesc: "登录后获取 AI 智能分析",
+                loginAction: "登录获取解读",
+                greeting: "您好，{name}！",
+                intro: "根据此金口诀课局分析：",
+                lines: {
+                    line1: "1. 地分{difen}，将神{jiangShen}，贵神{guiShen}，人元{renYuan}。",
+                    line2: "2. 四位相生相克关系显示事情发展顺利，有贵人相助。",
+                    line3: "3. 五行属{wuxing}，利于{direction}求财谋事。",
+                    line4: "4. 建议动作时机以辰、戌时为佳。",
+                },
+                directions: {
+                    east: "东方",
+                    south: "南方",
+                    west: "西方",
+                    north: "北方",
+                    center: "中央",
+                },
+            },
+        },
+        shengxiao: {
+            title: "生肖运程",
+            description: "{year} 年十二生肖运势预测",
+            cardTitle: "{animal}年生人",
+            bornYears: "{years} 年出生",
+            switchAnimal: "切换生肖",
+            periodYear: "年度运程",
+            periodMonth: "本月运程",
+            overall: "综合运势",
+            safeYear: "平安年",
+            adviceTitle: "💡 开运建议",
+            luckyColor: "幸运颜色",
+            luckyNumber: "幸运数字",
+            luckyDirection: "幸运方位",
+            career: "事业运势",
+            wealth: "财富运势",
+            love: "感情运势",
+            health: "健康运势",
+            scoreUnit: "分",
+            taisuiTitle: "{year}年{status}",
+            taisuiDesc: "今年为{animal}年，生肖{self}{status}，建议佩戴红绳或本命佛化解。",
+        },
+        bazi: {
+            title: "八字排盘",
+            subtitle: "AI 智能八字分析系统，揭示个人命盘特质与发展规律",
+            tabs: {
+                input: "排盘",
+                result: "结果",
+                calculator: "查询",
+                reverse: "反推",
+            },
+            sections: {
+                basicInfo: "基本信息",
+                basicInfoDesc: "请输入您的基本信息",
+                birthTime: "出生时间",
+                birthTimeDesc: "请选择准确的出生日期和时间",
+                birthLocation: "出生地点",
+                birthLocationDesc: "用于计算真太阳时校正",
+            },
+            labels: {
+                name: "姓名",
+                gender: "性别",
+                year: "年",
+                month: "月",
+                day: "日",
+                hour: "时",
+                minute: "分",
+                lunarDate: "农历日期",
+                province: "省份/直辖市",
+                trueSolar: "使用真太阳时",
+            },
+            placeholders: {
+                name: "请输入姓名",
+            },
+            gender: {
+                male: "男性",
+                female: "女性",
+            },
+            badge: {
+                recommended: "推荐开启",
+            },
+            actions: {
+                start: "开始排盘",
+                calculating: "排盘中...",
+                reset: "重新排盘",
+            },
+            results: {
+                pillarsTitle: "四柱八字",
+                pillarsDesc: "您的八字命盘",
+                wuxingTitle: "五行分布",
+                dayMasterLabel: "日主: {master} ({element})",
+            },
+            pillars: {
+                year: "年柱",
+                month: "月柱",
+                day: "日柱",
+                hour: "时柱",
+            },
+            options: {
+                year: "{value}年",
+                month: "{value}月",
+                day: "{value}日",
+                minute: "{value}分",
+            },
+        },
+        ziwei: {
+            title: "紫微斗数排盘",
+            subtitle: "十二宫位深度解析，揭示命盘核心结构与人生运势",
+            tabs: {
+                input: "输入信息",
+                result: "命盘结果",
+            },
+            sections: {
+                basicInfo: "基本信息",
+                birthTime: "出生时辰",
+                birthTimeDesc: "紫微斗数以时辰定命宫，请确保时辰准确",
+                chartType: "盘式选择",
+                chart: "紫微命盘",
+            },
+            labels: {
+                name: "姓名",
+                gender: "性别",
+                year: "年",
+                month: "月",
+                day: "日",
+                hour: "时辰",
+                lunarDate: "农历日期",
+                flowYear: "流年年份",
+            },
+            placeholders: {
+                name: "请输入姓名",
+            },
+            gender: {
+                male: "男性 (阳)",
+                female: "女性 (阴)",
+            },
+            chartTypes: {
+                natal: "先天盘 (本命盘)",
+                flow: "流年盘",
+            },
+            options: {
+                year: "{value}年",
+                month: "{value}月",
+                day: "{value}日",
+            },
+            actions: {
+                start: "开始排盘",
+                calculating: "排盘中...",
+                reset: "重新排盘",
+            },
+            dayun: {
+                prev: "上一大运",
+                current: "当前大运",
+                next: "下一大运",
+                label: "第 {index} 大运 ({start} - {end} 岁)",
+            },
+            center: {
+                title: "紫微斗数",
+                mingGong: "命宫: {palace}",
+                shenGong: "身宫: {palace}",
+            },
+            badges: {
+                ming: "命",
+                shen: "身",
+            },
+            palace: {
+                detailTitle: "{name}详解",
+                mainStar: "主星",
+                noMainStar: "无主星",
+                otherStars: "其他星曜",
+            },
+            aiSample: "您好，{name}！\n\n根据您的紫微命盘分析：\n\n1. 命宫主星为{mainStar}，显示您具有领导才能和贵人运。\n\n2. 您的命盘格局属于“紫府同宫”，主富贵双全，一生多有贵人相助。\n\n3. 财帛宫有化禄，显示财运亨通，适合经商或投资。\n\n4. 建议在事业上保持谦逊，多与贵人合作，可获更大成就。",
+            defaultStar: "紫微",
+        },
+        liuyao: {
+            title: "六爻排盘",
+            subtitle: "传统铜钱摇卦，AI 智能解读卦象吉凶",
+            question: {
+                title: "设定问题",
+                description: "心中默念所问之事，诚心求卦",
+            },
+            labels: {
+                category: "问卦类别",
+                question: "具体问题（可选）",
+                method: "起卦方式",
+                yang: "阳",
+                yin: "阴",
+                changing: "变",
+                shi: "世",
+                ying: "应",
+                changingSymbol: "○",
+            },
+            placeholders: {
+                category: "选择问卦类别",
+                question: "请描述您想询问的具体问题...",
+            },
+            categories: {
+                career: "事业工作",
+                love: "感情婚姻",
+                wealth: "财运投资",
+                health: "健康疾病",
+                study: "学业考试",
+                other: "其他事项",
+            },
+            methods: {
+                coin: "铜钱摇卦",
+                time: "时间起卦",
+                number: "数字起卦",
+            },
+            actions: {
+                start: "开始起卦",
+                shaking: "摇卦中...",
+                shake: "摇第 {value} 爻",
+                castNow: "立即起卦",
+                reset: "重新起卦",
+            },
+            cast: {
+                progress: "第 {current} / {total} 爻",
+                lineIndex: "第{value}爻",
+                lineIndexShort: "{value}爻",
+            },
+            coin: {
+                flower: "花",
+                text: "字",
+            },
+            hints: {
+                shake: "心中默念问题，点击按钮摇卦",
+            },
+            time: {
+                description: "以当前时间自动起卦",
+            },
+            result: {
+                base: "本卦",
+                changed: "变卦",
+            },
+            aiTitle: "AI 卦象解读",
+        },
+        meihua: {
+            title: "梅花易数",
+            subtitle: "万物皆可起卦，心诚则灵",
+            question: {
+                title: "问卦描述",
+                description: "心中默念所问之事",
+                placeholder: "请描述您想询问的问题...",
+            },
+            method: {
+                title: "起卦方式",
+                time: "时间",
+                number: "数字",
+                word: "文字",
+                timeDesc: "以当前时间自动起卦",
+                timeLabel: "时间起卦",
+                numberLabel: "数字起卦",
+                wordLabel: "文字起卦",
+            },
+            labels: {
+                number: "输入数字",
+                word: "输入文字",
+                upper: "上卦",
+                lower: "下卦",
+                tiGua: "体卦",
+                yongGua: "用卦",
+            },
+            placeholders: {
+                number: "请输入任意数字，如 38、168、520",
+                word: "请输入文字，如人名、物品名等",
+            },
+            hints: {
+                number: "可以是心中想到的数字、看到的数字等",
+                word: "根据字数和笔画起卦",
+            },
+            actions: {
+                castNow: "立即起卦",
+                castNumber: "数字起卦",
+                castWord: "文字起卦",
+                reset: "重新起卦",
+            },
+            errors: {
+                numberTooShort: "请输入至少两位数字",
+                wordRequired: "请输入文字",
+            },
+            result: {
+                method: "起卦方式: {value}",
+                input: "输入: {value}",
+                movingLine: "动爻: 第{value}爻",
+                base: "本卦",
+                mutual: "互卦",
+                changed: "变卦",
+                movingLineDesc: "第{value}爻变动",
+                tiYongTitle: "体用关系",
+            },
+            relation: {
+                "生我": "生我",
+                "我生": "我生",
+                "克我": "克我",
+                "我克": "我克",
+                "比和": "比和",
+            },
+            relationDesc: {
+                shengwo: "用生体，吉利之象",
+                wosheng: "体生用，有所损耗",
+                kewo: "用克体，不利之象",
+                woke: "体克用，有所收获",
+                bihe: "体用比和，平稳之象",
+            },
+            aiTitle: "AI 卦象解读",
+        },
+        tarot: {
+            title: "塔罗占卜",
+            subtitle: "聆听潜意识的声音，获取人生的指引与洞见",
+            labels: {
+                question: "您的问题（可选）",
+                style: "选择解读风格",
+                reversed: "逆位",
+                reversedSuffix: "(逆位)",
+            },
+            placeholders: {
+                question: "例如：我的感情发展如何？",
+            },
+            actions: {
+                continue: "继续选择牌阵",
+                startDraw: "开始抽牌",
+                shuffle: "洗牌",
+                restart: "重新开始",
+            },
+            steps: {
+                question: {
+                    title: "静心冥想，提出您的问题",
+                    description: "请先静下心来，集中精神，在心中默念您想咨询的问题",
+                },
+                spread: {
+                    title: "选择牌阵",
+                    description: "不同的牌阵适合不同类型的问题",
+                },
+                draw: {
+                    title: "抽取您的塔罗牌",
+                    description: "点击卡牌抽取，共需抽取 {count} 张",
+                    deckHint: "点击下方牌堆抽牌",
+                },
+                result: {
+                    title: "塔罗解读",
+                    fallbackQuestion: "您的塔罗占卜结果",
+                },
+            },
+            spreads: {
+                single: {
+                    name: "单张牌",
+                    description: "快速获取指引",
+                },
+                three: {
+                    name: "三张牌",
+                    description: "过去-现在-未来",
+                },
+                love: {
+                    name: "爱情牌阵",
+                    description: "分析感情关系",
+                },
+                career: {
+                    name: "事业牌阵",
+                    description: "工作与职业发展",
+                },
+                celtic: {
+                    name: "凯尔特十字",
+                    description: "深度全面分析",
+                },
+                yesno: {
+                    name: "是非牌阵",
+                    description: "是或否的回答",
+                },
+            },
+            styles: {
+                standard: {
+                    name: "标准",
+                    description: "专业客观的塔罗牌解读",
+                },
+                fire: {
+                    name: "火神",
+                    description: "直白犀利的解读风格",
+                },
+                moon: {
+                    name: "月光",
+                    description: "温柔优雅的解读风格",
+                },
+                wise: {
+                    name: "维斯顿",
+                    description: "理性深度的哲学分析",
+                },
+            },
+            positions: {
+                current: "当前情况",
+                past: "过去",
+                present: "现在",
+                future: "未来",
+                self: "你的状态",
+                other: "对方状态",
+                relationship: "关系现状",
+                currentState: "当前状态",
+                challenge: "挑战",
+                advice: "建议",
+                outcome: "结果",
+                goal: "目标",
+                subconscious: "潜意识",
+                environment: "环境",
+                hopeFear: "希望/恐惧",
+                finalOutcome: "最终结果",
+                answer: "答案",
+                reason: "原因",
+            },
+            interpretation: {
+                reversed: "{card}逆位代表能量受阻或内在挣扎。在{position}的位置上，这暗示着需要面对和处理某些障碍。",
+                upright: "{card}代表{meaning}。在{position}的位置上，这为您带来积极的能量指引。",
+            },
+            aiTitle: "AI 塔罗解读",
+        },
+        daily: {
+            title: "每日运势",
+            subtitle: "了解今日运程，把握人生机遇",
+            ganZhiLabel: "{value}日",
+            zodiacLabel: "生肖{value}",
+            overall: {
+                title: "综合运势",
+                scoreLabel: "综合评分",
+            },
+            lucky: {
+                color: "幸运颜色",
+                number: "幸运数字",
+                direction: "幸运方位",
+            },
+            items: {
+                love: "爱情运",
+                career: "事业运",
+                wealth: "财运",
+                health: "健康运",
+            },
+            itemDesc: {
+                love: "感情方面需要多一些耐心和理解",
+                career: "工作中可能会遇到新的机会",
+                wealth: "理财方面宜稳健，避免冲动消费",
+                health: "注意作息规律，适当运动",
+            },
+            colors: {
+                red: "红色",
+                yellow: "黄色",
+                blue: "蓝色",
+                green: "绿色",
+                purple: "紫色",
+                white: "白色",
+                gold: "金色",
+            },
+            directions: {
+                east: "东",
+                south: "南",
+                west: "西",
+                north: "北",
+                southeast: "东南",
+                northeast: "东北",
+                southwest: "西南",
+                northwest: "西北",
+            },
+            suitable: {
+                travel: "出行",
+                meet: "会友",
+                study: "学习",
+                exercise: "运动",
+            },
+            avoid: {
+                invest: "投资",
+                conflict: "争执",
+                stayUpLate: "熬夜",
+            },
+            advice: "今日宜保持积极乐观的心态，遇事不急不躁。",
+            scoreUnit: "{value}分",
+            suitableTitle: "✓ 今日宜",
+            avoidTitle: "✗ 今日忌",
+            aiTitle: "AI 个性化运势解读",
+            aiLoginPrompt: "登录并输入您的生辰八字，获取专属于您的每日运势分析",
+        },
+        huangli: {
+            title: "黄历查询",
+            subtitle: "传统万年历，每日宜忌一目了然",
+            actions: {
+                today: "回到今天",
+            },
+            ganZhi: {
+                year: "{value}年",
+                month: "{value}月",
+                day: "{value}日",
+            },
+            sections: {
+                lunar: "农历",
+                chongSha: "冲煞",
+                yi: "今日宜",
+                ji: "今日忌",
+                shichen: "时辰吉凶",
+            },
+            labels: {
+                zodiac: "生肖",
+                zodiacYear: "{value}年",
+                xingXiu: "星宿",
+                xingXiuValue: "{value}宿",
+                todayChong: "今日冲",
+                chongValue: "{value}",
+                shaDirection: "煞方",
+                pengZu: "彭祖百忌",
+            },
+            directions: {
+                east: "东",
+                south: "南",
+                west: "西",
+                north: "北",
+            },
+            jiXiong: {
+                good: "吉",
+                bad: "凶",
+                neutral: "中",
+            },
+        },
+        pricing: {
+            badge: "会员特权",
+            title: "解锁全部占卜功能",
+            subtitle: "升级会员，享受无限次占卜、AI 智能解读等专属特权",
+            currentPlan: "当前套餐：{plan}",
+            recommended: "推荐",
+            discount: "省 ¥{amount}",
+            free: "免费",
+            price: "¥{amount}",
+            period: {
+                monthly: "月",
+                yearly: "年",
+                lifetime: "永久",
+            },
+            actions: {
+                currentPlan: "当前套餐",
+                processing: "处理中...",
+                inUse: "当前使用",
+                subscribe: "立即开通",
+            },
+            benefitsTitle: "会员专属特权",
+            benefits: {
+                unlimited: {
+                    title: "无限占卜",
+                    desc: "不限次数使用所有占卜功能",
+                },
+                ai: {
+                    title: "AI 解读",
+                    desc: "获得专业 AI 智能解读分析",
+                },
+                history: {
+                    title: "永久保存",
+                    desc: "历史记录永久保存随时查看",
+                },
+                support: {
+                    title: "专属客服",
+                    desc: "一对一专属客服支持",
+                },
+            },
+            faqTitle: "常见问题",
+            faqs: {
+                upgrade: {
+                    question: "如何升级会员？",
+                    answer: "选择适合您的套餐，点击「立即开通」按钮，前往闲鱼完成支付并备注订单号。",
+                },
+                activation: {
+                    question: "支付后多久生效？",
+                    answer: "我们会在 1-24 小时内核实您的订单并开通会员。",
+                },
+                refund: {
+                    question: "会员可以退款吗？",
+                    answer: "开通后 7 天内如未使用会员权益，可联系客服申请全额退款。",
+                },
+                expire: {
+                    question: "会员到期后会怎样？",
+                    answer: "会员到期后将恢复为免费用户，但您的历史记录会保留。",
+                },
+            },
+            security: {
+                title: "安全支付保障",
+                subtitle: "支付完成后请保留订单号，我们将在核实支付后为您开通会员",
+            },
+            dialog: {
+                title: "订单已创建",
+                description: "请前往闲鱼完成支付并备注订单号",
+                planLabel: "套餐",
+                amountLabel: "金额",
+                orderLabel: "订单号",
+                noticeTitle: "重要提示：",
+                noticeBody: "请在闲鱼支付时备注订单号，我们将在核实支付后 1-24 小时内为您开通会员。",
+                actions: {
+                    later: "稍后支付",
+                    pay: "前往闲鱼支付",
+                },
+            },
+            errors: {
+                createOrderFailed: "创建订单失败",
+                paymentFailed: "支付过程出错，请稍后重试",
+            },
+        },
+        history: {
+            title: "历史记录",
+            total: "共 {count} 条记录",
+            actions: {
+                refresh: "刷新",
+                prev: "上一页",
+                next: "下一页",
+            },
+            search: {
+                placeholder: "搜索问题或标题",
+            },
+            filters: {
+                placeholder: "筛选类型",
+                all: "全部类型",
+            },
+            types: {
+                bazi: "八字",
+                ziwei: "紫微",
+                liuyao: "六爻",
+                meihua: "梅花",
+                tarot: "塔罗",
+                daily: "每日运势",
+            },
+            recordFallback: "占卜记录",
+            aiLabel: "AI 解读",
+            pagination: "第 {page} / {total} 页",
+            auth: {
+                title: "请先登录",
+                subtitle: "登录后可查看您的占卜历史记录",
+                action: "前往登录",
+            },
+            empty: {
+                title: "暂无占卜记录",
+                subtitle: "开始您的第一次占卜之旅吧",
+                action: "开始占卜",
+            },
+            detail: {
+                title: "占卜详情",
+                question: "问题",
+                result: "结果",
+                aiTitle: "AI 解读",
+            },
+            delete: {
+                title: "确认删除",
+                description: "确定要删除这条占卜记录吗？此操作无法撤销。",
+            },
+        },
+        profile: {
+            title: "个人中心",
+            subtitle: "管理您的账户信息和偏好设置",
+            tabs: {
+                overview: "概览",
+                preferences: "偏好设置",
+                security: "安全设置",
+            },
+            auth: {
+                required: "请先登录",
+                action: "前往登录",
+            },
+            sections: {
+                account: "账户信息",
+                quota: "今日配额",
+            },
+            labels: {
+                registeredAt: "注册于 {date}",
+                used: "已使用",
+                freePlan: "免费版",
+            },
+            actions: {
+                upgrade: "升级",
+                renew: "续费",
+            },
+            stats: {
+                total: "总占卜次数",
+                monthly: "本月占卜",
+                favorite: "最爱占卜",
+            },
+            recent: {
+                title: "最近占卜",
+                viewAll: "查看全部",
+                fallbackTitle: "占卜记录",
+                empty: "暂无占卜记录",
+            },
+            preferences: {
+                title: "通知设置",
+                subtitle: "管理您的通知偏好",
+                push: {
+                    title: "推送通知",
+                    desc: "接收占卜提醒和运势推送",
+                },
+                email: {
+                    title: "邮件订阅",
+                    desc: "接收每周运势报告和优惠信息",
+                },
+            },
+            security: {
+                title: "安全设置",
+                subtitle: "管理您的账户安全",
+                emailTitle: "邮箱验证",
+                verified: "已验证",
+                membershipTitle: "会员状态",
+                membershipPremium: "{plan}，{expires}",
+                expiresAt: "{date} 到期",
+                expiresNever: "永久有效",
+                freeUser: "免费用户",
+            },
+            types: {
+                bazi: "八字",
+                ziwei: "紫微",
+                liuyao: "六爻",
+                meihua: "梅花",
+                tarot: "塔罗",
+                daily: "每日运势",
+            },
+        },
+    },
+    features: {
+        ...extendedTranslations["zh-CN"].newFeatures,
+    },
+    divTerms: {
+        ...extendedTranslations["zh-CN"].divTerms,
+    },
+    seo: {
+        siteName: "占卜网 - 专业在线占卜平台",
+        siteDescription: "占卜网提供专业的八字排盘、紫微斗数、塔罗占卜、六爻排盘、梅花易数、奇门遁甲、玄空风水等在线占卜服务，AI智能解读，传承千年智慧。",
+        shortName: "占卜网",
+        appName: "占卜大师",
+    },
 }
 
 // 英文翻译
@@ -221,6 +1568,19 @@ export const en: Translations = {
         login: "Log in",
         logout: "Log out",
         register: "Sign up",
+        retry: "Retry",
+        refresh: "Refresh",
+        submit: "Submit",
+        reset: "Reset",
+        start: "Start",
+        close: "Close",
+        copy: "Copy",
+        copied: "Copied",
+        loadingShort: "Loading",
+    },
+    language: {
+        label: "Language",
+        switcherLabel: "Switch language",
     },
     nav: {
         home: "Home",
@@ -238,6 +1598,87 @@ export const en: Translations = {
         profile: "Profile",
         settings: "Settings",
         admin: "Admin",
+        menuOpen: "Open menu",
+        userFallback: "User",
+        pricing: "Upgrade",
+        signIn: "Sign in",
+        signUp: "Sign up",
+        signOut: "Sign out",
+    },
+    sidebar: {
+        logo: "ZhanBu",
+        advanced: "Advanced",
+        sections: {
+            home: "Home",
+            bazi: "BaZi",
+            ziwei: "Zi Wei",
+            liuyao: "Liu Yao",
+            tarot: "Tarot",
+            relationship: "Relationship",
+            huangli: "Almanac",
+            fortune: "Fortune",
+            traditional: "Traditional",
+            smart: "Smart",
+            community: "Community",
+        },
+        items: {
+            bazi: "BaZi Chart",
+            daily: "Daily Fortune",
+            marriage: "Compatibility",
+            ziwei: "Zi Wei Chart",
+            liuyao: "Liu Yao",
+            meihua: "Mei Hua",
+            tarot: "Tarot Reading",
+            relationshipBusiness: "Business",
+            relationshipFriendship: "Friendship",
+            relationshipInLaw: "In-law",
+            relationshipParentChild: "Parent-child",
+            relationshipWorkplace: "Workplace",
+            zodiac: "Horoscope",
+            shengxiao: "Chinese Zodiac",
+            liunian: "Annual Fortune",
+            qianwen: "Fortune Sticks",
+            jiemeng: "Dream Interpret",
+            zeji: "Auspicious Dates",
+            name: "Name Analysis",
+            aiChat: "AI Chat",
+            community: "Community",
+        },
+        descriptions: {
+            bazi: "AI BaZi analysis",
+            daily: "Daily fortune guide",
+            marriage: "Compatibility analysis",
+            ziwei: "Palace-level insights",
+            liuyao: "Coin divination",
+            meihua: "Mindful I Ching",
+            tarot: "Multiple spreads",
+            relationshipBusiness: "Partner matching",
+            relationshipFriendship: "Friendship match",
+            relationshipInLaw: "Family relations",
+            relationshipParentChild: "Parenting guidance",
+            relationshipWorkplace: "Work dynamics",
+            zodiac: "12-sign forecast",
+            shengxiao: "Zodiac trends",
+            liunian: "Yearly trends",
+            dailyFortune: "Today’s guide",
+            qianwen: "Guanyin & Yue Lao",
+            jiemeng: "Dream insights",
+            zeji: "Wedding & launch",
+            name: "Five-grid analysis",
+            aiChat: "AI fortune master",
+        },
+        advancedItems: {
+            qimen: "Qi Men Dun Jia",
+            liuren: "Da Liu Ren",
+            jinkouque: "Jin Kou Jue",
+            fengshui: "Feng Shui",
+        },
+        footer: {
+            profile: "Profile",
+            history: "History",
+            pricing: "Upgrade",
+            admin: "Admin",
+        },
     },
     home: {
         hero: {
@@ -254,6 +1695,37 @@ export const en: Translations = {
                 { title: "Liu Yao Prediction", description: "Ancient I Ching for answering questions" },
             ],
         },
+        sections: {
+            modulesTitle: "Core Modules",
+            modulesSubtitle: "Multiple divination systems for different needs",
+            aiBadge: "AI Technology",
+            aiTitle: "AI Interpretation",
+            aiSubtitle: "Combining traditional wisdom with modern AI for deeper insights",
+            journeyTitle: "Start Your Journey",
+            journeySubtitle: "Whether it's self-discovery, relationships, or decisions, ZhanBu is here to help.",
+            disclaimer: "Results are for reference and entertainment only, not decision advice.",
+        },
+        heroExtra: {
+            tagline: "AI Divination Platform",
+            brand: "ZhanBu",
+            headline: "Explore the Mysteries of Destiny",
+            description: "Blend Zi Wei, BaZi, Liu Yao, Tarot and more with modern AI to deliver comprehensive, precise insights.",
+            primaryCta: "Start Exploring",
+            secondaryCta: "Zi Wei Chart",
+        },
+        modules: [
+            { title: "BaZi Analysis", description: "Four pillars, five elements, life trends" },
+            { title: "Zi Wei Dou Shu", description: "Palace analysis, chart structure" },
+            { title: "Liu Yao", description: "Coin divination for specific questions" },
+            { title: "Tarot", description: "Spreads that reveal subconscious insights" },
+            { title: "Relationship", description: "Business, friendship, family compatibility" },
+            { title: "Almanac", description: "Auspicious dates for activities" },
+        ],
+        aiFeatures: [
+            { title: "Smart Interpretation", description: "Traditional wisdom + AI for deep analysis" },
+            { title: "Instant Feedback", description: "Get professional insights instantly" },
+            { title: "Privacy Protection", description: "Your data is protected and secure" },
+        ],
     },
     divination: {
         question: "Your Question",
@@ -280,10 +1752,1299 @@ export const en: Translations = {
         loginWithGoogle: "Sign in with Google",
         loginWithGithub: "Sign in with GitHub",
     },
+    ai: {
+        chat: {
+            title: "AI Fortune Master",
+            subtitle: "Talk with AI for guidance",
+            costPerMessage: "{cost} credits per message",
+            loginTip: "Please sign in to use AI chat",
+            insufficient: "Insufficient credits: need {required}, current {current}",
+            recharge: "Recharge",
+            newChat: "New chat",
+            clear: "Clear",
+            startTitle: "Start your divination journey",
+            startSubtitle: "Ask about love, career, wealth, health, and more. I will respond with divination wisdom.",
+            promptSamples: [
+                "How is my love fortune?",
+                "How will my career go this year?",
+                "Is my wealth improving recently?",
+                "What career suits me?",
+            ],
+            inputPlaceholder: "Type your question...",
+            inputLoginPlaceholder: "Please sign in",
+        },
+        analysis: {
+            title: "AI Deep Interpretation",
+            loginPrompt: "Sign in to get AI insights for your chart",
+            costLabel: "Cost {cost} credits",
+            insufficient: "Insufficient credits: need {required}, current {current}",
+            recharge: "Recharge",
+            refresh: "Regenerate",
+            used: "Used {used} credits",
+            retry: "Retry",
+            analyzing: "Analyzing...",
+            fetch: "Get AI interpretation",
+            loginAction: "Sign in",
+            greeting: "Hi {name}!\n\n",
+            request: "Please provide a detailed interpretation.",
+        },
+        modes: {
+            general: "General",
+            love: "Love",
+            career: "Career",
+            health: "Health",
+        },
+    },
+    errors: {
+        network: "Network error. Please try again.",
+        unknown: "Internal server error",
+        notFoundTitle: "Page not found",
+        notFoundDesc: "The page might have been moved, deleted, or never existed.",
+        notFoundHint: "Try one of these options:",
+        notFoundRecommendation: "You might be looking for:",
+        offlineTitle: "You're offline",
+        offlineSubtitle: "Check your connection or try:",
+        globalTitle: "Something went wrong",
+        globalDesc: "We ran into an unrecoverable error. Please refresh the page.",
+    },
+    offline: {
+        tips: [
+            "Check Wi‑Fi or cellular data",
+            "Switch networks or restart your router",
+            "Refresh after the connection is back",
+        ],
+        actions: {
+            home: "Back to home",
+        },
+        cached: "Some cached content is still available offline",
+    },
+    notFound: {
+        home: "Back to home",
+        community: "Browse community",
+        recommended: [
+            { name: "BaZi Chart", href: "/bazi" },
+            { name: "Tarot Reading", href: "/tarot" },
+            { name: "Zi Wei Dou Shu", href: "/ziwei" },
+            { name: "Daily Fortune", href: "/daily" },
+            { name: "AI Chat", href: "/ai-chat" },
+        ],
+    },
+    globalError: {
+        reload: "Reload",
+        backHome: "Back to home",
+        errorId: "Error ID",
+    },
+    pages: {
+        ...extendedTranslations.en.pages,
+        name: {
+            ...extendedTranslations.en.pages.name,
+            formTitle: "Enter Name",
+            formDescription: "Enter the name to analyze (single or compound surname)",
+            surnameLabel: "Surname",
+            surnamePlaceholder: "e.g., Wang, Ouyang",
+            givenNameLabel: "Given Name",
+            givenNamePlaceholder: "e.g., Jianguo, Xiaoming",
+            errorIncomplete: "Please enter full name",
+            errorFailed: "Calculation failed",
+            errorNetwork: "Network error, please try again",
+            calculating: "Calculating...",
+            start: "Start Analysis",
+            totalStrokesLabel: "Total strokes: {total}",
+            totalScoreLabel: "Overall Score",
+            sancaiTitle: "Three Talents",
+            sancaiScoreLabel: "Three Talents score: {score}",
+            sancaiLabels: { tian: "Heaven", ren: "Human", di: "Earth" },
+            wugeTitle: "Five Grids",
+            wugeLabels: {
+                tianGe: "Heaven",
+                renGe: "Person",
+                diGe: "Earth",
+                waiGe: "Outer",
+                zongGe: "Total",
+            },
+            wugeDesc: {
+                tianGe: "Innate fortune, determined by surname",
+                renGe: "Main fortune, affects life path",
+                diGe: "Early fortune, affects early years",
+                waiGe: "Secondary fortune, affects relationships",
+                zongGe: "Later fortune, affects later years",
+            },
+            reset: "Recalculate",
+        },
+        zodiac: {
+            ...extendedTranslations.en.pages.zodiac,
+            wealth: "Wealth",
+            switchSign: "Switch sign",
+            overall: "Overall",
+            luckyNumber: "Lucky number",
+            luckyColor: "Lucky color",
+            luckyDirection: "Lucky direction",
+            loveFortune: "Love",
+            careerFortune: "Career",
+            wealthFortune: "Wealth",
+            healthFortune: "Health",
+            scoreUnit: "pts",
+            elementSuffix: "sign",
+        },
+        liunian: {
+            ...extendedTranslations.en.pages.liunian,
+            inputTitle: "Enter your birth year",
+            inputDescription: "We will analyze your annual fortune",
+            birthYearLabel: "Birth year",
+            birthYearPlaceholder: "e.g., 1990",
+            startAnalyze: "Analyze",
+            yearLabel: "{year}",
+            birthInfo: "Born {birthYear} · Age {age}",
+            overallScoreLabel: "Annual overall score",
+            monthlyTitle: "Monthly trend",
+            monthlyDescription: "Fortune trend across 12 months",
+            adviceTitle: "💡 Annual tips",
+            reset: "Re-enter",
+            scoreUnit: "pts",
+            monthSuffix: "mo",
+        },
+        community: {
+            ...extendedTranslations.en.pages.community,
+            postButton: "New post",
+            dialogTitle: "Create a post",
+            dialogDescription: "Share your divination experience or ask a question",
+            titleLabel: "Title",
+            titlePlaceholder: "Enter post title",
+            categoryLabel: "Category",
+            contentLabel: "Content",
+            contentPlaceholder: "Describe in detail...",
+            submit: "Publish",
+            categories: "Categories",
+            searchPlaceholder: "Search posts",
+            allPosts: "All posts",
+            empty: "No posts yet. Be the first to share!",
+            time: {
+                justNow: "Just now",
+                minutesAgo: "{value} min ago",
+                hoursAgo: "{value} hours ago",
+                daysAgo: "{value} days ago",
+            },
+        },
+        relationship: {
+            title: "Relationship Analysis",
+            subtitle: "AI analyzes both charts to reveal compatibility",
+            types: {
+                marriage: { title: "Marriage Match", desc: "Analyze marital compatibility" },
+                motherInLaw: { title: "In-law Relationship", desc: "Analyze in-law dynamics" },
+                business: { title: "Business Partnership", desc: "Analyze business compatibility" },
+                friendship: { title: "Friendship Analysis", desc: "Analyze friendship quality" },
+                workplace: { title: "Workplace Relationship", desc: "Analyze colleague or manager relations" },
+            },
+            form: {
+                person1: "Person 1",
+                person2: "Person 2",
+                daughterInLaw: "Daughter-in-law",
+                motherInLaw: "Mother-in-law",
+            },
+            labels: {
+                name: "Name",
+                gender: "Gender",
+                year: "Year",
+                month: "Month",
+                day: "Day",
+                hour: "Birth hour",
+                lunar: "Lunar date",
+            },
+            placeholders: {
+                name: "Enter name",
+            },
+            gender: {
+                male: "Male",
+                female: "Female",
+            },
+            options: {
+                month: "{value}",
+                day: "{value}",
+            },
+            sections: {
+                type: "Choose analysis type",
+                overall: "Overall compatibility",
+                breakdown: "Breakdown",
+                strengths: "Strengths",
+                challenges: "Challenges",
+                advice: "Expert advice",
+            },
+            actions: {
+                analyzing: "Analyzing...",
+                start: "Start analysis",
+                reset: "Analyze again",
+            },
+            scoreLevels: {
+                excellent: "Excellent",
+                good: "Good",
+                fair: "Fair",
+                caution: "Caution",
+            },
+            scoreUnit: "{value} pts",
+            aiTitle: "AI Relationship Analysis",
+        },
+        marriage: {
+            title: "Marriage Match",
+            subtitle: "Enter both birthdays to analyze compatibility",
+            sections: {
+                male: "Male birth info",
+                female: "Female birth info",
+                shengxiaoAnalysis: "Zodiac compatibility",
+                wuxingAnalysis: "Five elements analysis",
+                maleWuxing: "Male elements distribution",
+                femaleWuxing: "Female elements distribution",
+                maleBazi: "Male chart",
+                femaleBazi: "Female chart",
+            },
+            labels: {
+                birthYear: "Birth year",
+                birthMonth: "Birth month",
+                birthDay: "Birth day",
+                birthHourOptional: "Birth hour (optional)",
+            },
+            placeholders: {
+                year: "e.g., 1990",
+                yearFemale: "e.g., 1992",
+                month: "1-12",
+                day: "1-31",
+                hour: "0-23",
+            },
+            actions: {
+                analyzing: "Analyzing...",
+                start: "Start analysis",
+                reset: "Analyze again",
+            },
+            tabs: {
+                shengxiao: "Zodiac match",
+                wuxing: "Five elements",
+                bazi: "Chart details",
+            },
+            result: {
+                zodiac: "Zodiac {value}",
+            },
+            scoreUnit: "{value} pts",
+        },
+        jiemeng: {
+            title: "Dream Interpretation",
+            subtitle: "Enter a dream keyword to reveal its meaning",
+            search: {
+                placeholder: "Enter a dream keyword, e.g. snake, flying, water...",
+            },
+            actions: {
+                search: "Interpret",
+            },
+            result: {
+                title: "Dream about {keyword}",
+                source: "Classic dream interpretations",
+                interpretationTitle: "Interpretation",
+                fortuneTitle: "🔮 Fortune",
+                adviceTitle: "💡 Advice",
+            },
+            related: {
+                title: "Related dreams",
+            },
+            suggestions: {
+                title: "You might search",
+                subtitle: "No exact result for “{keyword}”. Here are related entries.",
+            },
+            empty: "No related interpretation found. Try another keyword.",
+            categories: {
+                title: "Popular dream categories",
+            },
+        },
+        qianwen: {
+            title: "Fortune Sticks",
+            subtitle: "Pray sincerely and draw guidance",
+            count: "Total {total} sticks",
+            shaking: {
+                title: "Praying...",
+                subtitle: "Please wait for guidance",
+            },
+            loading: "Interpreting the lot...",
+            result: {
+                number: "No. {number}",
+            },
+            sections: {
+                poemTitle: "📜 Poem",
+                interpretTitle: "💡 Interpretation",
+                interpretDesc: "Meaning of this lot",
+            },
+            actions: {
+                change: "Pick another type",
+                redraw: "Draw again",
+            },
+        },
+        fengshui: {
+            title: "Feng Shui Chart",
+            subtitle: "Flying stars, house fortune, and auspicious directions",
+            sections: {
+                input: {
+                    title: "House info",
+                    description: "Enter the build year and orientation",
+                },
+                summary: {
+                    title: "House overview",
+                },
+                chart: {
+                    title: "Flying star chart",
+                },
+            },
+            labels: {
+                year: "Build/Move-in year",
+                mountain: "Mountain direction",
+                facing: "Facing direction",
+            },
+            options: {
+                year: "{year} (Period {period})",
+            },
+            help: "The mountain is the back of the house, and the facing is the front. For example, a south-facing house has mountain Zi and facing Wu.",
+            actions: {
+                calculating: "Calculating...",
+                start: "Start chart",
+                reset: "Recalculate",
+            },
+            summary: {
+                year: "Year:",
+                period: "Period:",
+                orientation: "Orientation:",
+                yearValue: "{year}",
+                periodValue: "Period {period}",
+                orientationValue: "Mountain {mountain} Facing {facing}",
+            },
+            chart: {
+                mountainStar: "Mountain star",
+                periodStar: "Period star",
+                facingStar: "Facing star",
+            },
+            positions: {
+                wealth: {
+                    title: "Wealth",
+                    desc: "Great for a cash box, safe, or greenery",
+                },
+                study: {
+                    title: "Study",
+                    desc: "Good for a study or learning space",
+                },
+                peach: {
+                    title: "Peach blossom",
+                    desc: "Boosts relationships and romance",
+                },
+                sickness: {
+                    title: "Illness",
+                    desc: "Place a gourd or six-coin charm to neutralize",
+                },
+            },
+            aiTitle: "AI Feng Shui Analysis",
+        },
+        zeji: {
+            title: "Auspicious Days",
+            subtitle: "Pick the best days based on the traditional almanac",
+            actions: {
+                back: "← Choose another event",
+            },
+            monthHeader: "{month}/{year}",
+            dateLabel: "{month}/{day}",
+            current: {
+                title: "{name} auspicious days",
+                count: "This month has {count} auspicious days",
+            },
+            sections: {
+                recommended: "Recommended days",
+                details: "Date details",
+            },
+            labels: {
+                yi: "✅ Good for",
+                ji: "❌ Avoid",
+            },
+            empty: "No recommended days this month",
+            emptyDetail: "Select a date on the left to view details",
+        },
+        qimen: {
+            title: "Advanced Charting",
+            subtitle: "Qi Men, Liu Ren, and Jin Kou techniques",
+            panTypes: {
+                qimen: "Qi Men Dun Jia",
+                liuren: "Da Liu Ren",
+                jinkou: "Jin Kou Jue",
+            },
+            cards: {
+                qimen: {
+                    title: "Qi Men chart",
+                    description: "An ancient system based on nine palaces, eight gates, nine stars, and eight deities",
+                },
+                liuren: {
+                    title: "Da Liu Ren chart",
+                    description: "A forecasting method centered on heaven/earth plates and three transmissions",
+                },
+                jinkou: {
+                    title: "Jin Kou Jue chart",
+                    description: "A concise and practical divination method",
+                },
+            },
+            sections: {
+                time: "Chart time",
+                summaryTitle: "{name} chart",
+                grid: "Nine-palace grid",
+            },
+            time: {
+                current: "Current time",
+                custom: "Custom time",
+            },
+            labels: {
+                year: "Year",
+                month: "Month",
+                day: "Day",
+                hour: "Hour",
+                gong: "{value} palace",
+                zhiFu: "Chief star",
+                zhiShi: "Chief gate",
+            },
+            options: {
+                month: "{value}",
+                day: "{value}",
+                hour: "{value} hour",
+            },
+            actions: {
+                calculating: "Calculating...",
+                start: "Generate chart",
+                reset: "Generate again",
+            },
+            summary: {
+                datetime: "{year}-{month}-{day} {hour} hour",
+                yearPillar: "Year pillar:",
+                monthPillar: "Month pillar:",
+                dayPillar: "Day pillar:",
+                hourPillar: "Hour pillar:",
+                ju: "Ju:",
+                juValue: "{yuan} {ju} Ju",
+            },
+            aiTitle: "AI Qi Men Interpretation",
+        },
+        liuren: {
+            title: "Da Liu Ren Chart",
+            subtitle: "A classic system for reading fortunes from time and stars",
+            tabs: {
+                input: "Setup",
+                result: "Result",
+            },
+            sections: {
+                question: "Question",
+                time: "Chart time",
+                timeDesc: "Da Liu Ren relies on the hour; accuracy matters",
+                siKe: "Four lessons",
+                sanChuan: "Three transmissions",
+                analysis: "Basic analysis",
+            },
+            labels: {
+                year: "Year",
+                month: "Month",
+                day: "Day",
+                hour: "Hour",
+                dayGan: "Day stem",
+                dayZhi: "Day branch",
+            },
+            placeholders: {
+                question: "Briefly describe your question",
+            },
+            options: {
+                hour: "{value} hour",
+            },
+            actions: {
+                calculating: "Calculating...",
+                start: "Generate chart",
+                reset: "Start over",
+            },
+            analysis: {
+                sample: "This chart shows mixed fortunes with obstacles; patience brings a turnaround. Support comes from the east.",
+            },
+            ai: {
+                title: "AI Interpretation",
+                action: "Get AI insight",
+                analyzing: "Analyzing...",
+                loginTitle: "AI Insight",
+                loginDesc: "Sign in to get AI analysis",
+                loginAction: "Sign in",
+                greeting: "Hello, {name}!",
+                intro: "Based on this chart:",
+                lines: {
+                    line1: "1. Day stem {riGan}, day branch {riZhi}, transmissions {sanChuan}.",
+                    line2: "2. Obstacles appear, but success follows with patience.",
+                    line3: "3. Support is in the south for career and wealth.",
+                    line4: "4. Act in the Mao or Wu hour for best timing.",
+                },
+            },
+        },
+        jinkouque: {
+            title: "Jin Kou Jue Chart",
+            subtitle: "A concise method derived from Da Liu Ren",
+            tabs: {
+                input: "Setup",
+                result: "Result",
+            },
+            sections: {
+                question: "Question",
+                method: "Method",
+                time: "Chart time",
+                fourPositions: {
+                    title: "Four positions",
+                    desc: "Ren Yuan, Gui Shen, Jiang Shen, Di Fen",
+                },
+                wuxing: "Five elements",
+                analysis: "Basic analysis",
+            },
+            labels: {
+                month: "Month",
+                day: "Day",
+                hour: "Hour",
+            },
+            placeholders: {
+                question: "Briefly describe your question",
+            },
+            methods: {
+                time: "Time method",
+                finger: "Finger method",
+            },
+            options: {
+                hour: "{value} hour",
+            },
+            actions: {
+                calculating: "Calculating...",
+                start: "Generate chart",
+                reset: "Start over",
+            },
+            analysis: {
+                sample: "Mixed fortunes: the positions support each other, with help available, but beware of hidden obstacles.",
+            },
+            ai: {
+                title: "AI Interpretation",
+                action: "Get AI insight",
+                analyzing: "Analyzing...",
+                loginTitle: "AI Insight",
+                loginDesc: "Sign in to get AI analysis",
+                loginAction: "Sign in",
+                greeting: "Hello, {name}!",
+                intro: "Based on this Jin Kou Jue chart:",
+                lines: {
+                    line1: "1. Di Fen {difen}, Jiang Shen {jiangShen}, Gui Shen {guiShen}, Ren Yuan {renYuan}.",
+                    line2: "2. The interactions show progress with noble support.",
+                    line3: "3. Element {wuxing} favors actions toward the {direction}.",
+                    line4: "4. Best timing is Chen or Xu hours.",
+                },
+                directions: {
+                    east: "east",
+                    south: "south",
+                    west: "west",
+                    north: "north",
+                    center: "center",
+                },
+            },
+        },
+        shengxiao: {
+            title: "Chinese Zodiac Fortune",
+            description: "{year} Chinese Zodiac forecast",
+            cardTitle: "{animal} born year",
+            bornYears: "Born in {years}",
+            switchAnimal: "Switch zodiac",
+            periodYear: "Annual fortune",
+            periodMonth: "Monthly fortune",
+            overall: "Overall fortune",
+            safeYear: "Safe year",
+            adviceTitle: "💡 Tips",
+            luckyColor: "Lucky color",
+            luckyNumber: "Lucky number",
+            luckyDirection: "Lucky direction",
+            career: "Career fortune",
+            wealth: "Wealth fortune",
+            love: "Love fortune",
+            health: "Health fortune",
+            scoreUnit: "pts",
+            taisuiTitle: "{year} {status}",
+            taisuiDesc: "This is the year of {animal}. Your zodiac {self} {status}. Consider wearing a red string for protection.",
+        },
+        bazi: {
+            title: "BaZi Chart",
+            subtitle: "AI-powered BaZi analysis to reveal your chart traits and life trends",
+            tabs: {
+                input: "Chart",
+                result: "Results",
+                calculator: "Calculator",
+                reverse: "Reverse",
+            },
+            sections: {
+                basicInfo: "Basic info",
+                basicInfoDesc: "Enter your basic information",
+                birthTime: "Birth time",
+                birthTimeDesc: "Select an accurate birth date and time",
+                birthLocation: "Birthplace",
+                birthLocationDesc: "Used for true solar time correction",
+            },
+            labels: {
+                name: "Name",
+                gender: "Gender",
+                year: "Year",
+                month: "Month",
+                day: "Day",
+                hour: "Hour",
+                minute: "Minute",
+                lunarDate: "Lunar date",
+                province: "Province/City",
+                trueSolar: "Use true solar time",
+            },
+            placeholders: {
+                name: "Enter your name",
+            },
+            gender: {
+                male: "Male",
+                female: "Female",
+            },
+            badge: {
+                recommended: "Recommended",
+            },
+            actions: {
+                start: "Generate chart",
+                calculating: "Generating...",
+                reset: "Start over",
+            },
+            results: {
+                pillarsTitle: "Four Pillars",
+                pillarsDesc: "Your BaZi chart",
+                wuxingTitle: "Five Elements",
+                dayMasterLabel: "Day Master: {master} ({element})",
+            },
+            pillars: {
+                year: "Year Pillar",
+                month: "Month Pillar",
+                day: "Day Pillar",
+                hour: "Hour Pillar",
+            },
+            options: {
+                year: "{value}",
+                month: "{value}",
+                day: "{value}",
+                minute: "{value}",
+            },
+        },
+        ziwei: {
+            title: "Zi Wei Chart",
+            subtitle: "Deep palace analysis to reveal chart structure and life trends",
+            tabs: {
+                input: "Enter info",
+                result: "Chart results",
+            },
+            sections: {
+                basicInfo: "Basic info",
+                birthTime: "Birth time",
+                birthTimeDesc: "Zi Wei uses birth time to determine palaces",
+                chartType: "Chart type",
+                chart: "Zi Wei chart",
+            },
+            labels: {
+                name: "Name",
+                gender: "Gender",
+                year: "Year",
+                month: "Month",
+                day: "Day",
+                hour: "Hour",
+                lunarDate: "Lunar date",
+                flowYear: "Flow year",
+            },
+            placeholders: {
+                name: "Enter your name",
+            },
+            gender: {
+                male: "Male (Yang)",
+                female: "Female (Yin)",
+            },
+            chartTypes: {
+                natal: "Natal chart",
+                flow: "Flow year chart",
+            },
+            options: {
+                year: "{value}",
+                month: "{value}",
+                day: "{value}",
+            },
+            actions: {
+                start: "Generate chart",
+                calculating: "Generating...",
+                reset: "Start over",
+            },
+            dayun: {
+                prev: "Previous cycle",
+                current: "Current cycle",
+                next: "Next cycle",
+                label: "Luck Cycle {index} ({start} - {end} yrs)",
+            },
+            center: {
+                title: "Zi Wei Dou Shu",
+                mingGong: "Ming Palace: {palace}",
+                shenGong: "Shen Palace: {palace}",
+            },
+            badges: {
+                ming: "Ming",
+                shen: "Shen",
+            },
+            palace: {
+                detailTitle: "{name} details",
+                mainStar: "Main star",
+                noMainStar: "No main star",
+                otherStars: "Other stars",
+            },
+            aiSample: "Hi {name}!\n\nBased on your Zi Wei chart:\n\n1. Your Ming Palace star is {mainStar}, suggesting leadership and strong support.\n\n2. Your chart pattern indicates prosperity and help from benefactors.\n\n3. The wealth palace looks favorable for business or investment.\n\n4. Stay humble and collaborate with allies for greater success.",
+            defaultStar: "Zi Wei",
+        },
+        liuyao: {
+            title: "Liu Yao Chart",
+            subtitle: "Traditional coin casting with AI interpretation",
+            question: {
+                title: "Set your question",
+                description: "Focus on your question and cast sincerely",
+            },
+            labels: {
+                category: "Category",
+                question: "Specific question (optional)",
+                method: "Casting method",
+                yang: "Yang",
+                yin: "Yin",
+                changing: "Changing",
+                shi: "Shi",
+                ying: "Ying",
+                changingSymbol: "○",
+            },
+            placeholders: {
+                category: "Choose a category",
+                question: "Describe your question...",
+            },
+            categories: {
+                career: "Career",
+                love: "Love",
+                wealth: "Wealth",
+                health: "Health",
+                study: "Study",
+                other: "Other",
+            },
+            methods: {
+                coin: "Coin casting",
+                time: "Time casting",
+                number: "Number casting",
+            },
+            actions: {
+                start: "Start casting",
+                shaking: "Shaking...",
+                shake: "Shake line {value}",
+                castNow: "Cast now",
+                reset: "Start over",
+            },
+            cast: {
+                progress: "Line {current} / {total}",
+                lineIndex: "Line {value}",
+                lineIndexShort: "Line {value}",
+            },
+            coin: {
+                flower: "Heads",
+                text: "Tails",
+            },
+            hints: {
+                shake: "Focus on your question and click to cast",
+            },
+            time: {
+                description: "Automatically cast by current time",
+            },
+            result: {
+                base: "Base hexagram",
+                changed: "Changed hexagram",
+            },
+            aiTitle: "AI Hexagram Interpretation",
+        },
+        meihua: {
+            title: "Mei Hua Yi Shu",
+            subtitle: "Anything can be cast with sincerity",
+            question: {
+                title: "Question",
+                description: "Keep your question in mind",
+                placeholder: "Describe your question...",
+            },
+            method: {
+                title: "Casting method",
+                time: "Time",
+                number: "Number",
+                word: "Text",
+                timeDesc: "Cast based on current time",
+                timeLabel: "Time casting",
+                numberLabel: "Number casting",
+                wordLabel: "Text casting",
+            },
+            labels: {
+                number: "Enter number",
+                word: "Enter text",
+                upper: "Upper trigram",
+                lower: "Lower trigram",
+                tiGua: "Body trigram",
+                yongGua: "Use trigram",
+            },
+            placeholders: {
+                number: "Any number, e.g. 38, 168, 520",
+                word: "Any text, e.g. a name or object",
+            },
+            hints: {
+                number: "Use a number that appears to you",
+                word: "Cast based on character count and strokes",
+            },
+            actions: {
+                castNow: "Cast now",
+                castNumber: "Cast by number",
+                castWord: "Cast by text",
+                reset: "Start over",
+            },
+            errors: {
+                numberTooShort: "Please enter at least two digits",
+                wordRequired: "Please enter text",
+            },
+            result: {
+                method: "Casting method: {value}",
+                input: "Input: {value}",
+                movingLine: "Moving line: {value}",
+                base: "Base hexagram",
+                mutual: "Mutual hexagram",
+                changed: "Changed hexagram",
+                movingLineDesc: "Line {value} changes",
+                tiYongTitle: "Body/Use relation",
+            },
+            relation: {
+                "生我": "Nourishes me",
+                "我生": "I nourish",
+                "克我": "Controls me",
+                "我克": "I control",
+                "比和": "Balanced",
+            },
+            relationDesc: {
+                shengwo: "The use trigram nourishes the body — auspicious.",
+                wosheng: "The body nourishes the use — some loss.",
+                kewo: "The use controls the body — unfavorable.",
+                woke: "The body controls the use — gains possible.",
+                bihe: "Body and use are balanced — stable.",
+            },
+            aiTitle: "AI Hexagram Interpretation",
+        },
+        tarot: {
+            title: "Tarot Reading",
+            subtitle: "Listen to your subconscious and find guidance",
+            labels: {
+                question: "Your question (optional)",
+                style: "Choose a reading style",
+                reversed: "Reversed",
+                reversedSuffix: "(Reversed)",
+            },
+            placeholders: {
+                question: "e.g., How will my love life go?",
+            },
+            actions: {
+                continue: "Continue",
+                startDraw: "Start drawing",
+                shuffle: "Shuffle",
+                restart: "Start over",
+            },
+            steps: {
+                question: {
+                    title: "Calm your mind and ask your question",
+                    description: "Focus on your question before you begin",
+                },
+                spread: {
+                    title: "Choose a spread",
+                    description: "Different spreads fit different questions",
+                },
+                draw: {
+                    title: "Draw your tarot cards",
+                    description: "Click to draw {count} cards",
+                    deckHint: "Click the deck below to draw",
+                },
+                result: {
+                    title: "Tarot Interpretation",
+                    fallbackQuestion: "Your tarot result",
+                },
+            },
+            spreads: {
+                single: {
+                    name: "Single card",
+                    description: "Quick guidance",
+                },
+                three: {
+                    name: "Three cards",
+                    description: "Past–present–future",
+                },
+                love: {
+                    name: "Love spread",
+                    description: "Analyze a relationship",
+                },
+                career: {
+                    name: "Career spread",
+                    description: "Work and growth",
+                },
+                celtic: {
+                    name: "Celtic cross",
+                    description: "Deep, holistic analysis",
+                },
+                yesno: {
+                    name: "Yes/No spread",
+                    description: "Simple answer",
+                },
+            },
+            styles: {
+                standard: {
+                    name: "Standard",
+                    description: "Professional and objective",
+                },
+                fire: {
+                    name: "Fire",
+                    description: "Direct and incisive",
+                },
+                moon: {
+                    name: "Moon",
+                    description: "Gentle and graceful",
+                },
+                wise: {
+                    name: "Wise",
+                    description: "Rational and philosophical",
+                },
+            },
+            positions: {
+                current: "Current situation",
+                past: "Past",
+                present: "Present",
+                future: "Future",
+                self: "You",
+                other: "Other person",
+                relationship: "Relationship",
+                currentState: "Current state",
+                challenge: "Challenge",
+                advice: "Advice",
+                outcome: "Outcome",
+                goal: "Goal",
+                subconscious: "Subconscious",
+                environment: "Environment",
+                hopeFear: "Hope/Fear",
+                finalOutcome: "Final outcome",
+                answer: "Answer",
+                reason: "Reason",
+            },
+            interpretation: {
+                reversed: "{card} reversed suggests blocked energy or inner struggle. In the {position} position, it hints at obstacles to address.",
+                upright: "{card} represents {meaning}. In the {position} position, it offers positive guidance.",
+            },
+            aiTitle: "AI Tarot Interpretation",
+        },
+        daily: {
+            title: "Daily Fortune",
+            subtitle: "Know today’s trend and seize opportunities",
+            ganZhiLabel: "{value} day",
+            zodiacLabel: "Zodiac {value}",
+            overall: {
+                title: "Overall fortune",
+                scoreLabel: "Overall score",
+            },
+            lucky: {
+                color: "Lucky color",
+                number: "Lucky number",
+                direction: "Lucky direction",
+            },
+            items: {
+                love: "Love",
+                career: "Career",
+                wealth: "Wealth",
+                health: "Health",
+            },
+            itemDesc: {
+                love: "Be patient and understanding in relationships",
+                career: "New opportunities may arise at work",
+                wealth: "Keep finances steady and avoid impulsive spending",
+                health: "Maintain routines and exercise moderately",
+            },
+            colors: {
+                red: "Red",
+                yellow: "Yellow",
+                blue: "Blue",
+                green: "Green",
+                purple: "Purple",
+                white: "White",
+                gold: "Gold",
+            },
+            directions: {
+                east: "East",
+                south: "South",
+                west: "West",
+                north: "North",
+                southeast: "Southeast",
+                northeast: "Northeast",
+                southwest: "Southwest",
+                northwest: "Northwest",
+            },
+            suitable: {
+                travel: "Travel",
+                meet: "Meet friends",
+                study: "Study",
+                exercise: "Exercise",
+            },
+            avoid: {
+                invest: "Invest",
+                conflict: "Conflict",
+                stayUpLate: "Stay up late",
+            },
+            advice: "Stay positive and calm today.",
+            scoreUnit: "{value} pts",
+            suitableTitle: "✓ Good for today",
+            avoidTitle: "✗ Avoid today",
+            aiTitle: "AI Personalized Fortune",
+            aiLoginPrompt: "Sign in and enter your birth data for a personalized daily analysis",
+        },
+        huangli: {
+            title: "Chinese Almanac",
+            subtitle: "Traditional almanac with daily auspicious guidance",
+            actions: {
+                today: "Today",
+            },
+            ganZhi: {
+                year: "{value}",
+                month: "{value}",
+                day: "{value}",
+            },
+            sections: {
+                lunar: "Lunar calendar",
+                chongSha: "Clash & Sha",
+                yi: "Auspicious",
+                ji: "Inauspicious",
+                shichen: "Hourly fortune",
+            },
+            labels: {
+                zodiac: "Zodiac",
+                zodiacYear: "Year of {value}",
+                xingXiu: "Lunar mansion",
+                xingXiuValue: "{value} mansion",
+                todayChong: "Clash",
+                chongValue: "{value}",
+                shaDirection: "Sha direction",
+                pengZu: "Peng Zu taboos",
+            },
+            directions: {
+                east: "East",
+                south: "South",
+                west: "West",
+                north: "North",
+            },
+            jiXiong: {
+                good: "Auspicious",
+                bad: "Inauspicious",
+                neutral: "Neutral",
+            },
+        },
+        pricing: {
+            badge: "Membership Perks",
+            title: "Unlock all divination features",
+            subtitle: "Upgrade to enjoy unlimited readings and AI insights",
+            currentPlan: "Current plan: {plan}",
+            recommended: "Recommended",
+            discount: "Save ¥{amount}",
+            free: "Free",
+            price: "¥{amount}",
+            period: {
+                monthly: "month",
+                yearly: "year",
+                lifetime: "lifetime",
+            },
+            actions: {
+                currentPlan: "Current plan",
+                processing: "Processing...",
+                inUse: "In use",
+                subscribe: "Subscribe",
+            },
+            benefitsTitle: "Member benefits",
+            benefits: {
+                unlimited: {
+                    title: "Unlimited readings",
+                    desc: "Use all divination features without limits",
+                },
+                ai: {
+                    title: "AI insights",
+                    desc: "Get professional AI interpretations",
+                },
+                history: {
+                    title: "Permanent history",
+                    desc: "Save and access history anytime",
+                },
+                support: {
+                    title: "Priority support",
+                    desc: "One‑on‑one member support",
+                },
+            },
+            faqTitle: "FAQ",
+            faqs: {
+                upgrade: {
+                    question: "How do I upgrade?",
+                    answer: "Choose a plan and click Subscribe, then complete payment and note the order ID.",
+                },
+                activation: {
+                    question: "When does it activate?",
+                    answer: "We verify your order within 1–24 hours and activate your membership.",
+                },
+                refund: {
+                    question: "Can I get a refund?",
+                    answer: "Refunds are available within 7 days if no benefits were used.",
+                },
+                expire: {
+                    question: "What happens after expiry?",
+                    answer: "You return to the free tier and your history remains.",
+                },
+            },
+            security: {
+                title: "Secure payments",
+                subtitle: "Keep your order ID. We activate membership after verification.",
+            },
+            dialog: {
+                title: "Order created",
+                description: "Please complete payment and include the order ID",
+                planLabel: "Plan",
+                amountLabel: "Amount",
+                orderLabel: "Order ID",
+                noticeTitle: "Important: ",
+                noticeBody: "Include the order ID in your payment note. We activate within 1–24 hours after verification.",
+                actions: {
+                    later: "Pay later",
+                    pay: "Go to payment",
+                },
+            },
+            errors: {
+                createOrderFailed: "Failed to create order",
+                paymentFailed: "Payment failed. Please try again later.",
+            },
+        },
+        history: {
+            title: "History",
+            total: "Total {count} records",
+            actions: {
+                refresh: "Refresh",
+                prev: "Previous",
+                next: "Next",
+            },
+            search: {
+                placeholder: "Search by question or title",
+            },
+            filters: {
+                placeholder: "Filter by type",
+                all: "All types",
+            },
+            types: {
+                bazi: "BaZi",
+                ziwei: "Zi Wei",
+                liuyao: "Liu Yao",
+                meihua: "Mei Hua",
+                tarot: "Tarot",
+                daily: "Daily fortune",
+            },
+            recordFallback: "Reading record",
+            aiLabel: "AI Interpretation",
+            pagination: "Page {page} / {total}",
+            auth: {
+                title: "Please sign in",
+                subtitle: "Sign in to view your history",
+                action: "Go to sign in",
+            },
+            empty: {
+                title: "No records yet",
+                subtitle: "Start your first divination",
+                action: "Start divination",
+            },
+            detail: {
+                title: "Reading detail",
+                question: "Question",
+                result: "Result",
+                aiTitle: "AI Interpretation",
+            },
+            delete: {
+                title: "Confirm delete",
+                description: "Delete this record? This action cannot be undone.",
+            },
+        },
+        profile: {
+            title: "Profile",
+            subtitle: "Manage your account and preferences",
+            tabs: {
+                overview: "Overview",
+                preferences: "Preferences",
+                security: "Security",
+            },
+            auth: {
+                required: "Please sign in first",
+                action: "Go to sign in",
+            },
+            sections: {
+                account: "Account info",
+                quota: "Daily quota",
+            },
+            labels: {
+                registeredAt: "Registered on {date}",
+                used: "Used",
+                freePlan: "Free plan",
+            },
+            actions: {
+                upgrade: "Upgrade",
+                renew: "Renew",
+            },
+            stats: {
+                total: "Total readings",
+                monthly: "This month",
+                favorite: "Favorite type",
+            },
+            recent: {
+                title: "Recent readings",
+                viewAll: "View all",
+                fallbackTitle: "Reading record",
+                empty: "No readings yet",
+            },
+            preferences: {
+                title: "Notifications",
+                subtitle: "Manage your notification preferences",
+                push: {
+                    title: "Push notifications",
+                    desc: "Receive reading reminders and fortune updates",
+                },
+                email: {
+                    title: "Email updates",
+                    desc: "Receive weekly reports and promotions",
+                },
+            },
+            security: {
+                title: "Security",
+                subtitle: "Manage account security",
+                emailTitle: "Email verification",
+                verified: "Verified",
+                membershipTitle: "Membership status",
+                membershipPremium: "{plan}, {expires}",
+                expiresAt: "Expires {date}",
+                expiresNever: "Lifetime",
+                freeUser: "Free user",
+            },
+            types: {
+                bazi: "BaZi",
+                ziwei: "Zi Wei",
+                liuyao: "Liu Yao",
+                meihua: "Mei Hua",
+                tarot: "Tarot",
+                daily: "Daily fortune",
+            },
+        },
+    },
+    features: {
+        ...extendedTranslations.en.newFeatures,
+    },
+    divTerms: {
+        ...extendedTranslations.en.divTerms,
+    },
+    seo: {
+        siteName: "ZhanBu - Professional Divination Platform",
+        siteDescription: "ZhanBu provides BaZi, Zi Wei, Tarot, Liu Yao, Mei Hua, Qi Men, Feng Shui and AI interpretations.",
+        shortName: "ZhanBu",
+        appName: "ZhanBu",
+    },
 }
-
-import { zhTW } from "./zh-tw"
-import { ja } from "./ja"
 
 // 所有翻译
 export const translations: Record<Locale, Translations> = {
@@ -313,4 +3074,13 @@ export function t(
         }
     }
     return typeof value === "string" ? value : key
+}
+
+export function formatMessage(
+    template: string,
+    params: Record<string, string | number>
+): string {
+    return template.replace(/\{(\w+)\}/g, (_, key) =>
+        key in params ? String(params[key]) : `{${key}}`
+    )
 }

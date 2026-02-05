@@ -24,6 +24,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
 import { AIAnalysisSection } from "@/components/ai/ai-analysis-section"
+import { useI18n, useTranslation, formatMessage } from "@/lib/i18n"
 
 // 天干地支
 const TIAN_GAN = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
@@ -73,6 +74,8 @@ interface DailyFortune {
  * 每日运势页面
  */
 export default function DailyFortunePage() {
+    const { locale } = useI18n()
+    const { t } = useTranslation()
     const [selectedDate, setSelectedDate] = useState(new Date())
     const [fortune, setFortune] = useState<DailyFortune | null>(null)
     const [isLoading, setIsLoading] = useState(false)
@@ -104,32 +107,32 @@ export default function DailyFortunePage() {
 
         const items: FortuneItem[] = [
             {
-                type: "爱情运",
+                type: t("pages.daily.items.love"),
                 icon: Heart,
                 score: random(40, 100),
                 trend: random(0, 2) === 0 ? "up" : random(0, 1) === 0 ? "down" : "stable",
-                description: "感情方面需要多一些耐心和理解",
+                description: t("pages.daily.itemDesc.love"),
             },
             {
-                type: "事业运",
+                type: t("pages.daily.items.career"),
                 icon: Briefcase,
                 score: random(40, 100),
                 trend: random(0, 2) === 0 ? "up" : random(0, 1) === 0 ? "down" : "stable",
-                description: "工作中可能会遇到新的机会",
+                description: t("pages.daily.itemDesc.career"),
             },
             {
-                type: "财运",
+                type: t("pages.daily.items.wealth"),
                 icon: Wallet,
                 score: random(40, 100),
                 trend: random(0, 2) === 0 ? "up" : random(0, 1) === 0 ? "down" : "stable",
-                description: "理财方面宜稳健，避免冲动消费",
+                description: t("pages.daily.itemDesc.wealth"),
             },
             {
-                type: "健康运",
+                type: t("pages.daily.items.health"),
                 icon: Activity,
                 score: random(40, 100),
                 trend: random(0, 2) === 0 ? "up" : random(0, 1) === 0 ? "down" : "stable",
-                description: "注意作息规律，适当运动",
+                description: t("pages.daily.itemDesc.health"),
             },
         ]
 
@@ -137,8 +140,37 @@ export default function DailyFortunePage() {
             items.reduce((sum, item) => sum + item.score, 0) / items.length
         )
 
-        const colors = ["红色", "黄色", "蓝色", "绿色", "紫色", "白色", "金色"]
-        const directions = ["东", "南", "西", "北", "东南", "东北", "西南", "西北"]
+        const colors = [
+            t("pages.daily.colors.red"),
+            t("pages.daily.colors.yellow"),
+            t("pages.daily.colors.blue"),
+            t("pages.daily.colors.green"),
+            t("pages.daily.colors.purple"),
+            t("pages.daily.colors.white"),
+            t("pages.daily.colors.gold"),
+        ]
+        const directions = [
+            t("pages.daily.directions.east"),
+            t("pages.daily.directions.south"),
+            t("pages.daily.directions.west"),
+            t("pages.daily.directions.north"),
+            t("pages.daily.directions.southeast"),
+            t("pages.daily.directions.northeast"),
+            t("pages.daily.directions.southwest"),
+            t("pages.daily.directions.northwest"),
+        ]
+
+        const suitableOptions = [
+            t("pages.daily.suitable.travel"),
+            t("pages.daily.suitable.meet"),
+            t("pages.daily.suitable.study"),
+            t("pages.daily.suitable.exercise"),
+        ]
+        const avoidOptions = [
+            t("pages.daily.avoid.invest"),
+            t("pages.daily.avoid.conflict"),
+            t("pages.daily.avoid.stayUpLate"),
+        ]
 
         return {
             date,
@@ -149,9 +181,9 @@ export default function DailyFortunePage() {
             luckyNumber: (seed % 9) + 1,
             luckyDirection: directions[seed % directions.length],
             items,
-            advice: "今日宜保持积极乐观的心态，遇事不急不躁。",
-            suitable: ["出行", "会友", "学习", "运动"].slice(0, (seed % 3) + 2),
-            avoid: ["投资", "争执", "熬夜"].slice(0, (seed % 2) + 1),
+            advice: t("pages.daily.advice"),
+            suitable: suitableOptions.slice(0, (seed % 3) + 2),
+            avoid: avoidOptions.slice(0, (seed % 2) + 1),
         }
     }
 
@@ -174,7 +206,7 @@ export default function DailyFortunePage() {
 
     // 格式化日期
     const formatDate = (date: Date) => {
-        return date.toLocaleDateString("zh-CN", {
+        return date.toLocaleDateString(locale, {
             year: "numeric",
             month: "long",
             day: "numeric",
@@ -207,9 +239,9 @@ export default function DailyFortunePage() {
                     <Sun className="h-8 w-8 text-orange-500" />
                 </div>
                 <div>
-                    <h1 className="font-serif text-3xl font-bold">每日运势</h1>
+                    <h1 className="font-serif text-3xl font-bold">{t("pages.daily.title")}</h1>
                     <p className="text-muted-foreground">
-                        了解今日运程，把握人生机遇
+                        {t("pages.daily.subtitle")}
                     </p>
                 </div>
             </div>
@@ -230,8 +262,12 @@ export default function DailyFortunePage() {
                             <div className="text-lg font-semibold">{formatDate(selectedDate)}</div>
                             {fortune && (
                                 <div className="flex items-center justify-center gap-2 mt-1">
-                                    <Badge variant="outline">{fortune.ganZhi}日</Badge>
-                                    <Badge variant="secondary">生肖{fortune.zodiac}</Badge>
+                                    <Badge variant="outline">
+                                        {formatMessage(t("pages.daily.ganZhiLabel"), { value: fortune.ganZhi })}
+                                    </Badge>
+                                    <Badge variant="secondary">
+                                        {formatMessage(t("pages.daily.zodiacLabel"), { value: fortune.zodiac })}
+                                    </Badge>
                                 </div>
                             )}
                         </div>
@@ -258,7 +294,7 @@ export default function DailyFortunePage() {
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Star className="h-5 w-5" />
-                                综合运势
+                                {t("pages.daily.overall.title")}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -270,7 +306,7 @@ export default function DailyFortunePage() {
                                     )}>
                                         {fortune.overallScore}
                                     </div>
-                                    <div className="text-sm text-muted-foreground mt-1">综合评分</div>
+                                    <div className="text-sm text-muted-foreground mt-1">{t("pages.daily.overall.scoreLabel")}</div>
                                 </div>
                                 <div className="flex-1 space-y-2">
                                     <Progress value={fortune.overallScore} className="h-3" />
@@ -285,21 +321,21 @@ export default function DailyFortunePage() {
                         <Card>
                             <CardContent className="pt-6 text-center">
                                 <div className="text-2xl mb-2">🎨</div>
-                                <div className="text-sm text-muted-foreground">幸运颜色</div>
+                                <div className="text-sm text-muted-foreground">{t("pages.daily.lucky.color")}</div>
                                 <div className="font-semibold">{fortune.luckyColor}</div>
                             </CardContent>
                         </Card>
                         <Card>
                             <CardContent className="pt-6 text-center">
                                 <div className="text-2xl mb-2">🔢</div>
-                                <div className="text-sm text-muted-foreground">幸运数字</div>
+                                <div className="text-sm text-muted-foreground">{t("pages.daily.lucky.number")}</div>
                                 <div className="font-semibold">{fortune.luckyNumber}</div>
                             </CardContent>
                         </Card>
                         <Card>
                             <CardContent className="pt-6 text-center">
                                 <div className="text-2xl mb-2">🧭</div>
-                                <div className="text-sm text-muted-foreground">幸运方位</div>
+                                <div className="text-sm text-muted-foreground">{t("pages.daily.lucky.direction")}</div>
                                 <div className="font-semibold">{fortune.luckyDirection}</div>
                             </CardContent>
                         </Card>
@@ -320,7 +356,7 @@ export default function DailyFortunePage() {
                                                 <div className="flex items-center gap-2">
                                                     {getTrendIcon(item.trend)}
                                                     <span className={cn("font-bold", getScoreColor(item.score))}>
-                                                        {item.score}分
+                                                        {formatMessage(t("pages.daily.scoreUnit"), { value: item.score })}
                                                     </span>
                                                 </div>
                                             </div>
@@ -337,7 +373,7 @@ export default function DailyFortunePage() {
                     <div className="grid md:grid-cols-2 gap-4">
                         <Card>
                             <CardHeader>
-                                <CardTitle className="text-green-500">✓ 今日宜</CardTitle>
+                                <CardTitle className="text-green-500">{t("pages.daily.suitableTitle")}</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className="flex flex-wrap gap-2">
@@ -351,7 +387,7 @@ export default function DailyFortunePage() {
                         </Card>
                         <Card>
                             <CardHeader>
-                                <CardTitle className="text-red-500">✗ 今日忌</CardTitle>
+                                <CardTitle className="text-red-500">{t("pages.daily.avoidTitle")}</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className="flex flex-wrap gap-2">
@@ -368,8 +404,8 @@ export default function DailyFortunePage() {
                     {/* AI 解读 */}
                     <AIAnalysisSection
                         type="general"
-                        title="AI 个性化运势解读"
-                        loginPrompt="登录并输入您的生辰八字，获取专属于您的每日运势分析"
+                        title={t("pages.daily.aiTitle")}
+                        loginPrompt={t("pages.daily.aiLoginPrompt")}
                     />
                 </div>
             ) : null}

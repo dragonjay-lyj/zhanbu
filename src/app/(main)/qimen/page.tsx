@@ -27,6 +27,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
 import { AIAnalysisSection } from "@/components/ai/ai-analysis-section"
+import { useTranslation, formatMessage } from "@/lib/i18n"
 
 // 天干地支
 const TIAN_GAN = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
@@ -79,6 +80,7 @@ interface QimenResult {
  * 奇门遁甲排盘页面
  */
 export default function QimenPage() {
+    const { t } = useTranslation()
     const [panType, setPanType] = useState<"qimen" | "liuren" | "jinkou">("qimen")
     const [step, setStep] = useState<"input" | "result">("input")
     const [result, setResult] = useState<QimenResult | null>(null)
@@ -165,10 +167,14 @@ export default function QimenPage() {
 
     const getPanTypeName = () => {
         switch (panType) {
-            case "qimen": return "奇门遁甲"
-            case "liuren": return "大六壬"
-            case "jinkou": return "金口诀"
-            default: return "奇门遁甲"
+            case "qimen":
+                return t("pages.qimen.panTypes.qimen")
+            case "liuren":
+                return t("pages.qimen.panTypes.liuren")
+            case "jinkou":
+                return t("pages.qimen.panTypes.jinkou")
+            default:
+                return t("pages.qimen.panTypes.qimen")
         }
     }
 
@@ -180,9 +186,9 @@ export default function QimenPage() {
                     <Compass className="h-8 w-8 text-indigo-500" />
                 </div>
                 <div>
-                    <h1 className="font-serif text-3xl font-bold">高级排盘</h1>
+                    <h1 className="font-serif text-3xl font-bold">{t("pages.qimen.title")}</h1>
                     <p className="text-muted-foreground">
-                        奇门遁甲、大六壬、金口诀等古法数术
+                        {t("pages.qimen.subtitle")}
                     </p>
                 </div>
             </div>
@@ -192,17 +198,17 @@ export default function QimenPage() {
                     {/* 排盘类型选择 */}
                     <Tabs value={panType} onValueChange={(v) => setPanType(v as typeof panType)}>
                         <TabsList className="grid w-full max-w-lg grid-cols-3">
-                            <TabsTrigger value="qimen" className="cursor-pointer">奇门遁甲</TabsTrigger>
-                            <TabsTrigger value="liuren" className="cursor-pointer">大六壬</TabsTrigger>
-                            <TabsTrigger value="jinkou" className="cursor-pointer">金口诀</TabsTrigger>
+                            <TabsTrigger value="qimen" className="cursor-pointer">{t("pages.qimen.panTypes.qimen")}</TabsTrigger>
+                            <TabsTrigger value="liuren" className="cursor-pointer">{t("pages.qimen.panTypes.liuren")}</TabsTrigger>
+                            <TabsTrigger value="jinkou" className="cursor-pointer">{t("pages.qimen.panTypes.jinkou")}</TabsTrigger>
                         </TabsList>
 
                         <TabsContent value="qimen" className="mt-6">
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>奇门遁甲排盘</CardTitle>
+                                    <CardTitle>{t("pages.qimen.cards.qimen.title")}</CardTitle>
                                     <CardDescription>
-                                        以九宫、八门、九星、八神为核心的古代数术
+                                        {t("pages.qimen.cards.qimen.description")}
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
@@ -211,9 +217,9 @@ export default function QimenPage() {
                         <TabsContent value="liuren" className="mt-6">
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>大六壬排盘</CardTitle>
+                                    <CardTitle>{t("pages.qimen.cards.liuren.title")}</CardTitle>
                                     <CardDescription>
-                                        以天地盘、四课三传为核心的预测术
+                                        {t("pages.qimen.cards.liuren.description")}
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
@@ -222,9 +228,9 @@ export default function QimenPage() {
                         <TabsContent value="jinkou" className="mt-6">
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>金口诀排盘</CardTitle>
+                                    <CardTitle>{t("pages.qimen.cards.jinkou.title")}</CardTitle>
                                     <CardDescription>
-                                        又称大六壬金口诀，简便实用的预测方法
+                                        {t("pages.qimen.cards.jinkou.description")}
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
@@ -236,7 +242,7 @@ export default function QimenPage() {
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Clock className="h-5 w-5" />
-                                排盘时间
+                                {t("pages.qimen.sections.time")}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
@@ -246,21 +252,21 @@ export default function QimenPage() {
                                     onClick={() => setUseCurrentTime(true)}
                                     className="cursor-pointer"
                                 >
-                                    当前时间
+                                    {t("pages.qimen.time.current")}
                                 </Button>
                                 <Button
                                     variant={!useCurrentTime ? "default" : "outline"}
                                     onClick={() => setUseCurrentTime(false)}
                                     className="cursor-pointer"
                                 >
-                                    自定义时间
+                                    {t("pages.qimen.time.custom")}
                                 </Button>
                             </div>
 
                             {!useCurrentTime && (
                                 <div className="grid grid-cols-4 gap-4">
                                     <div className="space-y-2">
-                                        <Label>年</Label>
+                                        <Label>{t("pages.qimen.labels.year")}</Label>
                                         <Select
                                             value={form.watch("year")}
                                             onValueChange={(v) => form.setValue("year", v)}
@@ -278,7 +284,7 @@ export default function QimenPage() {
                                         </Select>
                                     </div>
                                     <div className="space-y-2">
-                                        <Label>月</Label>
+                                        <Label>{t("pages.qimen.labels.month")}</Label>
                                         <Select
                                             value={form.watch("month")}
                                             onValueChange={(v) => form.setValue("month", v)}
@@ -289,14 +295,14 @@ export default function QimenPage() {
                                             <SelectContent>
                                                 {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
                                                     <SelectItem key={month} value={month.toString()} className="cursor-pointer">
-                                                        {month}月
+                                                        {formatMessage(t("pages.qimen.options.month"), { value: month })}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
                                     </div>
                                     <div className="space-y-2">
-                                        <Label>日</Label>
+                                        <Label>{t("pages.qimen.labels.day")}</Label>
                                         <Select
                                             value={form.watch("day")}
                                             onValueChange={(v) => form.setValue("day", v)}
@@ -307,14 +313,14 @@ export default function QimenPage() {
                                             <SelectContent>
                                                 {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
                                                     <SelectItem key={day} value={day.toString()} className="cursor-pointer">
-                                                        {day}日
+                                                        {formatMessage(t("pages.qimen.options.day"), { value: day })}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
                                     </div>
                                     <div className="space-y-2">
-                                        <Label>时辰</Label>
+                                        <Label>{t("pages.qimen.labels.hour")}</Label>
                                         <Select
                                             value={form.watch("hour")}
                                             onValueChange={(v) => form.setValue("hour", v)}
@@ -325,7 +331,7 @@ export default function QimenPage() {
                                             <SelectContent>
                                                 {DI_ZHI.map((zhi, i) => (
                                                     <SelectItem key={i} value={i.toString()} className="cursor-pointer">
-                                                        {zhi}时
+                                                        {formatMessage(t("pages.qimen.options.hour"), { value: zhi })}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -345,12 +351,12 @@ export default function QimenPage() {
                         {isLoading ? (
                             <>
                                 <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                                排盘中...
+                                {t("pages.qimen.actions.calculating")}
                             </>
                         ) : (
                             <>
                                 <Grid3X3 className="mr-2 h-4 w-4" />
-                                开始排盘
+                                {t("pages.qimen.actions.start")}
                             </>
                         )}
                     </Button>
@@ -360,32 +366,37 @@ export default function QimenPage() {
                     {/* 基本信息 */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>{getPanTypeName()}盘</CardTitle>
+                            <CardTitle>{formatMessage(t("pages.qimen.sections.summaryTitle"), { name: getPanTypeName() })}</CardTitle>
                             <CardDescription>
-                                {result.year}年{result.month}月{result.day}日 {DI_ZHI[parseInt(result.hour)]}时
+                                {formatMessage(t("pages.qimen.summary.datetime"), {
+                                    year: result.year,
+                                    month: result.month,
+                                    day: result.day,
+                                    hour: DI_ZHI[parseInt(result.hour)],
+                                })}
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="flex flex-wrap gap-4">
                                 <div className="flex items-center gap-2">
-                                    <span className="text-muted-foreground">年柱:</span>
+                                    <span className="text-muted-foreground">{t("pages.qimen.summary.yearPillar")}</span>
                                     <Badge variant="outline">{result.ganZhi.year}</Badge>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-muted-foreground">月柱:</span>
+                                    <span className="text-muted-foreground">{t("pages.qimen.summary.monthPillar")}</span>
                                     <Badge variant="outline">{result.ganZhi.month}</Badge>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-muted-foreground">日柱:</span>
+                                    <span className="text-muted-foreground">{t("pages.qimen.summary.dayPillar")}</span>
                                     <Badge variant="outline">{result.ganZhi.day}</Badge>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-muted-foreground">时柱:</span>
+                                    <span className="text-muted-foreground">{t("pages.qimen.summary.hourPillar")}</span>
                                     <Badge variant="outline">{result.ganZhi.hour}</Badge>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-muted-foreground">局数:</span>
-                                    <Badge>{result.yuan} {result.ju}局</Badge>
+                                    <span className="text-muted-foreground">{t("pages.qimen.summary.ju")}</span>
+                                    <Badge>{formatMessage(t("pages.qimen.summary.juValue"), { yuan: result.yuan, ju: result.ju })}</Badge>
                                 </div>
                             </div>
                         </CardContent>
@@ -396,7 +407,7 @@ export default function QimenPage() {
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Grid3X3 className="h-5 w-5" />
-                                九宫盘
+                                {t("pages.qimen.sections.grid")}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -415,7 +426,9 @@ export default function QimenPage() {
                                         )}
                                     >
                                         <div className="flex items-center justify-between">
-                                            <span className="text-xs text-muted-foreground">{cell.gong}宫</span>
+                                            <span className="text-xs text-muted-foreground">
+                                                {formatMessage(t("pages.qimen.labels.gong"), { value: cell.gong })}
+                                            </span>
                                             <Badge variant="outline" className="text-xs">{cell.position}</Badge>
                                         </div>
                                         <div className="text-center space-y-0.5">
@@ -437,11 +450,11 @@ export default function QimenPage() {
 
                             <div className="mt-6 flex justify-center gap-8">
                                 <div className="text-center">
-                                    <div className="text-sm text-muted-foreground">值符</div>
+                                    <div className="text-sm text-muted-foreground">{t("pages.qimen.labels.zhiFu")}</div>
                                     <div className="font-serif text-xl font-bold">{result.zhiFu}</div>
                                 </div>
                                 <div className="text-center">
-                                    <div className="text-sm text-muted-foreground">值使</div>
+                                    <div className="text-sm text-muted-foreground">{t("pages.qimen.labels.zhiShi")}</div>
                                     <div className="font-serif text-xl font-bold">{result.zhiShi}</div>
                                 </div>
                             </div>
@@ -449,7 +462,7 @@ export default function QimenPage() {
                     </Card>
 
                     {/* AI 解读 */}
-                    <AIAnalysisSection type="general" title="AI 奇门遁甲解读" />
+                    <AIAnalysisSection type="general" title={t("pages.qimen.aiTitle")} />
 
                     <div className="text-center">
                         <Button
@@ -461,7 +474,7 @@ export default function QimenPage() {
                             className="cursor-pointer"
                         >
                             <RefreshCw className="mr-2 h-4 w-4" />
-                            重新排盘
+                            {t("pages.qimen.actions.reset")}
                         </Button>
                     </div>
                 </div>

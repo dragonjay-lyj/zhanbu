@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
+import { useI18n, useTranslation, formatMessage } from "@/lib/i18n"
 
 // 天干地支
 const TIAN_GAN = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
@@ -78,8 +79,23 @@ interface HuangliData {
  * 黄历查询页面
  */
 export default function HuangliPage() {
+    const { locale } = useI18n()
+    const { t } = useTranslation()
     const [selectedDate, setSelectedDate] = useState(new Date())
     const [huangliData, setHuangliData] = useState<HuangliData | null>(null)
+
+    const jiXiongLabels: Record<"吉" | "凶" | "中", string> = {
+        吉: t("pages.huangli.jiXiong.good"),
+        凶: t("pages.huangli.jiXiong.bad"),
+        中: t("pages.huangli.jiXiong.neutral"),
+    }
+
+    const directionLabels: Record<string, string> = {
+        东: t("pages.huangli.directions.east"),
+        南: t("pages.huangli.directions.south"),
+        西: t("pages.huangli.directions.west"),
+        北: t("pages.huangli.directions.north"),
+    }
 
     // 农历月份名
     const lunarMonthNames = [
@@ -160,7 +176,7 @@ export default function HuangliPage() {
     }
 
     const formatGregorian = (date: Date) => {
-        return date.toLocaleDateString("zh-CN", {
+        return date.toLocaleDateString(locale, {
             year: "numeric",
             month: "long",
             day: "numeric",
@@ -178,9 +194,9 @@ export default function HuangliPage() {
                     <Calendar className="h-8 w-8 text-red-500" />
                 </div>
                 <div>
-                    <h1 className="font-serif text-3xl font-bold">黄历查询</h1>
+                    <h1 className="font-serif text-3xl font-bold">{t("pages.huangli.title")}</h1>
                     <p className="text-muted-foreground">
-                        传统万年历，每日宜忌一目了然
+                        {t("pages.huangli.subtitle")}
                     </p>
                 </div>
             </div>
@@ -195,9 +211,15 @@ export default function HuangliPage() {
                         <div className="text-center">
                             <div className="text-xl font-semibold">{formatGregorian(selectedDate)}</div>
                             <div className="flex items-center justify-center gap-2 mt-2">
-                                <Badge variant="outline">{huangliData.ganZhi.year}年</Badge>
-                                <Badge variant="outline">{huangliData.ganZhi.month}月</Badge>
-                                <Badge variant="secondary">{huangliData.ganZhi.day}日</Badge>
+                                <Badge variant="outline">
+                                    {formatMessage(t("pages.huangli.ganZhi.year"), { value: huangliData.ganZhi.year })}
+                                </Badge>
+                                <Badge variant="outline">
+                                    {formatMessage(t("pages.huangli.ganZhi.month"), { value: huangliData.ganZhi.month })}
+                                </Badge>
+                                <Badge variant="secondary">
+                                    {formatMessage(t("pages.huangli.ganZhi.day"), { value: huangliData.ganZhi.day })}
+                                </Badge>
                             </div>
                         </div>
                         <Button variant="ghost" size="icon" onClick={() => navigateDate(1)} className="cursor-pointer">
@@ -206,7 +228,7 @@ export default function HuangliPage() {
                     </div>
                     <div className="flex justify-center mt-4">
                         <Button variant="outline" size="sm" onClick={() => setSelectedDate(new Date())} className="cursor-pointer">
-                            回到今天
+                            {t("pages.huangli.actions.today")}
                         </Button>
                     </div>
                 </CardContent>
@@ -218,7 +240,7 @@ export default function HuangliPage() {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Moon className="h-5 w-5" />
-                            农历
+                            {t("pages.huangli.sections.lunar")}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -228,12 +250,16 @@ export default function HuangliPage() {
                             </div>
                             <div className="mt-4 flex justify-center gap-4">
                                 <div>
-                                    <div className="text-sm text-muted-foreground">生肖</div>
-                                    <div className="font-semibold">{huangliData.zodiac}年</div>
+                                    <div className="text-sm text-muted-foreground">{t("pages.huangli.labels.zodiac")}</div>
+                                    <div className="font-semibold">
+                                        {formatMessage(t("pages.huangli.labels.zodiacYear"), { value: huangliData.zodiac })}
+                                    </div>
                                 </div>
                                 <div>
-                                    <div className="text-sm text-muted-foreground">星宿</div>
-                                    <div className="font-semibold">{huangliData.xingXiu}宿</div>
+                                    <div className="text-sm text-muted-foreground">{t("pages.huangli.labels.xingXiu")}</div>
+                                    <div className="font-semibold">
+                                        {formatMessage(t("pages.huangli.labels.xingXiuValue"), { value: huangliData.xingXiu })}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -244,26 +270,26 @@ export default function HuangliPage() {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Compass className="h-5 w-5" />
-                            冲煞
+                            {t("pages.huangli.sections.chongSha")}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="grid grid-cols-2 gap-4 text-center">
                             <div>
-                                <div className="text-sm text-muted-foreground">今日冲</div>
+                                <div className="text-sm text-muted-foreground">{t("pages.huangli.labels.todayChong")}</div>
                                 <div className="font-serif text-2xl font-bold text-red-500">
-                                    {huangliData.chongSha.chong}
+                                    {formatMessage(t("pages.huangli.labels.chongValue"), { value: huangliData.chongSha.chong })}
                                 </div>
                             </div>
                             <div>
-                                <div className="text-sm text-muted-foreground">煞方</div>
+                                <div className="text-sm text-muted-foreground">{t("pages.huangli.labels.shaDirection")}</div>
                                 <div className="font-serif text-2xl font-bold">
-                                    {huangliData.chongSha.sha}
+                                    {directionLabels[huangliData.chongSha.sha] || huangliData.chongSha.sha}
                                 </div>
                             </div>
                         </div>
                         <div className="mt-4 p-3 rounded-lg bg-muted/50">
-                            <div className="text-sm text-muted-foreground mb-1">彭祖百忌</div>
+                            <div className="text-sm text-muted-foreground mb-1">{t("pages.huangli.labels.pengZu")}</div>
                             <div className="text-sm space-y-1">
                                 {huangliData.pengZu.map((item, i) => (
                                     <div key={i}>{item}</div>
@@ -280,7 +306,7 @@ export default function HuangliPage() {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-green-500">
                             <CheckCircle className="h-5 w-5" />
-                            今日宜
+                            {t("pages.huangli.sections.yi")}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -302,7 +328,7 @@ export default function HuangliPage() {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-red-500">
                             <XCircle className="h-5 w-5" />
-                            今日忌
+                            {t("pages.huangli.sections.ji")}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -326,7 +352,7 @@ export default function HuangliPage() {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Clock className="h-5 w-5" />
-                        时辰吉凶
+                        {t("pages.huangli.sections.shichen")}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -352,7 +378,7 @@ export default function HuangliPage() {
                                         s.jiXiong === "中" && "text-yellow-500 border-yellow-500/30"
                                     )}
                                 >
-                                    {s.jiXiong}
+                                    {jiXiongLabels[s.jiXiong]}
                                 </Badge>
                             </div>
                         ))}

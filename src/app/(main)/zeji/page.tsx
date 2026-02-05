@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
+import { useTranslation, formatMessage } from "@/lib/i18n"
 
 // 事项类型
 interface EventType {
@@ -36,6 +37,7 @@ const levelColors: Record<string, string> = {
 }
 
 export default function ZejiPage() {
+    const { t } = useTranslation()
     const [eventTypes, setEventTypes] = useState<EventType[]>([])
     const [selectedType, setSelectedType] = useState<EventType | null>(null)
     const [isLoading, setIsLoading] = useState(false)
@@ -92,7 +94,10 @@ export default function ZejiPage() {
     // 格式化日期
     const formatDate = (dateStr: string) => {
         const date = new Date(dateStr)
-        return `${date.getMonth() + 1}月${date.getDate()}日`
+        return formatMessage(t("pages.zeji.dateLabel"), {
+            month: date.getMonth() + 1,
+            day: date.getDate(),
+        })
     }
 
     return (
@@ -103,10 +108,10 @@ export default function ZejiPage() {
                     <CalendarCheck className="w-8 h-8 text-white" />
                 </div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                    择吉选日
+                    {t("pages.zeji.title")}
                 </h1>
                 <p className="text-muted-foreground mt-2">
-                    根据传统黄历，为您挑选良辰吉日
+                    {t("pages.zeji.subtitle")}
                 </p>
             </div>
 
@@ -140,14 +145,17 @@ export default function ZejiPage() {
                     {/* 返回和月份切换 */}
                     <div className="flex items-center justify-between">
                         <Button variant="outline" onClick={() => setSelectedType(null)}>
-                            ← 选择其他事项
+                            {t("pages.zeji.actions.back")}
                         </Button>
                         <div className="flex items-center gap-2">
                             <Button variant="ghost" size="icon" onClick={() => changeMonth(-1)}>
                                 <ChevronLeft className="w-4 h-4" />
                             </Button>
                             <span className="font-medium min-w-[120px] text-center">
-                                {currentMonth.getFullYear()}年{currentMonth.getMonth() + 1}月
+                                {formatMessage(t("pages.zeji.monthHeader"), {
+                                    year: currentMonth.getFullYear(),
+                                    month: currentMonth.getMonth() + 1,
+                                })}
                             </span>
                             <Button variant="ghost" size="icon" onClick={() => changeMonth(1)}>
                                 <ChevronRight className="w-4 h-4" />
@@ -160,8 +168,12 @@ export default function ZejiPage() {
                         <CardContent className="p-4 flex items-center gap-4">
                             <span className="text-4xl">{selectedType.icon}</span>
                             <div>
-                                <h2 className="text-xl font-bold">{selectedType.name}吉日</h2>
-                                <p className="text-white/80 text-sm">本月共有 {auspiciousDates.length} 个吉日</p>
+                                <h2 className="text-xl font-bold">
+                                    {formatMessage(t("pages.zeji.current.title"), { name: selectedType.name })}
+                                </h2>
+                                <p className="text-white/80 text-sm">
+                                    {formatMessage(t("pages.zeji.current.count"), { count: auspiciousDates.length })}
+                                </p>
                             </div>
                         </CardContent>
                     </Card>
@@ -174,7 +186,7 @@ export default function ZejiPage() {
                         <div className="grid gap-4 md:grid-cols-2">
                             {/* 吉日列表 */}
                             <div className="space-y-4">
-                                <h3 className="font-semibold text-lg">推荐吉日</h3>
+                                <h3 className="font-semibold text-lg">{t("pages.zeji.sections.recommended")}</h3>
                                 {auspiciousDates.length > 0 ? (
                                     auspiciousDates.map((date) => (
                                         <Card
@@ -210,7 +222,7 @@ export default function ZejiPage() {
                                 ) : (
                                     <Card>
                                         <CardContent className="p-6 text-center text-muted-foreground">
-                                            本月暂无推荐吉日
+                                            {t("pages.zeji.empty")}
                                         </CardContent>
                                     </Card>
                                 )}
@@ -218,7 +230,7 @@ export default function ZejiPage() {
 
                             {/* 日期详情 */}
                             <div className="space-y-4">
-                                <h3 className="font-semibold text-lg">日期详情</h3>
+                                <h3 className="font-semibold text-lg">{t("pages.zeji.sections.details")}</h3>
                                 {selectedDate ? (
                                     <Card>
                                         <CardHeader>
@@ -239,7 +251,9 @@ export default function ZejiPage() {
                                         </CardHeader>
                                         <CardContent className="space-y-4">
                                             <div className="p-4 rounded-lg bg-green-50 dark:bg-green-950/20">
-                                                <h4 className="font-medium text-green-700 dark:text-green-400 mb-2">✅ 宜</h4>
+                                                <h4 className="font-medium text-green-700 dark:text-green-400 mb-2">
+                                                    {t("pages.zeji.labels.yi")}
+                                                </h4>
                                                 <div className="flex flex-wrap gap-1">
                                                     {selectedDate.yi.map((item) => (
                                                         <Badge key={item} variant="secondary" className="bg-green-100 dark:bg-green-900/30">
@@ -249,7 +263,9 @@ export default function ZejiPage() {
                                                 </div>
                                             </div>
                                             <div className="p-4 rounded-lg bg-red-50 dark:bg-red-950/20">
-                                                <h4 className="font-medium text-red-700 dark:text-red-400 mb-2">❌ 忌</h4>
+                                                <h4 className="font-medium text-red-700 dark:text-red-400 mb-2">
+                                                    {t("pages.zeji.labels.ji")}
+                                                </h4>
                                                 <div className="flex flex-wrap gap-1">
                                                     {selectedDate.ji.map((item) => (
                                                         <Badge key={item} variant="secondary" className="bg-red-100 dark:bg-red-900/30">
@@ -264,7 +280,7 @@ export default function ZejiPage() {
                                     <Card>
                                         <CardContent className="p-6 text-center text-muted-foreground">
                                             <Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                                            点击左侧日期查看详情
+                                            {t("pages.zeji.emptyDetail")}
                                         </CardContent>
                                     </Card>
                                 )}

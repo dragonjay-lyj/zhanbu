@@ -5,6 +5,7 @@ export {
     localeConfig,
     getTranslations,
     t,
+    formatMessage,
     type Locale,
     type Translations,
 } from "./config"

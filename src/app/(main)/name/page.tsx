@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
+import { useTranslation, formatMessage } from "@/lib/i18n"
 
 // 五格结果接口
 interface WugeItem {
@@ -62,6 +63,7 @@ const luckColors: Record<string, string> = {
 }
 
 export default function NamePage() {
+    const { t } = useTranslation()
     const [surname, setSurname] = useState("")
     const [givenName, setGivenName] = useState("")
     const [isLoading, setIsLoading] = useState(false)
@@ -71,7 +73,7 @@ export default function NamePage() {
     // 计算姓名
     const calculateName = async () => {
         if (!surname.trim() || !givenName.trim()) {
-            setError("请输入完整的姓名")
+            setError(t("pages.name.errorIncomplete"))
             return
         }
 
@@ -90,10 +92,10 @@ export default function NamePage() {
             if (data.success) {
                 setResult(data.data)
             } else {
-                setError(data.error || "计算失败")
+                setError(data.error || t("pages.name.errorFailed"))
             }
         } catch {
-            setError("网络错误，请稍后重试")
+            setError(t("pages.name.errorNetwork"))
         } finally {
             setIsLoading(false)
         }
@@ -143,10 +145,10 @@ export default function NamePage() {
                     <User className="w-8 h-8 text-white" />
                 </div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                    姓名测算
+                    {t("pages.name.title")}
                 </h1>
                 <p className="text-muted-foreground mt-2">
-                    基于五格剖象法，分析姓名的数理吉凶
+                    {t("pages.name.description")}
                 </p>
             </div>
 
@@ -156,29 +158,29 @@ export default function NamePage() {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Calculator className="w-5 h-5" />
-                            输入姓名
+                            {t("pages.name.formTitle")}
                         </CardTitle>
                         <CardDescription>
-                            请输入您要测算的姓名（支持单姓和复姓）
+                            {t("pages.name.formDescription")}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="surname">姓氏</Label>
+                                <Label htmlFor="surname">{t("pages.name.surnameLabel")}</Label>
                                 <Input
                                     id="surname"
-                                    placeholder="如：王、欧阳"
+                                    placeholder={t("pages.name.surnamePlaceholder")}
                                     value={surname}
                                     onChange={(e) => setSurname(e.target.value)}
                                     maxLength={4}
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="givenName">名字</Label>
+                                <Label htmlFor="givenName">{t("pages.name.givenNameLabel")}</Label>
                                 <Input
                                     id="givenName"
-                                    placeholder="如：建国、小明"
+                                    placeholder={t("pages.name.givenNamePlaceholder")}
                                     value={givenName}
                                     onChange={(e) => setGivenName(e.target.value)}
                                     maxLength={4}
@@ -198,12 +200,12 @@ export default function NamePage() {
                             {isLoading ? (
                                 <>
                                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                    计算中...
+                                    {t("pages.name.calculating")}
                                 </>
                             ) : (
                                 <>
                                     <Sparkles className="w-4 h-4 mr-2" />
-                                    开始测算
+                                    {t("pages.name.start")}
                                 </>
                             )}
                         </Button>
@@ -223,14 +225,14 @@ export default function NamePage() {
                                         {result.surname}{result.givenName}
                                     </CardTitle>
                                     <CardDescription>
-                                        总笔画：{result.strokes.total} 画
+                                        {formatMessage(t("pages.name.totalStrokesLabel"), { total: result.strokes.total })}
                                     </CardDescription>
                                 </div>
                                 <div className="text-center">
                                     <div className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                                         {result.totalScore}
                                     </div>
-                                    <div className="text-sm text-muted-foreground">综合评分</div>
+                                    <div className="text-sm text-muted-foreground">{t("pages.name.totalScoreLabel")}</div>
                                 </div>
                             </div>
                         </CardHeader>
@@ -248,7 +250,7 @@ export default function NamePage() {
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
-                                三才配置
+                                {t("pages.name.sancaiTitle")}
                                 <Badge variant={result.sancai.luck === "凶" ? "destructive" : "secondary"}>
                                     {result.sancai.luck}
                                 </Badge>
@@ -258,9 +260,9 @@ export default function NamePage() {
                         <CardContent>
                             <div className="flex items-center justify-center gap-8">
                                 {[
-                                    { label: "天", value: result.sancai.tian },
-                                    { label: "人", value: result.sancai.ren },
-                                    { label: "地", value: result.sancai.di },
+                                    { label: t("pages.name.sancaiLabels.tian"), value: result.sancai.tian },
+                                    { label: t("pages.name.sancaiLabels.ren"), value: result.sancai.ren },
+                                    { label: t("pages.name.sancaiLabels.di"), value: result.sancai.di },
                                 ].map((item) => (
                                     <div key={item.label} className="text-center">
                                         <div className={cn(
@@ -277,7 +279,7 @@ export default function NamePage() {
                             <div className="mt-4 text-center">
                                 <Progress value={result.sancai.score} className="h-2 max-w-xs mx-auto" />
                                 <p className="text-sm text-muted-foreground mt-2">
-                                    三才评分：{result.sancai.score} 分
+                                    {formatMessage(t("pages.name.sancaiScoreLabel"), { score: result.sancai.score })}
                                 </p>
                             </div>
                         </CardContent>
@@ -285,15 +287,35 @@ export default function NamePage() {
 
                     {/* 五格详解 */}
                     <div>
-                        <h2 className="text-xl font-semibold mb-4">五格详解</h2>
+                        <h2 className="text-xl font-semibold mb-4">{t("pages.name.wugeTitle")}</h2>
                         <div className="grid gap-4 md:grid-cols-2">
-                            {renderWugeCard("天格", result.wuge.tianGe, "代表先天运势，由姓氏决定")}
-                            {renderWugeCard("人格", result.wuge.renGe, "代表主运，影响一生运势")}
-                            {renderWugeCard("地格", result.wuge.diGe, "代表前运，影响中年前")}
-                            {renderWugeCard("外格", result.wuge.waiGe, "代表副运，影响人际关系")}
+                            {renderWugeCard(
+                                t("pages.name.wugeLabels.tianGe"),
+                                result.wuge.tianGe,
+                                t("pages.name.wugeDesc.tianGe")
+                            )}
+                            {renderWugeCard(
+                                t("pages.name.wugeLabels.renGe"),
+                                result.wuge.renGe,
+                                t("pages.name.wugeDesc.renGe")
+                            )}
+                            {renderWugeCard(
+                                t("pages.name.wugeLabels.diGe"),
+                                result.wuge.diGe,
+                                t("pages.name.wugeDesc.diGe")
+                            )}
+                            {renderWugeCard(
+                                t("pages.name.wugeLabels.waiGe"),
+                                result.wuge.waiGe,
+                                t("pages.name.wugeDesc.waiGe")
+                            )}
                         </div>
                         <div className="mt-4">
-                            {renderWugeCard("总格", result.wuge.zongGe, "代表后运，影响中年后")}
+                            {renderWugeCard(
+                                t("pages.name.wugeLabels.zongGe"),
+                                result.wuge.zongGe,
+                                t("pages.name.wugeDesc.zongGe")
+                            )}
                         </div>
                     </div>
 
@@ -305,7 +327,7 @@ export default function NamePage() {
                             className="gap-2"
                         >
                             <RefreshCw className="w-4 h-4" />
-                            重新测算
+                            {t("pages.name.reset")}
                         </Button>
                     </div>
                 </div>

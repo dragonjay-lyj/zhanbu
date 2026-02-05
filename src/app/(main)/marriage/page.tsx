@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
+import { useTranslation, formatMessage } from "@/lib/i18n"
 
 // 分析结果类型
 interface MarriageResult {
@@ -48,6 +49,7 @@ const levelColors: Record<string, string> = {
 }
 
 export default function MarriagePage() {
+    const { t } = useTranslation()
     const [maleInfo, setMaleInfo] = useState({ year: "", month: "", day: "", hour: "" })
     const [femaleInfo, setFemaleInfo] = useState({ year: "", month: "", day: "", hour: "" })
     const [isLoading, setIsLoading] = useState(false)
@@ -120,10 +122,10 @@ export default function MarriagePage() {
                     <Heart className="w-8 h-8 text-white" />
                 </div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
-                    八字合婚
+                    {t("pages.marriage.title")}
                 </h1>
                 <p className="text-muted-foreground mt-2">
-                    输入双方生辰，分析姻缘契合度
+                    {t("pages.marriage.subtitle")}
                 </p>
             </div>
 
@@ -137,25 +139,25 @@ export default function MarriagePage() {
                                 <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
                                     <User className="w-4 h-4 text-white" />
                                 </div>
-                                男方生辰
+                                {t("pages.marriage.sections.male")}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <Label>出生年份</Label>
+                                    <Label>{t("pages.marriage.labels.birthYear")}</Label>
                                     <Input
                                         type="number"
-                                        placeholder="如 1990"
+                                        placeholder={t("pages.marriage.placeholders.year")}
                                         value={maleInfo.year}
                                         onChange={(e) => setMaleInfo({ ...maleInfo, year: e.target.value })}
                                     />
                                 </div>
                                 <div>
-                                    <Label>出生月份</Label>
+                                    <Label>{t("pages.marriage.labels.birthMonth")}</Label>
                                     <Input
                                         type="number"
-                                        placeholder="1-12"
+                                        placeholder={t("pages.marriage.placeholders.month")}
                                         min="1"
                                         max="12"
                                         value={maleInfo.month}
@@ -165,10 +167,10 @@ export default function MarriagePage() {
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <Label>出生日期</Label>
+                                    <Label>{t("pages.marriage.labels.birthDay")}</Label>
                                     <Input
                                         type="number"
-                                        placeholder="1-31"
+                                        placeholder={t("pages.marriage.placeholders.day")}
                                         min="1"
                                         max="31"
                                         value={maleInfo.day}
@@ -176,10 +178,10 @@ export default function MarriagePage() {
                                     />
                                 </div>
                                 <div>
-                                    <Label>出生时辰（可选）</Label>
+                                    <Label>{t("pages.marriage.labels.birthHourOptional")}</Label>
                                     <Input
                                         type="number"
-                                        placeholder="0-23"
+                                        placeholder={t("pages.marriage.placeholders.hour")}
                                         min="0"
                                         max="23"
                                         value={maleInfo.hour}
@@ -197,25 +199,25 @@ export default function MarriagePage() {
                                 <div className="w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center">
                                     <User className="w-4 h-4 text-white" />
                                 </div>
-                                女方生辰
+                                {t("pages.marriage.sections.female")}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <Label>出生年份</Label>
+                                    <Label>{t("pages.marriage.labels.birthYear")}</Label>
                                     <Input
                                         type="number"
-                                        placeholder="如 1992"
+                                        placeholder={t("pages.marriage.placeholders.yearFemale")}
                                         value={femaleInfo.year}
                                         onChange={(e) => setFemaleInfo({ ...femaleInfo, year: e.target.value })}
                                     />
                                 </div>
                                 <div>
-                                    <Label>出生月份</Label>
+                                    <Label>{t("pages.marriage.labels.birthMonth")}</Label>
                                     <Input
                                         type="number"
-                                        placeholder="1-12"
+                                        placeholder={t("pages.marriage.placeholders.month")}
                                         min="1"
                                         max="12"
                                         value={femaleInfo.month}
@@ -225,10 +227,10 @@ export default function MarriagePage() {
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <Label>出生日期</Label>
+                                    <Label>{t("pages.marriage.labels.birthDay")}</Label>
                                     <Input
                                         type="number"
-                                        placeholder="1-31"
+                                        placeholder={t("pages.marriage.placeholders.day")}
                                         min="1"
                                         max="31"
                                         value={femaleInfo.day}
@@ -236,10 +238,10 @@ export default function MarriagePage() {
                                     />
                                 </div>
                                 <div>
-                                    <Label>出生时辰（可选）</Label>
+                                    <Label>{t("pages.marriage.labels.birthHourOptional")}</Label>
                                     <Input
                                         type="number"
-                                        placeholder="0-23"
+                                        placeholder={t("pages.marriage.placeholders.hour")}
                                         min="0"
                                         max="23"
                                         value={femaleInfo.hour}
@@ -259,12 +261,12 @@ export default function MarriagePage() {
                             {isLoading ? (
                                 <>
                                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                    正在分析...
+                                    {t("pages.marriage.actions.analyzing")}
                                 </>
                             ) : (
                                 <>
                                     <Heart className="w-4 h-4 mr-2" />
-                                    开始合婚分析
+                                    {t("pages.marriage.actions.start")}
                                 </>
                             )}
                         </Button>
@@ -284,15 +286,21 @@ export default function MarriagePage() {
                             <div className="flex items-center justify-center gap-4 mb-4">
                                 <div className="text-center">
                                     <div className="text-4xl">🧑</div>
-                                    <p className="text-sm mt-1">属{result.male.bazi.shengxiao}</p>
+                                    <p className="text-sm mt-1">
+                                        {formatMessage(t("pages.marriage.result.zodiac"), { value: result.male.bazi.shengxiao })}
+                                    </p>
                                 </div>
                                 <div className="text-4xl">💕</div>
                                 <div className="text-center">
                                     <div className="text-4xl">👩</div>
-                                    <p className="text-sm mt-1">属{result.female.bazi.shengxiao}</p>
+                                    <p className="text-sm mt-1">
+                                        {formatMessage(t("pages.marriage.result.zodiac"), { value: result.female.bazi.shengxiao })}
+                                    </p>
                                 </div>
                             </div>
-                            <div className="text-5xl font-bold mb-2">{result.analysis.overall.score}分</div>
+                            <div className="text-5xl font-bold mb-2">
+                                {formatMessage(t("pages.marriage.scoreUnit"), { value: result.analysis.overall.score })}
+                            </div>
                             <Badge className="bg-white/20 text-lg px-4 py-1">
                                 {result.analysis.overall.level}
                             </Badge>
@@ -303,18 +311,18 @@ export default function MarriagePage() {
                     {/* 详细分析 */}
                     <Tabs defaultValue="shengxiao">
                         <TabsList className="grid w-full grid-cols-3">
-                            <TabsTrigger value="shengxiao">生肖配对</TabsTrigger>
-                            <TabsTrigger value="wuxing">五行互补</TabsTrigger>
-                            <TabsTrigger value="bazi">八字详情</TabsTrigger>
+                            <TabsTrigger value="shengxiao">{t("pages.marriage.tabs.shengxiao")}</TabsTrigger>
+                            <TabsTrigger value="wuxing">{t("pages.marriage.tabs.wuxing")}</TabsTrigger>
+                            <TabsTrigger value="bazi">{t("pages.marriage.tabs.bazi")}</TabsTrigger>
                         </TabsList>
 
                         <TabsContent value="shengxiao" className="mt-4">
                             <Card>
                                 <CardHeader>
                                     <CardTitle className="flex items-center justify-between">
-                                        <span>生肖配对分析</span>
+                                        <span>{t("pages.marriage.sections.shengxiaoAnalysis")}</span>
                                         <span className="text-2xl font-bold text-primary">
-                                            {result.analysis.shengxiao.score}分
+                                            {formatMessage(t("pages.marriage.scoreUnit"), { value: result.analysis.shengxiao.score })}
                                         </span>
                                     </CardTitle>
                                 </CardHeader>
@@ -342,16 +350,16 @@ export default function MarriagePage() {
                             <Card>
                                 <CardHeader>
                                     <CardTitle className="flex items-center justify-between">
-                                        <span>五行互补分析</span>
+                                        <span>{t("pages.marriage.sections.wuxingAnalysis")}</span>
                                         <span className="text-2xl font-bold text-primary">
-                                            {result.analysis.wuxing.score}分
+                                            {formatMessage(t("pages.marriage.scoreUnit"), { value: result.analysis.wuxing.score })}
                                         </span>
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-6">
                                     <div className="grid grid-cols-2 gap-6">
-                                        <WuxingBar distribution={result.male.wuxing} label="男方五行分布" />
-                                        <WuxingBar distribution={result.female.wuxing} label="女方五行分布" />
+                                        <WuxingBar distribution={result.male.wuxing} label={t("pages.marriage.sections.maleWuxing")} />
+                                        <WuxingBar distribution={result.female.wuxing} label={t("pages.marriage.sections.femaleWuxing")} />
                                     </div>
                                     {result.analysis.wuxing.details.length > 0 && (
                                         <div className="space-y-2">
@@ -371,11 +379,16 @@ export default function MarriagePage() {
                             <div className="grid gap-4 md:grid-cols-2">
                                 <Card>
                                     <CardHeader>
-                                        <CardTitle className="text-blue-600">男方八字</CardTitle>
+                                        <CardTitle className="text-blue-600">{t("pages.marriage.sections.maleBazi")}</CardTitle>
                                     </CardHeader>
                                     <CardContent>
                                         <div className="grid grid-cols-4 gap-2 text-center">
-                                            {["年柱", "月柱", "日柱", "时柱"].map((label, i) => {
+                                            {[
+                                                t("pages.bazi.pillars.year"),
+                                                t("pages.bazi.pillars.month"),
+                                                t("pages.bazi.pillars.day"),
+                                                t("pages.bazi.pillars.hour"),
+                                            ].map((label, i) => {
                                                 const value = [
                                                     result.male.bazi.year,
                                                     result.male.bazi.month,
@@ -396,11 +409,16 @@ export default function MarriagePage() {
                                 </Card>
                                 <Card>
                                     <CardHeader>
-                                        <CardTitle className="text-pink-600">女方八字</CardTitle>
+                                        <CardTitle className="text-pink-600">{t("pages.marriage.sections.femaleBazi")}</CardTitle>
                                     </CardHeader>
                                     <CardContent>
                                         <div className="grid grid-cols-4 gap-2 text-center">
-                                            {["年柱", "月柱", "日柱", "时柱"].map((label, i) => {
+                                            {[
+                                                t("pages.bazi.pillars.year"),
+                                                t("pages.bazi.pillars.month"),
+                                                t("pages.bazi.pillars.day"),
+                                                t("pages.bazi.pillars.hour"),
+                                            ].map((label, i) => {
                                                 const value = [
                                                     result.female.bazi.year,
                                                     result.female.bazi.month,
@@ -429,7 +447,7 @@ export default function MarriagePage() {
                         onClick={() => setResult(null)}
                         className="w-full"
                     >
-                        重新分析
+                        {t("pages.marriage.actions.reset")}
                     </Button>
                 </div>
             )}

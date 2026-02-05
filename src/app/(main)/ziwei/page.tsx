@@ -31,6 +31,7 @@ import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn, ZIWEI_STARS, ZIWEI_PALACES } from "@/lib/utils"
+import { useTranslation, formatMessage } from "@/lib/i18n"
 
 // 中国省份数据
 const provinces = [
@@ -85,6 +86,7 @@ interface ZiweiResult {
  */
 export default function ZiweiPage() {
     const { isSignedIn, user } = useUser()
+    const { t } = useTranslation()
     const [result, setResult] = useState<ZiweiResult | null>(null)
     const [isLoading, setIsLoading] = useState(false)
     const [aiAnalysis, setAiAnalysis] = useState<string | null>(null)
@@ -166,9 +168,9 @@ export default function ZiweiPage() {
                     <Hexagon className="h-8 w-8 text-violet-500" />
                 </div>
                 <div>
-                    <h1 className="font-serif text-3xl font-bold">紫微斗数排盘</h1>
+                    <h1 className="font-serif text-3xl font-bold">{t("pages.ziwei.title")}</h1>
                     <p className="text-muted-foreground">
-                        十二宫位深度解析，揭示命盘核心结构与人生运势
+                        {t("pages.ziwei.subtitle")}
                     </p>
                 </div>
             </div>
@@ -177,11 +179,11 @@ export default function ZiweiPage() {
                 <TabsList className="grid w-full max-w-md grid-cols-2">
                     <TabsTrigger value="input" className="cursor-pointer">
                         <User className="mr-2 h-4 w-4" />
-                        输入信息
+                        {t("pages.ziwei.tabs.input")}
                     </TabsTrigger>
                     <TabsTrigger value="result" disabled={!result} className="cursor-pointer">
                         <Sparkles className="mr-2 h-4 w-4" />
-                        命盘结果
+                        {t("pages.ziwei.tabs.result")}
                     </TabsTrigger>
                 </TabsList>
 
@@ -194,20 +196,20 @@ export default function ZiweiPage() {
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2">
                                         <User className="h-5 w-5" />
-                                        基本信息
+                                        {t("pages.ziwei.sections.basicInfo")}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="space-y-2">
-                                        <Label htmlFor="name">姓名</Label>
+                                        <Label htmlFor="name">{t("pages.ziwei.labels.name")}</Label>
                                         <Input
                                             id="name"
-                                            placeholder="请输入姓名"
+                                            placeholder={t("pages.ziwei.placeholders.name")}
                                             {...form.register("name")}
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label>性别</Label>
+                                        <Label>{t("pages.ziwei.labels.gender")}</Label>
                                         <div className="flex gap-4">
                                             <label className="flex items-center gap-2 cursor-pointer">
                                                 <input
@@ -216,7 +218,7 @@ export default function ZiweiPage() {
                                                     {...form.register("gender")}
                                                     className="w-4 h-4"
                                                 />
-                                                <span>男性 (阳)</span>
+                                                <span>{t("pages.ziwei.gender.male")}</span>
                                             </label>
                                             <label className="flex items-center gap-2 cursor-pointer">
                                                 <input
@@ -225,7 +227,7 @@ export default function ZiweiPage() {
                                                     {...form.register("gender")}
                                                     className="w-4 h-4"
                                                 />
-                                                <span>女性 (阴)</span>
+                                                <span>{t("pages.ziwei.gender.female")}</span>
                                             </label>
                                         </div>
                                     </div>
@@ -237,16 +239,16 @@ export default function ZiweiPage() {
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2">
                                         <Calendar className="h-5 w-5" />
-                                        出生时辰
+                                        {t("pages.ziwei.sections.birthTime")}
                                     </CardTitle>
                                     <CardDescription>
-                                        紫微斗数以时辰定命宫，请确保时辰准确
+                                        {t("pages.ziwei.sections.birthTimeDesc")}
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="grid grid-cols-3 gap-2">
                                         <div className="space-y-2">
-                                            <Label>年</Label>
+                                            <Label>{t("pages.ziwei.labels.year")}</Label>
                                             <Select
                                                 value={form.watch("birthYear")}
                                                 onValueChange={(v) => form.setValue("birthYear", v)}
@@ -257,14 +259,14 @@ export default function ZiweiPage() {
                                                 <SelectContent>
                                                     {years.map((year) => (
                                                         <SelectItem key={year} value={year.toString()} className="cursor-pointer">
-                                                            {year}年
+                                                            {formatMessage(t("pages.ziwei.options.year"), { value: year })}
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>
                                             </Select>
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>月</Label>
+                                            <Label>{t("pages.ziwei.labels.month")}</Label>
                                             <Select
                                                 value={form.watch("birthMonth")}
                                                 onValueChange={(v) => form.setValue("birthMonth", v)}
@@ -275,14 +277,14 @@ export default function ZiweiPage() {
                                                 <SelectContent>
                                                     {months.map((month) => (
                                                         <SelectItem key={month} value={month.toString()} className="cursor-pointer">
-                                                            {month}月
+                                                            {formatMessage(t("pages.ziwei.options.month"), { value: month })}
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>
                                             </Select>
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>日</Label>
+                                            <Label>{t("pages.ziwei.labels.day")}</Label>
                                             <Select
                                                 value={form.watch("birthDay")}
                                                 onValueChange={(v) => form.setValue("birthDay", v)}
@@ -293,7 +295,7 @@ export default function ZiweiPage() {
                                                 <SelectContent>
                                                     {days.map((day) => (
                                                         <SelectItem key={day} value={day.toString()} className="cursor-pointer">
-                                                            {day}日
+                                                            {formatMessage(t("pages.ziwei.options.day"), { value: day })}
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>
@@ -301,7 +303,7 @@ export default function ZiweiPage() {
                                         </div>
                                     </div>
                                     <div className="space-y-2">
-                                        <Label>时辰</Label>
+                                        <Label>{t("pages.ziwei.labels.hour")}</Label>
                                         <Select
                                             value={form.watch("birthHour")}
                                             onValueChange={(v) => form.setValue("birthHour", v)}
@@ -325,7 +327,7 @@ export default function ZiweiPage() {
                                             onCheckedChange={(v) => form.setValue("isLunar", v)}
                                         />
                                         <Label htmlFor="isLunar" className="cursor-pointer">
-                                            农历日期
+                                            {t("pages.ziwei.labels.lunarDate")}
                                         </Label>
                                     </div>
                                 </CardContent>
@@ -334,7 +336,7 @@ export default function ZiweiPage() {
                             {/* 盘式选择 */}
                             <Card className="md:col-span-2">
                                 <CardHeader>
-                                    <CardTitle>盘式选择</CardTitle>
+                                    <CardTitle>{t("pages.ziwei.sections.chartType")}</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="flex gap-4">
@@ -345,7 +347,7 @@ export default function ZiweiPage() {
                                                 {...form.register("chartType")}
                                                 className="w-4 h-4"
                                             />
-                                            <span>先天盘 (本命盘)</span>
+                                            <span>{t("pages.ziwei.chartTypes.natal")}</span>
                                         </label>
                                         <label className="flex items-center gap-2 cursor-pointer">
                                             <input
@@ -354,12 +356,12 @@ export default function ZiweiPage() {
                                                 {...form.register("chartType")}
                                                 className="w-4 h-4"
                                             />
-                                            <span>流年盘</span>
+                                            <span>{t("pages.ziwei.chartTypes.flow")}</span>
                                         </label>
                                     </div>
                                     {form.watch("chartType") === "flow_year" && (
                                         <div className="space-y-2 max-w-xs">
-                                            <Label>流年年份</Label>
+                                            <Label>{t("pages.ziwei.labels.flowYear")}</Label>
                                             <Select
                                                 value={form.watch("flowYear")}
                                                 onValueChange={(v) => form.setValue("flowYear", v)}
@@ -370,7 +372,7 @@ export default function ZiweiPage() {
                                                 <SelectContent>
                                                     {years.map((year) => (
                                                         <SelectItem key={year} value={year.toString()} className="cursor-pointer">
-                                                            {year}年
+                                                            {formatMessage(t("pages.ziwei.options.year"), { value: year })}
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>
@@ -392,12 +394,12 @@ export default function ZiweiPage() {
                                         {isLoading ? (
                                             <>
                                                 <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                                                排盘中...
+                                                {t("pages.ziwei.actions.calculating")}
                                             </>
                                         ) : (
                                             <>
                                                 <Sparkles className="mr-2 h-4 w-4" />
-                                                开始排盘
+                                                {t("pages.ziwei.actions.start")}
                                             </>
                                         )}
                                     </Button>
@@ -423,12 +425,16 @@ export default function ZiweiPage() {
                                             className="cursor-pointer"
                                         >
                                             <ChevronLeft className="h-4 w-4" />
-                                            上一大运
+                                            {t("pages.ziwei.dayun.prev")}
                                         </Button>
                                         <div className="text-center">
-                                            <div className="text-sm text-muted-foreground">当前大运</div>
+                                            <div className="text-sm text-muted-foreground">{t("pages.ziwei.dayun.current")}</div>
                                             <div className="font-serif text-xl font-bold">
-                                                第 {currentDayun} 大运 ({result.dayunStart + (currentDayun - 1) * 10} - {result.dayunStart + currentDayun * 10 - 1} 岁)
+                                                {formatMessage(t("pages.ziwei.dayun.label"), {
+                                                    index: currentDayun,
+                                                    start: result.dayunStart + (currentDayun - 1) * 10,
+                                                    end: result.dayunStart + currentDayun * 10 - 1,
+                                                })}
                                             </div>
                                         </div>
                                         <Button
@@ -438,7 +444,7 @@ export default function ZiweiPage() {
                                             disabled={currentDayun === 12}
                                             className="cursor-pointer"
                                         >
-                                            下一大运
+                                            {t("pages.ziwei.dayun.next")}
                                             <ChevronRight className="h-4 w-4" />
                                         </Button>
                                     </div>
@@ -450,7 +456,7 @@ export default function ZiweiPage() {
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2">
                                         <Hexagon className="h-5 w-5" />
-                                        紫微命盘
+                                        {t("pages.ziwei.sections.chart")}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
@@ -458,12 +464,16 @@ export default function ZiweiPage() {
                                         {/* 中央空白区域 */}
                                         <div className="col-start-2 col-span-2 row-start-2 row-span-2 flex items-center justify-center bg-gradient-to-br from-primary/5 to-secondary/5 rounded-lg border border-dashed">
                                             <div className="text-center p-4">
-                                                <div className="font-serif text-lg font-bold text-primary mb-1">紫微斗数</div>
+                                                <div className="font-serif text-lg font-bold text-primary mb-1">{t("pages.ziwei.center.title")}</div>
                                                 <div className="text-sm text-muted-foreground">
-                                                    命宫: {ZIWEI_PALACES[result.mingGong]}
+                                                    {formatMessage(t("pages.ziwei.center.mingGong"), {
+                                                        palace: ZIWEI_PALACES[result.mingGong],
+                                                    })}
                                                 </div>
                                                 <div className="text-sm text-muted-foreground">
-                                                    身宫: {ZIWEI_PALACES[result.shenGong]}
+                                                    {formatMessage(t("pages.ziwei.center.shenGong"), {
+                                                        palace: ZIWEI_PALACES[result.shenGong],
+                                                    })}
                                                 </div>
                                             </div>
                                         </div>
@@ -491,8 +501,8 @@ export default function ZiweiPage() {
                                                 >
                                                     <div className="text-xs text-muted-foreground flex items-center gap-1">
                                                         {palace.name}
-                                                        {isMing && <Badge variant="default" className="text-[10px] px-1">命</Badge>}
-                                                        {isShen && <Badge variant="secondary" className="text-[10px] px-1">身</Badge>}
+                                                        {isMing && <Badge variant="default" className="text-[10px] px-1">{t("pages.ziwei.badges.ming")}</Badge>}
+                                                        {isShen && <Badge variant="secondary" className="text-[10px] px-1">{t("pages.ziwei.badges.shen")}</Badge>}
                                                     </div>
                                                     {palace.mainStar && (
                                                         <div className={cn(
@@ -523,19 +533,21 @@ export default function ZiweiPage() {
                                     <CardHeader>
                                         <CardTitle className="flex items-center gap-2">
                                             <Info className="h-5 w-5" />
-                                            {result.palaces[selectedPalace].name}详解
+                                            {formatMessage(t("pages.ziwei.palace.detailTitle"), {
+                                                name: result.palaces[selectedPalace].name,
+                                            })}
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent>
                                         <div className="grid gap-4 md:grid-cols-2">
                                             <div>
-                                                <h4 className="font-semibold mb-2">主星</h4>
+                                                <h4 className="font-semibold mb-2">{t("pages.ziwei.palace.mainStar")}</h4>
                                                 <div className="font-serif text-2xl text-primary">
-                                                    {result.palaces[selectedPalace].mainStar || "无主星"}
+                                                    {result.palaces[selectedPalace].mainStar || t("pages.ziwei.palace.noMainStar")}
                                                 </div>
                                             </div>
                                             <div>
-                                                <h4 className="font-semibold mb-2">其他星曜</h4>
+                                                <h4 className="font-semibold mb-2">{t("pages.ziwei.palace.otherStars")}</h4>
                                                 <div className="flex flex-wrap gap-2">
                                                     {result.palaces[selectedPalace].otherStars.map((star) => (
                                                         <Badge key={star} variant="outline">
@@ -551,15 +563,15 @@ export default function ZiweiPage() {
 
                             {/* AI 解读区域 */}
                             <Card className={cn(
-                                "border-2",
-                                isSignedIn ? "border-primary/50 bg-primary/5" : "border-dashed"
-                            )}>
+                                                "border-2",
+                                                isSignedIn ? "border-primary/50 bg-primary/5" : "border-dashed"
+                                            )}>
                                 <CardContent className="pt-6">
                                     {isSignedIn ? (
                                         <div className="space-y-4">
                                             <div className="flex items-center gap-2">
                                                 <Brain className="h-5 w-5 text-primary" />
-                                                <h3 className="font-semibold">AI 智能解读</h3>
+                                                <h3 className="font-semibold">{t("ai.analysis.title")}</h3>
                                             </div>
                                             {aiAnalysis ? (
                                                 <div className="prose prose-sm dark:prose-invert max-w-none">
@@ -573,7 +585,12 @@ export default function ZiweiPage() {
                                                         setIsAnalyzing(true)
                                                         // 模拟 AI 分析
                                                         await new Promise(resolve => setTimeout(resolve, 2000))
-                                                        setAiAnalysis(`您好，${user?.firstName || "用户"}！\n\n根据您的紫微命盘分析：\n\n1. 命宫主星为${result?.palaces[result?.mingGong || 0]?.mainStar || "紫微"}，显示您具有领导才能和贵人运。\n\n2. 您的命盘格局属于"紫府同宫"，主富贵双全，一生多有贵人相助。\n\n3. 财帛宫有化禄，显示财运亨通，适合经商或投资。\n\n4. 建议在事业上保持谦逊，多与贵人合作，可获更大成就。`)
+                                                        setAiAnalysis(
+                                                            formatMessage(t("pages.ziwei.aiSample"), {
+                                                                name: user?.firstName || t("nav.userFallback"),
+                                                                mainStar: result?.palaces[result?.mingGong || 0]?.mainStar || t("pages.ziwei.defaultStar"),
+                                                            })
+                                                        )
                                                         setIsAnalyzing(false)
                                                     }}
                                                     disabled={isAnalyzing}
@@ -582,12 +599,12 @@ export default function ZiweiPage() {
                                                     {isAnalyzing ? (
                                                         <>
                                                             <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                                                            AI 分析中...
+                                                            {t("ai.analysis.analyzing")}
                                                         </>
                                                     ) : (
                                                         <>
                                                             <Sparkles className="mr-2 h-4 w-4" />
-                                                            获取 AI 深度解读
+                                                            {t("ai.analysis.fetch")}
                                                         </>
                                                     )}
                                                 </Button>
@@ -596,12 +613,12 @@ export default function ZiweiPage() {
                                     ) : (
                                         <div className="text-center">
                                             <Sparkles className="h-8 w-8 text-muted-foreground mx-auto mb-4" />
-                                            <h3 className="font-semibold mb-2">AI 深度解读</h3>
+                                            <h3 className="font-semibold mb-2">{t("ai.analysis.title")}</h3>
                                             <p className="text-sm text-muted-foreground mb-4">
-                                                登录后获取 AI 智能分析，深入解读您的紫微命盘
+                                                {t("ai.analysis.loginPrompt")}
                                             </p>
                                             <Button variant="outline" className="cursor-pointer" asChild>
-                                                <a href="/sign-in">登录获取解读</a>
+                                                <a href="/sign-in">{t("ai.analysis.loginAction")}</a>
                                             </Button>
                                         </div>
                                     )}
@@ -615,7 +632,7 @@ export default function ZiweiPage() {
                                     className="cursor-pointer"
                                 >
                                     <RefreshCw className="mr-2 h-4 w-4" />
-                                    重新排盘
+                                    {t("pages.ziwei.actions.reset")}
                                 </Button>
                             </div>
                         </div>

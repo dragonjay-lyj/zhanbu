@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
+import { useTranslation, formatMessage } from "@/lib/i18n"
 
 // 梦境分类
 interface DreamCategory {
@@ -33,6 +34,7 @@ const fortuneColors: Record<string, string> = {
 }
 
 export default function JiemengPage() {
+    const { t } = useTranslation()
     const [categories, setCategories] = useState<DreamCategory[]>([])
     const [searchKeyword, setSearchKeyword] = useState("")
     const [isLoading, setIsLoading] = useState(false)
@@ -97,10 +99,10 @@ export default function JiemengPage() {
                     <Moon className="w-8 h-8 text-white" />
                 </div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                    周公解梦
+                    {t("pages.jiemeng.title")}
                 </h1>
                 <p className="text-muted-foreground mt-2">
-                    输入梦境关键词，解读梦的寓意
+                    {t("pages.jiemeng.subtitle")}
                 </p>
             </div>
 
@@ -111,7 +113,7 @@ export default function JiemengPage() {
                         <div className="relative flex-1">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                             <Input
-                                placeholder="输入梦境关键词，如：蛇、飞、水..."
+                                placeholder={t("pages.jiemeng.search.placeholder")}
                                 value={searchKeyword}
                                 onChange={(e) => setSearchKeyword(e.target.value)}
                                 onKeyDown={(e) => e.key === "Enter" && searchDream(searchKeyword)}
@@ -126,7 +128,7 @@ export default function JiemengPage() {
                             {isLoading ? (
                                 <Loader2 className="w-4 h-4 animate-spin" />
                             ) : (
-                                "解梦"
+                                t("pages.jiemeng.actions.search")
                             )}
                         </Button>
                     </div>
@@ -145,8 +147,10 @@ export default function JiemengPage() {
                                         <div className="flex items-center gap-3">
                                             <BookOpen className="w-8 h-8" />
                                             <div>
-                                                <h2 className="text-2xl font-bold">梦见{result.keyword}</h2>
-                                                <p className="text-white/80 text-sm">周公解梦典籍解读</p>
+                                                <h2 className="text-2xl font-bold">
+                                                    {formatMessage(t("pages.jiemeng.result.title"), { keyword: result.keyword })}
+                                                </h2>
+                                                <p className="text-white/80 text-sm">{t("pages.jiemeng.result.source")}</p>
                                             </div>
                                         </div>
                                         <Badge className={getFortuneColor(result.interpretation.fortune)}>
@@ -158,7 +162,7 @@ export default function JiemengPage() {
                                     <div>
                                         <h3 className="font-medium flex items-center gap-2 mb-2">
                                             <Sparkles className="w-4 h-4 text-purple-500" />
-                                            梦境解读
+                                            {t("pages.jiemeng.result.interpretationTitle")}
                                         </h3>
                                         <p className="text-muted-foreground leading-relaxed">
                                             {result.interpretation.meaning}
@@ -166,13 +170,13 @@ export default function JiemengPage() {
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="p-4 rounded-lg bg-muted/50">
-                                            <h4 className="font-medium mb-1">🔮 运势预示</h4>
+                                            <h4 className="font-medium mb-1">{t("pages.jiemeng.result.fortuneTitle")}</h4>
                                             <p className="text-sm text-muted-foreground">
                                                 {result.interpretation.fortune}
                                             </p>
                                         </div>
                                         <div className="p-4 rounded-lg bg-muted/50">
-                                            <h4 className="font-medium mb-1">💡 建议</h4>
+                                            <h4 className="font-medium mb-1">{t("pages.jiemeng.result.adviceTitle")}</h4>
                                             <p className="text-sm text-muted-foreground">
                                                 {result.interpretation.advice}
                                             </p>
@@ -185,7 +189,7 @@ export default function JiemengPage() {
                             {result.related && result.related.length > 0 && (
                                 <Card>
                                     <CardHeader>
-                                        <CardTitle className="text-lg">相关梦境</CardTitle>
+                                        <CardTitle className="text-lg">{t("pages.jiemeng.related.title")}</CardTitle>
                                     </CardHeader>
                                     <CardContent>
                                         <div className="flex flex-wrap gap-2">
@@ -207,9 +211,9 @@ export default function JiemengPage() {
                     ) : result.suggestions && result.suggestions.length > 0 ? (
                         <Card>
                             <CardHeader>
-                                <CardTitle>您可能想搜索</CardTitle>
+                                <CardTitle>{t("pages.jiemeng.suggestions.title")}</CardTitle>
                                 <CardDescription>
-                                    未找到「{result.keyword}」的精确解释，以下是相关结果
+                                    {formatMessage(t("pages.jiemeng.suggestions.subtitle"), { keyword: result.keyword })}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
@@ -233,7 +237,7 @@ export default function JiemengPage() {
                             <CardContent className="pt-6 text-center">
                                 <Moon className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
                                 <p className="text-muted-foreground">
-                                    {result.message || "未找到相关解释，请尝试其他关键词"}
+                                    {result.message || t("pages.jiemeng.empty")}
                                 </p>
                             </CardContent>
                         </Card>
@@ -244,7 +248,7 @@ export default function JiemengPage() {
             {/* 梦境分类 */}
             {!result && (
                 <div className="space-y-6">
-                    <h2 className="text-xl font-semibold">热门梦境分类</h2>
+                    <h2 className="text-xl font-semibold">{t("pages.jiemeng.categories.title")}</h2>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                         {categories.map((category) => (
                             <Card key={category.id} className="hover:shadow-md transition-shadow">

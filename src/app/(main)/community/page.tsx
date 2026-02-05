@@ -26,6 +26,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
+import { useI18n, useTranslation, formatMessage } from "@/lib/i18n"
 
 // 帖子类型
 interface Post {
@@ -58,20 +59,9 @@ const categoryColors: Record<string, string> = {
     "help": "bg-orange-100 text-orange-800",
 }
 
-// 时间格式化
-function formatTime(dateStr: string) {
-    const date = new Date(dateStr)
-    const now = new Date()
-    const diff = now.getTime() - date.getTime()
-
-    if (diff < 60000) return "刚刚"
-    if (diff < 3600000) return `${Math.floor(diff / 60000)}分钟前`
-    if (diff < 86400000) return `${Math.floor(diff / 3600000)}小时前`
-    if (diff < 604800000) return `${Math.floor(diff / 86400000)}天前`
-    return date.toLocaleDateString("zh-CN")
-}
-
 export default function CommunityPage() {
+    const { locale } = useI18n()
+    const { t } = useTranslation()
     const [posts, setPosts] = useState<Post[]>([])
     const [categories, setCategories] = useState<Category[]>([])
     const [isLoading, setIsLoading] = useState(true)
@@ -135,6 +125,30 @@ export default function CommunityPage() {
         post.content.toLowerCase().includes(searchQuery.toLowerCase())
     )
 
+    const formatTime = (dateStr: string) => {
+        const date = new Date(dateStr)
+        const now = new Date()
+        const diff = now.getTime() - date.getTime()
+
+        if (diff < 60000) return t("pages.community.time.justNow")
+        if (diff < 3600000) {
+            return formatMessage(t("pages.community.time.minutesAgo"), {
+                value: Math.floor(diff / 60000),
+            })
+        }
+        if (diff < 86400000) {
+            return formatMessage(t("pages.community.time.hoursAgo"), {
+                value: Math.floor(diff / 3600000),
+            })
+        }
+        if (diff < 604800000) {
+            return formatMessage(t("pages.community.time.daysAgo"), {
+                value: Math.floor(diff / 86400000),
+            })
+        }
+        return date.toLocaleDateString(locale)
+    }
+
     return (
         <div className="container mx-auto px-4 py-8">
             {/* 页面标题 */}
@@ -142,37 +156,37 @@ export default function CommunityPage() {
                 <div>
                     <h1 className="text-3xl font-bold flex items-center gap-2">
                         <MessageSquare className="w-8 h-8 text-primary" />
-                        占卜社区
+                        {t("pages.community.title")}
                     </h1>
                     <p className="text-muted-foreground mt-1">
-                        分享占卜心得，交流命理知识
+                        {t("pages.community.description")}
                     </p>
                 </div>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
                         <Button className="bg-gradient-to-r from-purple-500 to-pink-500">
                             <Plus className="w-4 h-4 mr-2" />
-                            发布帖子
+                            {t("pages.community.postButton")}
                         </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-lg">
                         <DialogHeader>
-                            <DialogTitle>发布新帖子</DialogTitle>
+                            <DialogTitle>{t("pages.community.dialogTitle")}</DialogTitle>
                             <DialogDescription>
-                                分享你的占卜经验或提出问题
+                                {t("pages.community.dialogDescription")}
                             </DialogDescription>
                         </DialogHeader>
                         <div className="space-y-4 mt-4">
                             <div>
-                                <Label>标题</Label>
+                                <Label>{t("pages.community.titleLabel")}</Label>
                                 <Input
-                                    placeholder="输入帖子标题"
+                                    placeholder={t("pages.community.titlePlaceholder")}
                                     value={newPost.title}
                                     onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
                                 />
                             </div>
                             <div>
-                                <Label>分类</Label>
+                                <Label>{t("pages.community.categoryLabel")}</Label>
                                 <Select
                                     value={newPost.category}
                                     onValueChange={(v) => setNewPost({ ...newPost, category: v })}
@@ -190,9 +204,9 @@ export default function CommunityPage() {
                                 </Select>
                             </div>
                             <div>
-                                <Label>内容</Label>
+                                <Label>{t("pages.community.contentLabel")}</Label>
                                 <Textarea
-                                    placeholder="详细描述..."
+                                    placeholder={t("pages.community.contentPlaceholder")}
                                     rows={6}
                                     value={newPost.content}
                                     onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
@@ -204,7 +218,7 @@ export default function CommunityPage() {
                                 className="w-full"
                             >
                                 {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                                发布
+                                {t("pages.community.submit")}
                             </Button>
                         </div>
                     </DialogContent>
@@ -216,7 +230,7 @@ export default function CommunityPage() {
                 <div className="lg:col-span-1">
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-lg">分类</CardTitle>
+                            <CardTitle className="text-lg">{t("pages.community.categories")}</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2">
                             <Button
@@ -224,7 +238,7 @@ export default function CommunityPage() {
                                 className="w-full justify-start"
                                 onClick={() => setActiveCategory("all")}
                             >
-                                📋 全部帖子
+                                📋 {t("pages.community.allPosts")}
                             </Button>
                             {categories.map((cat) => (
                                 <Button
@@ -246,7 +260,7 @@ export default function CommunityPage() {
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <Input
-                            placeholder="搜索帖子..."
+                            placeholder={t("pages.community.searchPlaceholder")}
                             className="pl-10"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
@@ -261,7 +275,7 @@ export default function CommunityPage() {
                     ) : filteredPosts.length === 0 ? (
                         <Card>
                             <CardContent className="py-12 text-center text-muted-foreground">
-                                暂无帖子，快来发布第一个吧！
+                                {t("pages.community.empty")}
                             </CardContent>
                         </Card>
                     ) : (

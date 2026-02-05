@@ -28,6 +28,7 @@ import { Badge } from "@/components/ui/badge"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import { AIAnalysisSection } from "@/components/ai/ai-analysis-section"
+import { useTranslation, formatMessage } from "@/lib/i18n"
 
 // 八卦数据
 const BA_GUA = {
@@ -92,6 +93,7 @@ interface HexagramResult {
  * 六爻排盘页面
  */
 export default function LiuyaoPage() {
+    const { t } = useTranslation()
     const [step, setStep] = useState<"question" | "cast" | "result">("question")
     const [question, setQuestion] = useState("")
     const [category, setCategory] = useState("")
@@ -101,6 +103,21 @@ export default function LiuyaoPage() {
     const [lines, setLines] = useState<YaoLine[]>([])
     const [result, setResult] = useState<HexagramResult | null>(null)
     const [isLoading, setIsLoading] = useState(false)
+
+    const categoryOptions = [
+        { value: "事业", label: t("pages.liuyao.categories.career") },
+        { value: "感情", label: t("pages.liuyao.categories.love") },
+        { value: "财运", label: t("pages.liuyao.categories.wealth") },
+        { value: "健康", label: t("pages.liuyao.categories.health") },
+        { value: "学业", label: t("pages.liuyao.categories.study") },
+        { value: "其他", label: t("pages.liuyao.categories.other") },
+    ]
+
+    const castMethods = [
+        { value: "coin", label: t("pages.liuyao.methods.coin"), icon: Coins },
+        { value: "time", label: t("pages.liuyao.methods.time"), icon: Clock },
+        { value: "number", label: t("pages.liuyao.methods.number"), icon: Hash },
+    ]
 
     // 模拟摇铜钱
     const shakeCoin = useCallback(async () => {
@@ -235,9 +252,9 @@ export default function LiuyaoPage() {
                     <Coins className="h-8 w-8 text-primary" />
                 </div>
                 <div>
-                    <h1 className="font-serif text-3xl font-bold">六爻排盘</h1>
+                    <h1 className="font-serif text-3xl font-bold">{t("pages.liuyao.title")}</h1>
                     <p className="text-muted-foreground">
-                        传统铜钱摇卦，AI 智能解读卦象吉凶
+                        {t("pages.liuyao.subtitle")}
                     </p>
                 </div>
             </div>
@@ -248,34 +265,33 @@ export default function LiuyaoPage() {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Info className="h-5 w-5" />
-                            设定问题
+                            {t("pages.liuyao.question.title")}
                         </CardTitle>
                         <CardDescription>
-                            心中默念所问之事，诚心求卦
+                            {t("pages.liuyao.question.description")}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="space-y-2">
-                            <Label>问卦类别</Label>
+                            <Label>{t("pages.liuyao.labels.category")}</Label>
                             <Select value={category} onValueChange={setCategory}>
                                 <SelectTrigger className="cursor-pointer">
-                                    <SelectValue placeholder="选择问卦类别" />
+                                    <SelectValue placeholder={t("pages.liuyao.placeholders.category")} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="事业" className="cursor-pointer">事业工作</SelectItem>
-                                    <SelectItem value="感情" className="cursor-pointer">感情婚姻</SelectItem>
-                                    <SelectItem value="财运" className="cursor-pointer">财运投资</SelectItem>
-                                    <SelectItem value="健康" className="cursor-pointer">健康疾病</SelectItem>
-                                    <SelectItem value="学业" className="cursor-pointer">学业考试</SelectItem>
-                                    <SelectItem value="其他" className="cursor-pointer">其他事项</SelectItem>
+                                    {categoryOptions.map((option) => (
+                                        <SelectItem key={option.value} value={option.value} className="cursor-pointer">
+                                            {option.label}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         </div>
 
                         <div className="space-y-2">
-                            <Label>具体问题（可选）</Label>
+                            <Label>{t("pages.liuyao.labels.question")}</Label>
                             <Textarea
-                                placeholder="请描述您想询问的具体问题..."
+                                placeholder={t("pages.liuyao.placeholders.question")}
                                 value={question}
                                 onChange={(e) => setQuestion(e.target.value)}
                                 rows={3}
@@ -283,13 +299,9 @@ export default function LiuyaoPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <Label>起卦方式</Label>
+                            <Label>{t("pages.liuyao.labels.method")}</Label>
                             <div className="grid grid-cols-3 gap-2">
-                                {[
-                                    { value: "coin", label: "铜钱摇卦", icon: Coins },
-                                    { value: "time", label: "时间起卦", icon: Clock },
-                                    { value: "number", label: "数字起卦", icon: Hash },
-                                ].map((method) => (
+                                {castMethods.map((method) => (
                                     <Button
                                         key={method.value}
                                         variant={castMethod === method.value ? "default" : "outline"}
@@ -309,7 +321,7 @@ export default function LiuyaoPage() {
                             onClick={() => setStep("cast")}
                         >
                             <ChevronRight className="mr-2 h-4 w-4" />
-                            开始起卦
+                            {t("pages.liuyao.actions.start")}
                         </Button>
                     </CardContent>
                 </Card>
@@ -324,10 +336,13 @@ export default function LiuyaoPage() {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <Coins className="h-5 w-5" />
-                                    铜钱摇卦
+                                    {t("pages.liuyao.methods.coin")}
                                 </CardTitle>
                                 <CardDescription>
-                                    第 {Math.min(currentYao + 1, 6)} / 6 爻
+                                    {formatMessage(t("pages.liuyao.cast.progress"), {
+                                        current: Math.min(currentYao + 1, 6),
+                                        total: 6,
+                                    })}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-6">
@@ -339,7 +354,7 @@ export default function LiuyaoPage() {
                                             className="flex items-center gap-4 p-3 rounded-lg bg-muted/50"
                                         >
                                             <span className="text-sm text-muted-foreground w-12">
-                                                第{line.position}爻
+                                                {formatMessage(t("pages.liuyao.cast.lineIndex"), { value: line.position })}
                                             </span>
                                             <div className="flex-1 flex items-center gap-2">
                                                 {/* 爻符号 */}
@@ -365,7 +380,7 @@ export default function LiuyaoPage() {
                                                                     c === 1 ? "bg-yellow-500 text-yellow-950" : "bg-gray-300 text-gray-700"
                                                                 )}
                                                             >
-                                                                {c === 1 ? "花" : "字"}
+                                                                {c === 1 ? t("pages.liuyao.coin.flower") : t("pages.liuyao.coin.text")}
                                                             </div>
                                                         ))}
                                                     </div>
@@ -373,10 +388,10 @@ export default function LiuyaoPage() {
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <Badge variant="outline">
-                                                    {line.type === "yang" ? "阳" : "阴"}
+                                                    {line.type === "yang" ? t("pages.liuyao.labels.yang") : t("pages.liuyao.labels.yin")}
                                                 </Badge>
                                                 {line.changing && (
-                                                    <Badge variant="destructive">变</Badge>
+                                                    <Badge variant="destructive">{t("pages.liuyao.labels.changing")}</Badge>
                                                 )}
                                             </div>
                                         </div>
@@ -395,17 +410,17 @@ export default function LiuyaoPage() {
                                             {isShaking ? (
                                                 <>
                                                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                                                    摇卦中...
+                                                    {t("pages.liuyao.actions.shaking")}
                                                 </>
                                             ) : (
                                                 <>
                                                     <Dices className="mr-2 h-5 w-5" />
-                                                    摇第 {currentYao + 1} 爻
+                                                    {formatMessage(t("pages.liuyao.actions.shake"), { value: currentYao + 1 })}
                                                 </>
                                             )}
                                         </Button>
                                         <p className="text-sm text-muted-foreground mt-2">
-                                            心中默念问题，点击按钮摇卦
+                                            {t("pages.liuyao.hints.shake")}
                                         </p>
                                     </div>
                                 )}
@@ -419,10 +434,10 @@ export default function LiuyaoPage() {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <Clock className="h-5 w-5" />
-                                    时间起卦
+                                    {t("pages.liuyao.methods.time")}
                                 </CardTitle>
                                 <CardDescription>
-                                    以当前时间自动起卦
+                                    {t("pages.liuyao.time.description")}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="text-center space-y-4">
@@ -435,7 +450,7 @@ export default function LiuyaoPage() {
                                     className="cursor-pointer"
                                 >
                                     <Sparkles className="mr-2 h-5 w-5" />
-                                    立即起卦
+                                    {t("pages.liuyao.actions.castNow")}
                                 </Button>
                             </CardContent>
                         </Card>
@@ -451,7 +466,7 @@ export default function LiuyaoPage() {
                         {/* 本卦 */}
                         <Card>
                             <CardHeader>
-                                <CardTitle>本卦</CardTitle>
+                                <CardTitle>{t("pages.liuyao.result.base")}</CardTitle>
                                 <CardDescription className="font-serif text-2xl text-foreground">
                                     {result.benGua.name}
                                 </CardDescription>
@@ -464,7 +479,11 @@ export default function LiuyaoPage() {
                                             className="flex items-center gap-4"
                                         >
                                             <span className="text-xs text-muted-foreground w-8">
-                                                {line.position === result.shiYao ? "世" : line.position === result.yingYao ? "应" : `${line.position}爻`}
+                                                {line.position === result.shiYao
+                                                    ? t("pages.liuyao.labels.shi")
+                                                    : line.position === result.yingYao
+                                                        ? t("pages.liuyao.labels.ying")
+                                                        : formatMessage(t("pages.liuyao.cast.lineIndexShort"), { value: line.position })}
                                             </span>
                                             <div className="flex items-center gap-1">
                                                 {line.type === "yang" ? (
@@ -482,7 +501,7 @@ export default function LiuyaoPage() {
                                                 {line.liuQin}
                                             </Badge>
                                             {line.changing && (
-                                                <Badge variant="destructive" className="text-xs">○</Badge>
+                                                <Badge variant="destructive" className="text-xs">{t("pages.liuyao.labels.changingSymbol")}</Badge>
                                             )}
                                         </div>
                                     ))}
@@ -494,7 +513,7 @@ export default function LiuyaoPage() {
                         {result.bianGua && (
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>变卦</CardTitle>
+                                    <CardTitle>{t("pages.liuyao.result.changed")}</CardTitle>
                                     <CardDescription className="font-serif text-2xl text-foreground">
                                         {result.bianGua.name}
                                     </CardDescription>
@@ -512,7 +531,7 @@ export default function LiuyaoPage() {
                                                     className="flex items-center gap-4"
                                                 >
                                                     <span className="text-xs text-muted-foreground w-8">
-                                                        {line.position}爻
+                                                        {formatMessage(t("pages.liuyao.cast.lineIndexShort"), { value: line.position })}
                                                     </span>
                                                     <div className="flex items-center gap-1">
                                                         {changedType === "yang" ? (
@@ -535,7 +554,7 @@ export default function LiuyaoPage() {
                     </div>
 
                     {/* AI 解读 */}
-                    <AIAnalysisSection type="liuyao" title="AI 卦象解读" />
+                    <AIAnalysisSection type="liuyao" title={t("pages.liuyao.aiTitle")} />
 
                     {/* 重新起卦 */}
                     <div className="text-center">
@@ -545,7 +564,7 @@ export default function LiuyaoPage() {
                             className="cursor-pointer"
                         >
                             <RefreshCw className="mr-2 h-4 w-4" />
-                            重新起卦
+                            {t("pages.liuyao.actions.reset")}
                         </Button>
                     </div>
                 </div>

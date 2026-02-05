@@ -23,6 +23,7 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useMembership } from "@/lib/membership"
+import { useI18n, useTranslation, formatMessage } from "@/lib/i18n"
 
 interface StatsData {
     totalFortunes: number
@@ -41,6 +42,8 @@ interface StatsData {
  * 用户个人中心页面
  */
 export default function ProfilePage() {
+    const { locale } = useI18n()
+    const { t } = useTranslation()
     const { user, isLoaded } = useUser()
     const { membership, isLoading: membershipLoading } = useMembership()
     const [stats, setStats] = useState<StatsData | null>(null)
@@ -71,17 +74,17 @@ export default function ProfilePage() {
     }
 
     const formatDate = (dateStr: string) => {
-        return new Date(dateStr).toLocaleDateString("zh-CN")
+        return new Date(dateStr).toLocaleDateString(locale)
     }
 
     const getTypeLabel = (type: string) => {
         const labels: Record<string, string> = {
-            bazi: "八字",
-            ziwei: "紫微",
-            liuyao: "六爻",
-            meihua: "梅花",
-            tarot: "塔罗",
-            daily: "每日运势",
+            bazi: t("pages.profile.types.bazi"),
+            ziwei: t("pages.profile.types.ziwei"),
+            liuyao: t("pages.profile.types.liuyao"),
+            meihua: t("pages.profile.types.meihua"),
+            tarot: t("pages.profile.types.tarot"),
+            daily: t("pages.profile.types.daily"),
         }
         return labels[type] || type
     }
@@ -97,9 +100,9 @@ export default function ProfilePage() {
     if (!user) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-                <p className="text-muted-foreground">请先登录</p>
+                <p className="text-muted-foreground">{t("pages.profile.auth.required")}</p>
                 <Link href="/sign-in">
-                    <Button className="cursor-pointer">前往登录</Button>
+                    <Button className="cursor-pointer">{t("pages.profile.auth.action")}</Button>
                 </Link>
             </div>
         )
@@ -113,15 +116,15 @@ export default function ProfilePage() {
         <div className="space-y-8">
             {/* 页面标题 */}
             <div>
-                <h1 className="text-3xl font-bold">个人中心</h1>
-                <p className="text-muted-foreground">管理您的账户信息和偏好设置</p>
+                <h1 className="text-3xl font-bold">{t("pages.profile.title")}</h1>
+                <p className="text-muted-foreground">{t("pages.profile.subtitle")}</p>
             </div>
 
             <Tabs defaultValue="overview" className="space-y-6">
                 <TabsList>
-                    <TabsTrigger value="overview" className="cursor-pointer">概览</TabsTrigger>
-                    <TabsTrigger value="preferences" className="cursor-pointer">偏好设置</TabsTrigger>
-                    <TabsTrigger value="security" className="cursor-pointer">安全设置</TabsTrigger>
+                    <TabsTrigger value="overview" className="cursor-pointer">{t("pages.profile.tabs.overview")}</TabsTrigger>
+                    <TabsTrigger value="preferences" className="cursor-pointer">{t("pages.profile.tabs.preferences")}</TabsTrigger>
+                    <TabsTrigger value="security" className="cursor-pointer">{t("pages.profile.tabs.security")}</TabsTrigger>
                 </TabsList>
 
                 {/* 概览 */}
@@ -132,7 +135,7 @@ export default function ProfilePage() {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <User className="h-5 w-5" />
-                                    账户信息
+                                    {t("pages.profile.sections.account")}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
@@ -146,7 +149,7 @@ export default function ProfilePage() {
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-lg">
-                                            {user.fullName || user.username || "用户"}
+                                            {user.fullName || user.username || t("nav.userFallback")}
                                         </h3>
                                         <p className="text-sm text-muted-foreground flex items-center gap-1">
                                             <Mail className="h-3 w-3" />
@@ -157,7 +160,9 @@ export default function ProfilePage() {
 
                                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                     <Calendar className="h-4 w-4" />
-                                    注册于 {user.createdAt ? new Date(user.createdAt).toLocaleDateString("zh-CN") : "-"}
+                                    {formatMessage(t("pages.profile.labels.registeredAt"), {
+                                        date: user.createdAt ? new Date(user.createdAt).toLocaleDateString(locale) : "-",
+                                    })}
                                 </div>
                             </CardContent>
                         </Card>
@@ -167,13 +172,13 @@ export default function ProfilePage() {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <Sparkles className="h-5 w-5" />
-                                    今日配额
+                                    {t("pages.profile.sections.quota")}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
                                     <div className="flex justify-between text-sm">
-                                        <span>已使用</span>
+                                        <span>{t("pages.profile.labels.used")}</span>
                                         <span>
                                             {quotaUsed} / {membership?.dailyQuota === "无限" ? "∞" : quotaTotal}
                                         </span>
@@ -184,12 +189,12 @@ export default function ProfilePage() {
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                         <Crown className={membership?.isPremium ? "h-5 w-5 text-amber-500" : "h-5 w-5 text-muted-foreground"} />
-                                        <span>{membership?.planName || "免费版"}</span>
+                                        <span>{membership?.planName || t("pages.profile.labels.freePlan")}</span>
                                     </div>
                                     {!membership?.isPremium && (
                                         <Link href="/pricing">
                                             <Button size="sm" variant="outline" className="cursor-pointer">
-                                                升级
+                                                {t("pages.profile.actions.upgrade")}
                                             </Button>
                                         </Link>
                                     )}
@@ -203,19 +208,19 @@ export default function ProfilePage() {
                         <Card>
                             <CardContent className="pt-6 text-center">
                                 <div className="text-3xl font-bold">{stats?.totalFortunes || 0}</div>
-                                <p className="text-sm text-muted-foreground">总占卜次数</p>
+                                <p className="text-sm text-muted-foreground">{t("pages.profile.stats.total")}</p>
                             </CardContent>
                         </Card>
                         <Card>
                             <CardContent className="pt-6 text-center">
                                 <div className="text-3xl font-bold">{stats?.monthlyFortunes || 0}</div>
-                                <p className="text-sm text-muted-foreground">本月占卜</p>
+                                <p className="text-sm text-muted-foreground">{t("pages.profile.stats.monthly")}</p>
                             </CardContent>
                         </Card>
                         <Card>
                             <CardContent className="pt-6 text-center">
                                 <div className="text-3xl font-bold">{stats?.favoriteType || "-"}</div>
-                                <p className="text-sm text-muted-foreground">最爱占卜</p>
+                                <p className="text-sm text-muted-foreground">{t("pages.profile.stats.favorite")}</p>
                             </CardContent>
                         </Card>
                     </div>
@@ -223,10 +228,10 @@ export default function ProfilePage() {
                     {/* 最近占卜 */}
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between">
-                            <CardTitle>最近占卜</CardTitle>
+                            <CardTitle>{t("pages.profile.recent.title")}</CardTitle>
                             <Link href="/history">
                                 <Button variant="ghost" size="sm" className="cursor-pointer">
-                                    查看全部
+                                    {t("pages.profile.recent.viewAll")}
                                     <ChevronRight className="ml-1 h-4 w-4" />
                                 </Button>
                             </Link>
@@ -243,7 +248,7 @@ export default function ProfilePage() {
                                                 <div className="flex items-center gap-2">
                                                     <Badge variant="outline">{getTypeLabel(fortune.type)}</Badge>
                                                     <span className="text-sm font-medium">
-                                                        {fortune.title || fortune.question?.slice(0, 30) || "占卜记录"}
+                                                        {fortune.title || fortune.question?.slice(0, 30) || t("pages.profile.recent.fallbackTitle")}
                                                     </span>
                                                 </div>
                                             </div>
@@ -254,7 +259,7 @@ export default function ProfilePage() {
                                     ))}
                                 </div>
                             ) : (
-                                <p className="text-center text-muted-foreground py-8">暂无占卜记录</p>
+                                <p className="text-center text-muted-foreground py-8">{t("pages.profile.recent.empty")}</p>
                             )}
                         </CardContent>
                     </Card>
@@ -266,15 +271,15 @@ export default function ProfilePage() {
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Bell className="h-5 w-5" />
-                                通知设置
+                                {t("pages.profile.preferences.title")}
                             </CardTitle>
-                            <CardDescription>管理您的通知偏好</CardDescription>
+                            <CardDescription>{t("pages.profile.preferences.subtitle")}</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <Label>推送通知</Label>
-                                    <p className="text-sm text-muted-foreground">接收占卜提醒和运势推送</p>
+                                    <Label>{t("pages.profile.preferences.push.title")}</Label>
+                                    <p className="text-sm text-muted-foreground">{t("pages.profile.preferences.push.desc")}</p>
                                 </div>
                                 <Switch
                                     checked={notificationsEnabled}
@@ -283,8 +288,8 @@ export default function ProfilePage() {
                             </div>
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <Label>邮件订阅</Label>
-                                    <p className="text-sm text-muted-foreground">接收每周运势报告和优惠信息</p>
+                                    <Label>{t("pages.profile.preferences.email.title")}</Label>
+                                    <p className="text-sm text-muted-foreground">{t("pages.profile.preferences.email.desc")}</p>
                                 </div>
                                 <Switch
                                     checked={emailUpdates}
@@ -301,34 +306,39 @@ export default function ProfilePage() {
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Shield className="h-5 w-5" />
-                                安全设置
+                                {t("pages.profile.security.title")}
                             </CardTitle>
-                            <CardDescription>管理您的账户安全</CardDescription>
+                            <CardDescription>{t("pages.profile.security.subtitle")}</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="flex items-center justify-between p-4 rounded-lg border">
                                 <div>
-                                    <h4 className="font-medium">邮箱验证</h4>
+                                    <h4 className="font-medium">{t("pages.profile.security.emailTitle")}</h4>
                                     <p className="text-sm text-muted-foreground">
                                         {user.primaryEmailAddress?.emailAddress}
                                     </p>
                                 </div>
-                                <Badge variant="secondary">已验证</Badge>
+                                <Badge variant="secondary">{t("pages.profile.security.verified")}</Badge>
                             </div>
 
                             <div className="flex items-center justify-between p-4 rounded-lg border">
                                 <div>
-                                    <h4 className="font-medium">会员状态</h4>
+                                    <h4 className="font-medium">{t("pages.profile.security.membershipTitle")}</h4>
                                     <p className="text-sm text-muted-foreground">
                                         {membership?.isPremium
-                                            ? `${membership.planName}，${membership.expiresAt ? formatDate(membership.expiresAt) + " 到期" : "永久有效"}`
-                                            : "免费用户"}
+                                            ? formatMessage(t("pages.profile.security.membershipPremium"), {
+                                                plan: membership.planName,
+                                                expires: membership.expiresAt
+                                                    ? formatMessage(t("pages.profile.security.expiresAt"), { date: formatDate(membership.expiresAt) })
+                                                    : t("pages.profile.security.expiresNever"),
+                                            })
+                                            : t("pages.profile.security.freeUser")}
                                     </p>
                                 </div>
                                 <Link href="/pricing">
                                     <Button variant="outline" size="sm" className="cursor-pointer">
                                         <CreditCard className="mr-2 h-4 w-4" />
-                                        {membership?.isPremium ? "续费" : "升级"}
+                                        {membership?.isPremium ? t("pages.profile.actions.renew") : t("pages.profile.actions.upgrade")}
                                     </Button>
                                 </Link>
                             </div>

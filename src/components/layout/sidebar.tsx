@@ -39,90 +39,91 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion"
+import { useTranslation } from "@/lib/i18n"
 
 // 导航配置
 const navigation = [
     {
-        title: "首页",
+        titleKey: "sidebar.sections.home",
         href: "/",
         icon: Sparkles,
     },
     {
-        title: "八字命理",
+        titleKey: "sidebar.sections.bazi",
         icon: LayoutGrid,
         items: [
-            { title: "八字排盘", href: "/bazi", description: "AI 智能八字分析" },
-            { title: "每日运势", href: "/daily", description: "每日吉凶预测" },
-            { title: "合婚分析", href: "/marriage", description: "八字配对分析" },
+            { titleKey: "sidebar.items.bazi", href: "/bazi", descriptionKey: "sidebar.descriptions.bazi" },
+            { titleKey: "sidebar.items.daily", href: "/daily", descriptionKey: "sidebar.descriptions.daily" },
+            { titleKey: "sidebar.items.marriage", href: "/marriage", descriptionKey: "sidebar.descriptions.marriage" },
         ],
     },
     {
-        title: "紫微斗数",
+        titleKey: "sidebar.sections.ziwei",
         icon: Hexagon,
         items: [
-            { title: "紫微排盘", href: "/ziwei", description: "十二宫位深度解析" },
+            { titleKey: "sidebar.items.ziwei", href: "/ziwei", descriptionKey: "sidebar.descriptions.ziwei" },
         ],
     },
     {
-        title: "六爻占卜",
+        titleKey: "sidebar.sections.liuyao",
         icon: Layers,
         items: [
-            { title: "六爻排盘", href: "/liuyao", description: "铜钱摇卦预测" },
-            { title: "梅花易数", href: "/meihua", description: "心易决策分析" },
+            { titleKey: "sidebar.items.liuyao", href: "/liuyao", descriptionKey: "sidebar.descriptions.liuyao" },
+            { titleKey: "sidebar.items.meihua", href: "/meihua", descriptionKey: "sidebar.descriptions.meihua" },
         ],
     },
     {
-        title: "塔罗占卜",
+        titleKey: "sidebar.sections.tarot",
         icon: Flower2,
         items: [
-            { title: "塔罗解读", href: "/tarot", description: "多种牌阵解读" },
+            { titleKey: "sidebar.items.tarot", href: "/tarot", descriptionKey: "sidebar.descriptions.tarot" },
         ],
     },
     {
-        title: "关系分析",
+        titleKey: "sidebar.sections.relationship",
         icon: Heart,
         items: [
-            { title: "商业合作", href: "/relationship/business", description: "合伙人匹配分析", icon: Briefcase },
-            { title: "闺蜜分析", href: "/relationship/friendship", description: "友谊契合度分析", icon: Users },
-            { title: "婆媳关系", href: "/relationship/in-law", description: "家庭关系分析", icon: UserCheck },
-            { title: "亲子关系", href: "/relationship/parent-child", description: "教育指导分析", icon: Baby },
-            { title: "职场关系", href: "/relationship/workplace", description: "上下级关系分析", icon: Building2 },
+            { titleKey: "sidebar.items.relationshipBusiness", href: "/relationship/business", descriptionKey: "sidebar.descriptions.relationshipBusiness", icon: Briefcase },
+            { titleKey: "sidebar.items.relationshipFriendship", href: "/relationship/friendship", descriptionKey: "sidebar.descriptions.relationshipFriendship", icon: Users },
+            { titleKey: "sidebar.items.relationshipInLaw", href: "/relationship/in-law", descriptionKey: "sidebar.descriptions.relationshipInLaw", icon: UserCheck },
+            { titleKey: "sidebar.items.relationshipParentChild", href: "/relationship/parent-child", descriptionKey: "sidebar.descriptions.relationshipParentChild", icon: Baby },
+            { titleKey: "sidebar.items.relationshipWorkplace", href: "/relationship/workplace", descriptionKey: "sidebar.descriptions.relationshipWorkplace", icon: Building2 },
         ],
     },
     {
-        title: "黄历查询",
+        titleKey: "sidebar.sections.huangli",
         href: "/huangli",
         icon: Calendar,
     },
     {
-        title: "运势预测",
+        titleKey: "sidebar.sections.fortune",
         icon: Star,
         items: [
-            { title: "星座运势", href: "/zodiac", description: "十二星座运势预测" },
-            { title: "生肖运程", href: "/shengxiao", description: "十二生肖年运月运" },
-            { title: "流年运势", href: "/liunian", description: "年度运势走向" },
-            { title: "每日运势", href: "/daily", description: "今日运势指引" },
+            { titleKey: "sidebar.items.zodiac", href: "/zodiac", descriptionKey: "sidebar.descriptions.zodiac" },
+            { titleKey: "sidebar.items.shengxiao", href: "/shengxiao", descriptionKey: "sidebar.descriptions.shengxiao" },
+            { titleKey: "sidebar.items.liunian", href: "/liunian", descriptionKey: "sidebar.descriptions.liunian" },
+            { titleKey: "sidebar.items.daily", href: "/daily", descriptionKey: "sidebar.descriptions.dailyFortune" },
         ],
     },
     {
-        title: "传统占卜",
+        titleKey: "sidebar.sections.traditional",
         icon: BookOpen,
         items: [
-            { title: "抽签占卜", href: "/qianwen", description: "观音灵签、月老灵签" },
-            { title: "周公解梦", href: "/jiemeng", description: "梦境解析" },
-            { title: "择吉选日", href: "/zeji", description: "婚嫁、开业吉日" },
+            { titleKey: "sidebar.items.qianwen", href: "/qianwen", descriptionKey: "sidebar.descriptions.qianwen" },
+            { titleKey: "sidebar.items.jiemeng", href: "/jiemeng", descriptionKey: "sidebar.descriptions.jiemeng" },
+            { titleKey: "sidebar.items.zeji", href: "/zeji", descriptionKey: "sidebar.descriptions.zeji" },
         ],
     },
     {
-        title: "智能服务",
+        titleKey: "sidebar.sections.smart",
         icon: Bot,
         items: [
-            { title: "姓名测算", href: "/name", description: "五格剖象姓名分析" },
-            { title: "AI 对话", href: "/ai-chat", description: "AI 占卜大师" },
+            { titleKey: "sidebar.items.name", href: "/name", descriptionKey: "sidebar.descriptions.name" },
+            { titleKey: "sidebar.items.aiChat", href: "/ai-chat", descriptionKey: "sidebar.descriptions.aiChat" },
         ],
     },
     {
-        title: "占卜社区",
+        titleKey: "sidebar.sections.community",
         href: "/community",
         icon: MessageCircle,
     },
@@ -130,10 +131,10 @@ const navigation = [
 
 // 高级功能（需要更多开发）
 const advancedNavigation = [
-    { title: "奇门遁甲", href: "/qimen", icon: Compass },
-    { title: "大六壬", href: "/liuren", icon: Hexagon },
-    { title: "金口诀", href: "/jinkouque", icon: MoonIcon },
-    { title: "玄空风水", href: "/fengshui", icon: Building2 },
+    { titleKey: "sidebar.advancedItems.qimen", href: "/qimen", icon: Compass },
+    { titleKey: "sidebar.advancedItems.liuren", href: "/liuren", icon: Hexagon },
+    { titleKey: "sidebar.advancedItems.jinkouque", href: "/jinkouque", icon: MoonIcon },
+    { titleKey: "sidebar.advancedItems.fengshui", href: "/fengshui", icon: Building2 },
 ]
 
 /**
@@ -142,13 +143,14 @@ const advancedNavigation = [
  */
 export function Sidebar() {
     const pathname = usePathname()
+    const { t } = useTranslation()
 
     return (
         <div className="flex h-full flex-col bg-sidebar">
             {/* Logo */}
             <div className="flex h-16 items-center gap-2 border-b border-sidebar-border px-6">
                 <Sparkles className="h-6 w-6 text-sidebar-primary" />
-                <span className="font-serif text-lg font-bold">ZhanBu 占卜</span>
+                <span className="font-serif text-lg font-bold">{t("sidebar.logo")}</span>
             </div>
 
             {/* 导航区域 */}
@@ -171,7 +173,7 @@ export function Sidebar() {
                                     )}
                                 >
                                     <item.icon className="h-4 w-4" />
-                                    {item.title}
+                                    {t(item.titleKey)}
                                 </Link>
                             )
                         }
@@ -179,12 +181,12 @@ export function Sidebar() {
                         // 折叠菜单
                         return (
                             <Accordion
-                                key={item.title}
+                                key={item.titleKey}
                                 type="single"
                                 collapsible
                                 className="w-full"
                             >
-                                <AccordionItem value={item.title} className="border-none">
+                                <AccordionItem value={item.titleKey} className="border-none">
                                     <AccordionTrigger
                                         className={cn(
                                             "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:no-underline",
@@ -195,7 +197,7 @@ export function Sidebar() {
                                     >
                                         <div className="flex items-center gap-3">
                                             <item.icon className="h-4 w-4" />
-                                            {item.title}
+                                            {t(item.titleKey)}
                                         </div>
                                     </AccordionTrigger>
                                     <AccordionContent className="pb-1 pt-1">
@@ -216,7 +218,7 @@ export function Sidebar() {
                                                         )}
                                                     >
                                                         {SubIcon && <SubIcon className="h-3.5 w-3.5" />}
-                                                        {subItem.title}
+                                                        {t(subItem.titleKey)}
                                                     </Link>
                                                 )
                                             })}
@@ -233,7 +235,7 @@ export function Sidebar() {
                 {/* 高级功能 */}
                 <div className="px-3 py-2">
                     <h4 className="mb-2 text-xs font-semibold text-sidebar-foreground/50 uppercase tracking-wider">
-                        高级功能
+                        {t("sidebar.advanced")}
                     </h4>
                     <div className="space-y-1">
                         {advancedNavigation.map((item) => {
@@ -251,7 +253,7 @@ export function Sidebar() {
                                     )}
                                 >
                                     <item.icon className="h-4 w-4" />
-                                    {item.title}
+                                    {t(item.titleKey)}
                                 </Link>
                             )
                         })}
@@ -272,7 +274,7 @@ export function Sidebar() {
                     )}
                 >
                     <User className="h-4 w-4" />
-                    个人中心
+                    {t("sidebar.footer.profile")}
                 </Link>
                 <Link
                     href="/history"
@@ -285,7 +287,7 @@ export function Sidebar() {
                     )}
                 >
                     <History className="h-4 w-4" />
-                    历史记录
+                    {t("sidebar.footer.history")}
                 </Link>
                 <Link
                     href="/pricing"
@@ -298,7 +300,7 @@ export function Sidebar() {
                     )}
                 >
                     <Crown className="h-4 w-4" />
-                    升级会员
+                    {t("sidebar.footer.pricing")}
                 </Link>
                 <Link
                     href="/admin"
@@ -309,7 +311,7 @@ export function Sidebar() {
                     )}
                 >
                     <Settings className="h-4 w-4" />
-                    管理后台
+                    {t("sidebar.footer.admin")}
                 </Link>
             </div>
         </div>

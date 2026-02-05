@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
+import { useTranslation, formatMessage } from "@/lib/i18n"
 
 // 生肖数据接口
 interface ZodiacAnimal {
@@ -56,6 +57,7 @@ const taisuiColors: Record<string, string> = {
 }
 
 export default function ShengxiaoPage() {
+    const { t } = useTranslation()
     const [animals, setAnimals] = useState<ZodiacAnimal[]>([])
     const [selectedAnimal, setSelectedAnimal] = useState<ZodiacAnimal | null>(null)
     const [period, setPeriod] = useState<"year" | "month">("year")
@@ -115,10 +117,10 @@ export default function ShengxiaoPage() {
                     <span className="text-3xl">🐲</span>
                 </div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
-                    生肖运程
+                    {t("pages.shengxiao.title")}
                 </h1>
                 <p className="text-muted-foreground mt-2">
-                    {currentYear} 年十二生肖运势预测
+                    {formatMessage(t("pages.shengxiao.description"), { year: currentYear })}
                 </p>
             </div>
 
@@ -157,10 +159,10 @@ export default function ShengxiaoPage() {
                                     <div className="text-6xl">{selectedAnimal.emoji}</div>
                                     <div>
                                         <CardTitle className="text-2xl">
-                                            {selectedAnimal.name}年生人
+                                            {formatMessage(t("pages.shengxiao.cardTitle"), { animal: selectedAnimal.name })}
                                         </CardTitle>
                                         <CardDescription className="text-white/80">
-                                            {selectedAnimal.years.join("、")} 年出生
+                                            {formatMessage(t("pages.shengxiao.bornYears"), { years: selectedAnimal.years.join("、") })}
                                         </CardDescription>
                                     </div>
                                 </div>
@@ -171,7 +173,7 @@ export default function ShengxiaoPage() {
                                         setFortune(null)
                                     }}
                                 >
-                                    切换生肖
+                                    {t("pages.shengxiao.switchAnimal")}
                                 </Button>
                             </div>
                         </CardHeader>
@@ -185,11 +187,17 @@ export default function ShengxiaoPage() {
                                     <AlertTriangle className="w-6 h-6 text-red-500" />
                                     <div>
                                         <h4 className="font-medium text-red-700 dark:text-red-400">
-                                            {currentYear}年{fortune.taisui.status}
+                                            {formatMessage(t("pages.shengxiao.taisuiTitle"), {
+                                                year: currentYear,
+                                                status: fortune.taisui.status,
+                                            })}
                                         </h4>
                                         <p className="text-sm text-red-600 dark:text-red-300">
-                                            今年为{fortune.taisui.yearAnimal.name}年，生肖{selectedAnimal.name}{fortune.taisui.status}，
-                                            建议佩戴红绳或本命佛化解。
+                                            {formatMessage(t("pages.shengxiao.taisuiDesc"), {
+                                                animal: fortune.taisui.yearAnimal.name,
+                                                self: selectedAnimal.name,
+                                                status: fortune.taisui.status,
+                                            })}
                                         </p>
                                     </div>
                                 </div>
@@ -200,8 +208,8 @@ export default function ShengxiaoPage() {
                     {/* 周期选择 */}
                     <Tabs value={period} onValueChange={(v) => setPeriod(v as "year" | "month")}>
                         <TabsList className="grid w-full grid-cols-2">
-                            <TabsTrigger value="year">年度运程</TabsTrigger>
-                            <TabsTrigger value="month">本月运程</TabsTrigger>
+                            <TabsTrigger value="year">{t("pages.shengxiao.periodYear")}</TabsTrigger>
+                            <TabsTrigger value="month">{t("pages.shengxiao.periodMonth")}</TabsTrigger>
                         </TabsList>
 
                         <TabsContent value={period} className="mt-6">
@@ -217,16 +225,18 @@ export default function ShengxiaoPage() {
                                             <div className="flex items-center justify-between">
                                                 <div className="flex items-center gap-2">
                                                     <Sparkles className="w-5 h-5 text-primary" />
-                                                    <CardTitle>综合运势</CardTitle>
+                                                    <CardTitle>{t("pages.shengxiao.overall")}</CardTitle>
                                                     <Badge className={taisuiColors[fortune.taisui.status]}>
-                                                        {fortune.taisui.status === "无" ? "平安年" : fortune.taisui.status}
+                                                        {fortune.taisui.status === "无"
+                                                            ? t("pages.shengxiao.safeYear")
+                                                            : fortune.taisui.status}
                                                     </Badge>
                                                 </div>
                                                 <div className={cn(
                                                     "text-3xl font-bold",
                                                     getScoreColor(fortune.fortune.scores.overall)
                                                 )}>
-                                                    {fortune.fortune.scores.overall}分
+                                                    {fortune.fortune.scores.overall}{t("pages.shengxiao.scoreUnit")}
                                                 </div>
                                             </div>
                                         </CardHeader>
@@ -234,7 +244,7 @@ export default function ShengxiaoPage() {
                                             <Progress value={fortune.fortune.scores.overall} className="h-3 mb-4" />
                                             <p className="text-muted-foreground mb-4">{fortune.fortune.description}</p>
                                             <div className="p-4 rounded-lg bg-muted/50">
-                                                <p className="text-sm font-medium">💡 开运建议</p>
+                                                <p className="text-sm font-medium">{t("pages.shengxiao.adviceTitle")}</p>
                                                 <p className="text-sm text-muted-foreground mt-1">{fortune.fortune.advice}</p>
                                             </div>
                                         </CardContent>
@@ -247,7 +257,7 @@ export default function ShengxiaoPage() {
                                                 <Badge variant="secondary" className="text-lg px-3 py-1">
                                                     {fortune.fortune.lucky.colors}
                                                 </Badge>
-                                                <p className="text-sm text-muted-foreground mt-2">幸运颜色</p>
+                                                <p className="text-sm text-muted-foreground mt-2">{t("pages.shengxiao.luckyColor")}</p>
                                             </CardContent>
                                         </Card>
                                         <Card className="text-center">
@@ -255,7 +265,7 @@ export default function ShengxiaoPage() {
                                                 <div className="text-xl font-bold text-primary">
                                                     {fortune.fortune.lucky.numbers.join("、")}
                                                 </div>
-                                                <p className="text-sm text-muted-foreground mt-2">幸运数字</p>
+                                                <p className="text-sm text-muted-foreground mt-2">{t("pages.shengxiao.luckyNumber")}</p>
                                             </CardContent>
                                         </Card>
                                         <Card className="text-center">
@@ -263,7 +273,7 @@ export default function ShengxiaoPage() {
                                                 <div className="text-xl font-bold text-primary">
                                                     {fortune.fortune.lucky.direction}方
                                                 </div>
-                                                <p className="text-sm text-muted-foreground mt-2">幸运方位</p>
+                                                <p className="text-sm text-muted-foreground mt-2">{t("pages.shengxiao.luckyDirection")}</p>
                                             </CardContent>
                                         </Card>
                                     </div>
@@ -271,10 +281,10 @@ export default function ShengxiaoPage() {
                                     {/* 各项运势 */}
                                     <div className="grid gap-4 md:grid-cols-2">
                                         {[
-                                            { icon: <Briefcase className="w-5 h-5 text-blue-500" />, title: "事业运势", score: fortune.fortune.scores.career },
-                                            { icon: <Coins className="w-5 h-5 text-yellow-500" />, title: "财富运势", score: fortune.fortune.scores.wealth },
-                                            { icon: <Heart className="w-5 h-5 text-pink-500" />, title: "感情运势", score: fortune.fortune.scores.love },
-                                            { icon: <Activity className="w-5 h-5 text-green-500" />, title: "健康运势", score: fortune.fortune.scores.health },
+                                            { icon: <Briefcase className="w-5 h-5 text-blue-500" />, title: t("pages.shengxiao.career"), score: fortune.fortune.scores.career },
+                                            { icon: <Coins className="w-5 h-5 text-yellow-500" />, title: t("pages.shengxiao.wealth"), score: fortune.fortune.scores.wealth },
+                                            { icon: <Heart className="w-5 h-5 text-pink-500" />, title: t("pages.shengxiao.love"), score: fortune.fortune.scores.love },
+                                            { icon: <Activity className="w-5 h-5 text-green-500" />, title: t("pages.shengxiao.health"), score: fortune.fortune.scores.health },
                                         ].map((item) => (
                                             <Card key={item.title}>
                                                 <CardContent className="pt-6">
@@ -284,7 +294,7 @@ export default function ShengxiaoPage() {
                                                             <span className="font-medium">{item.title}</span>
                                                         </div>
                                                         <span className={cn("font-bold", getScoreColor(item.score))}>
-                                                            {item.score}分
+                                                            {item.score}{t("pages.shengxiao.scoreUnit")}
                                                         </span>
                                                     </div>
                                                     <Progress value={item.score} className="h-2" />

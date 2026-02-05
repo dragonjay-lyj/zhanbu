@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
+import { useTranslation } from "@/lib/i18n"
 
 // 星座数据
 interface ZodiacSign {
@@ -44,6 +45,7 @@ const zodiacPatterns: Record<string, string> = {
 }
 
 export default function ZodiacPage() {
+    const { t } = useTranslation()
     const [signs, setSigns] = useState<ZodiacSign[]>([])
     const [selectedSign, setSelectedSign] = useState<ZodiacSign | null>(null)
     const [period, setPeriod] = useState<"daily" | "weekly" | "monthly">("daily")
@@ -108,7 +110,7 @@ export default function ZodiacPage() {
                         <div className="flex items-center justify-between mb-2">
                             <h4 className="font-medium">{title}</h4>
                             <span className={cn("font-bold", getScoreColor(data.score))}>
-                                {data.score}分
+                                {data.score}{t("pages.zodiac.scoreUnit")}
                             </span>
                         </div>
                         <Progress value={data.score} className="h-2 mb-2" />
@@ -127,10 +129,10 @@ export default function ZodiacPage() {
                     <Star className="w-8 h-8 text-white" />
                 </div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                    星座运势
+                    {t("pages.zodiac.title")}
                 </h1>
                 <p className="text-muted-foreground mt-2">
-                    查看十二星座的每日、每周、每月运势
+                    {t("pages.zodiac.description")}
                 </p>
             </div>
 
@@ -179,7 +181,7 @@ export default function ZodiacPage() {
                                             {selectedSign.symbol} {selectedSign.name}
                                         </CardTitle>
                                         <CardDescription className="text-white/80">
-                                            {selectedSign.dates} · {selectedSign.element}象星座
+                                            {selectedSign.dates} · {selectedSign.element}{t("pages.zodiac.elementSuffix")}
                                         </CardDescription>
                                     </div>
                                 </div>
@@ -190,7 +192,7 @@ export default function ZodiacPage() {
                                         setFortune(null)
                                     }}
                                 >
-                                    切换星座
+                                    {t("pages.zodiac.switchSign")}
                                 </Button>
                             </div>
                         </CardHeader>
@@ -199,9 +201,9 @@ export default function ZodiacPage() {
                     {/* 周期选择 */}
                     <Tabs value={period} onValueChange={handlePeriodChange}>
                         <TabsList className="grid w-full grid-cols-3">
-                            <TabsTrigger value="daily">今日运势</TabsTrigger>
-                            <TabsTrigger value="weekly">本周运势</TabsTrigger>
-                            <TabsTrigger value="monthly">本月运势</TabsTrigger>
+                            <TabsTrigger value="daily">{t("pages.zodiac.daily")}</TabsTrigger>
+                            <TabsTrigger value="weekly">{t("pages.zodiac.weekly")}</TabsTrigger>
+                            <TabsTrigger value="monthly">{t("pages.zodiac.monthly")}</TabsTrigger>
                         </TabsList>
 
                         <TabsContent value={period} className="mt-6">
@@ -217,13 +219,13 @@ export default function ZodiacPage() {
                                             <div className="flex items-center justify-between">
                                                 <div className="flex items-center gap-2">
                                                     <Sparkles className="w-5 h-5 text-primary" />
-                                                    <CardTitle>综合运势</CardTitle>
+                                                    <CardTitle>{t("pages.zodiac.overall")}</CardTitle>
                                                 </div>
                                                 <div className={cn(
                                                     "text-3xl font-bold",
                                                     getScoreColor(fortune.overall.score)
                                                 )}>
-                                                    {fortune.overall.score}分
+                                                    {fortune.overall.score}{t("pages.zodiac.scoreUnit")}
                                                 </div>
                                             </div>
                                         </CardHeader>
@@ -240,7 +242,7 @@ export default function ZodiacPage() {
                                                 <div className="text-2xl font-bold text-primary">
                                                     {fortune.lucky.number}
                                                 </div>
-                                                <p className="text-sm text-muted-foreground">幸运数字</p>
+                                                <p className="text-sm text-muted-foreground">{t("pages.zodiac.luckyNumber")}</p>
                                             </CardContent>
                                         </Card>
                                         <Card className="text-center">
@@ -248,7 +250,7 @@ export default function ZodiacPage() {
                                                 <Badge variant="secondary" className="text-lg px-3 py-1">
                                                     {fortune.lucky.color}
                                                 </Badge>
-                                                <p className="text-sm text-muted-foreground mt-2">幸运颜色</p>
+                                                <p className="text-sm text-muted-foreground mt-2">{t("pages.zodiac.luckyColor")}</p>
                                             </CardContent>
                                         </Card>
                                         <Card className="text-center">
@@ -256,7 +258,7 @@ export default function ZodiacPage() {
                                                 <div className="text-2xl font-bold text-primary">
                                                     {fortune.lucky.direction}
                                                 </div>
-                                                <p className="text-sm text-muted-foreground">幸运方位</p>
+                                                <p className="text-sm text-muted-foreground">{t("pages.zodiac.luckyDirection")}</p>
                                             </CardContent>
                                         </Card>
                                     </div>
@@ -265,22 +267,22 @@ export default function ZodiacPage() {
                                     <div className="grid gap-4 md:grid-cols-2">
                                         {renderFortuneItem(
                                             <Heart className="w-5 h-5 text-pink-500" />,
-                                            "爱情运势",
+                                            t("pages.zodiac.loveFortune"),
                                             fortune.love
                                         )}
                                         {renderFortuneItem(
                                             <Briefcase className="w-5 h-5 text-blue-500" />,
-                                            "事业运势",
+                                            t("pages.zodiac.careerFortune"),
                                             fortune.career
                                         )}
                                         {renderFortuneItem(
                                             <Coins className="w-5 h-5 text-yellow-500" />,
-                                            "财富运势",
+                                            t("pages.zodiac.wealthFortune"),
                                             fortune.wealth
                                         )}
                                         {renderFortuneItem(
                                             <Activity className="w-5 h-5 text-green-500" />,
-                                            "健康运势",
+                                            t("pages.zodiac.healthFortune"),
                                             fortune.health
                                         )}
                                     </div>

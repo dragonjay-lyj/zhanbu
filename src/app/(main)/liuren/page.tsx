@@ -26,6 +26,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
+import { useTranslation, formatMessage } from "@/lib/i18n"
 
 // 十二将神
 const TWELVE_GENERALS = ["贵人", "腾蛇", "朱雀", "六合", "勾陈", "青龙", "天空", "白虎", "太常", "玄武", "太阴", "天后"]
@@ -39,7 +40,7 @@ const SAN_CHUAN = ["初传", "中传", "末传"]
 // 时辰数据
 const hours = Array.from({ length: 12 }, (_, i) => ({
     value: i.toString(),
-    label: DI_ZHI[i] + "时",
+    zhi: DI_ZHI[i],
 }))
 
 interface LiurenFormData {
@@ -62,6 +63,7 @@ interface LiurenResult {
  * 大六壬排盘页面
  */
 export default function LiurenPage() {
+    const { t } = useTranslation()
     const { isSignedIn, user } = useUser()
     const [result, setResult] = useState<LiurenResult | null>(null)
     const [isLoading, setIsLoading] = useState(false)
@@ -99,8 +101,21 @@ export default function LiurenPage() {
             sanChuan,
             riGan: "甲",
             riZhi: "子",
-            analysis: "此课为涉害课，主事多阻碍，需耐心等待时机。贵人在东方，财运可期。",
+            analysis: t("pages.liuren.analysis.sample"),
         }
+    }
+
+    const buildAiAnalysis = (data: LiurenResult) => {
+        const name = user?.firstName || t("nav.userFallback")
+        const sanChuan = data.sanChuan.map((c) => c.zhi).join("、")
+        return [
+            formatMessage(t("pages.liuren.ai.greeting"), { name }),
+            t("pages.liuren.ai.intro"),
+            formatMessage(t("pages.liuren.ai.lines.line1"), { riGan: data.riGan, riZhi: data.riZhi, sanChuan }),
+            t("pages.liuren.ai.lines.line2"),
+            t("pages.liuren.ai.lines.line3"),
+            t("pages.liuren.ai.lines.line4"),
+        ].join("\n\n")
     }
 
     const onSubmit = async (data: LiurenFormData) => {
@@ -120,9 +135,9 @@ export default function LiurenPage() {
                     <Orbit className="h-8 w-8 text-cyan-500" />
                 </div>
                 <div>
-                    <h1 className="font-serif text-3xl font-bold">大六壬排盘</h1>
+                    <h1 className="font-serif text-3xl font-bold">{t("pages.liuren.title")}</h1>
                     <p className="text-muted-foreground">
-                        三式之一，以日月星辰推演人事吉凶
+                        {t("pages.liuren.subtitle")}
                     </p>
                 </div>
             </div>
@@ -131,11 +146,11 @@ export default function LiurenPage() {
                 <TabsList className="grid w-full max-w-md grid-cols-2">
                     <TabsTrigger value="input" className="cursor-pointer">
                         <Calendar className="mr-2 h-4 w-4" />
-                        起课设置
+                        {t("pages.liuren.tabs.input")}
                     </TabsTrigger>
                     <TabsTrigger value="result" disabled={!result} className="cursor-pointer">
                         <Sparkles className="mr-2 h-4 w-4" />
-                        课局结果
+                        {t("pages.liuren.tabs.result")}
                     </TabsTrigger>
                 </TabsList>
 
@@ -145,63 +160,63 @@ export default function LiurenPage() {
                         <div className="grid gap-6 md:grid-cols-2">
                             {/* 问题描述 */}
                             <Card className="md:col-span-2">
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2">
-                                        <Target className="h-5 w-5" />
-                                        占问事项
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <Input
-                                        placeholder="请简要描述您想占问的事项"
-                                        {...form.register("question")}
-                                    />
-                                </CardContent>
-                            </Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Target className="h-5 w-5" />
+                                    {t("pages.liuren.sections.question")}
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <Input
+                                    placeholder={t("pages.liuren.placeholders.question")}
+                                    {...form.register("question")}
+                                />
+                            </CardContent>
+                        </Card>
 
                             {/* 时间选择 */}
                             <Card className="md:col-span-2">
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2">
-                                        <Clock className="h-5 w-5" />
-                                        起课时间
-                                    </CardTitle>
-                                    <CardDescription>
-                                        大六壬以时辰起课，时辰准确至关重要
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="grid grid-cols-4 gap-4">
-                                        <div className="space-y-2">
-                                            <Label>年</Label>
-                                            <Input {...form.register("year")} />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label>月</Label>
-                                            <Input {...form.register("month")} />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label>日</Label>
-                                            <Input {...form.register("day")} />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label>时辰</Label>
-                                            <Select
-                                                value={form.watch("hour")}
-                                                onValueChange={(v) => form.setValue("hour", v)}
-                                            >
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Clock className="h-5 w-5" />
+                                    {t("pages.liuren.sections.time")}
+                                </CardTitle>
+                                <CardDescription>
+                                    {t("pages.liuren.sections.timeDesc")}
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="grid grid-cols-4 gap-4">
+                                    <div className="space-y-2">
+                                        <Label>{t("pages.liuren.labels.year")}</Label>
+                                        <Input {...form.register("year")} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>{t("pages.liuren.labels.month")}</Label>
+                                        <Input {...form.register("month")} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>{t("pages.liuren.labels.day")}</Label>
+                                        <Input {...form.register("day")} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>{t("pages.liuren.labels.hour")}</Label>
+                                        <Select
+                                            value={form.watch("hour")}
+                                            onValueChange={(v) => form.setValue("hour", v)}
+                                        >
                                                 <SelectTrigger className="cursor-pointer">
                                                     <SelectValue />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {hours.map((hour) => (
-                                                        <SelectItem key={hour.value} value={hour.value} className="cursor-pointer">
-                                                            {hour.label}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
+                                                {hours.map((hour) => (
+                                                    <SelectItem key={hour.value} value={hour.value} className="cursor-pointer">
+                                                        {formatMessage(t("pages.liuren.options.hour"), { value: hour.zhi })}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
                                     </div>
                                 </CardContent>
                             </Card>
@@ -218,12 +233,12 @@ export default function LiurenPage() {
                                         {isLoading ? (
                                             <>
                                                 <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                                                排课中...
+                                                {t("pages.liuren.actions.calculating")}
                                             </>
                                         ) : (
                                             <>
                                                 <Orbit className="mr-2 h-4 w-4" />
-                                                起课排盘
+                                                {t("pages.liuren.actions.start")}
                                             </>
                                         )}
                                     </Button>
@@ -242,11 +257,11 @@ export default function LiurenPage() {
                                 <CardContent className="pt-6">
                                     <div className="flex items-center justify-center gap-8">
                                         <div className="text-center">
-                                            <div className="text-sm text-muted-foreground">日干</div>
+                                            <div className="text-sm text-muted-foreground">{t("pages.liuren.labels.dayGan")}</div>
                                             <div className="font-serif text-3xl font-bold text-primary">{result.riGan}</div>
                                         </div>
                                         <div className="text-center">
-                                            <div className="text-sm text-muted-foreground">日支</div>
+                                            <div className="text-sm text-muted-foreground">{t("pages.liuren.labels.dayZhi")}</div>
                                             <div className="font-serif text-3xl font-bold">{result.riZhi}</div>
                                         </div>
                                     </div>
@@ -256,7 +271,7 @@ export default function LiurenPage() {
                             {/* 四课 */}
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>四课</CardTitle>
+                                    <CardTitle>{t("pages.liuren.sections.siKe")}</CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="grid grid-cols-4 gap-4">
@@ -276,7 +291,7 @@ export default function LiurenPage() {
                             {/* 三传 */}
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>三传</CardTitle>
+                                    <CardTitle>{t("pages.liuren.sections.sanChuan")}</CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="grid grid-cols-3 gap-4">
@@ -294,7 +309,7 @@ export default function LiurenPage() {
                             {/* 基础分析 */}
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>基础分析</CardTitle>
+                                    <CardTitle>{t("pages.liuren.sections.analysis")}</CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <p className="text-muted-foreground">{result.analysis}</p>
@@ -311,7 +326,7 @@ export default function LiurenPage() {
                                         <div className="space-y-4">
                                             <div className="flex items-center gap-2">
                                                 <Brain className="h-5 w-5 text-primary" />
-                                                <h3 className="font-semibold">AI 智能解读</h3>
+                                                <h3 className="font-semibold">{t("pages.liuren.ai.title")}</h3>
                                             </div>
                                             {aiAnalysis ? (
                                                 <p className="text-sm text-muted-foreground whitespace-pre-wrap">
@@ -322,7 +337,7 @@ export default function LiurenPage() {
                                                     onClick={async () => {
                                                         setIsAnalyzing(true)
                                                         await new Promise(resolve => setTimeout(resolve, 2000))
-                                                        setAiAnalysis(`您好，${user?.firstName || "用户"}！\n\n根据此大六壬课局分析：\n\n1. 日干${result.riGan}日支${result.riZhi}，三传${result.sanChuan.map(c => c.zhi).join("、")}。\n\n2. 此课为涉害课，主事有阻碍，但终能成功。\n\n3. 贵人临午位，利于南方求财谋事。\n\n4. 建议在卯时或午时行动为佳。`)
+                                                        setAiAnalysis(buildAiAnalysis(result))
                                                         setIsAnalyzing(false)
                                                     }}
                                                     disabled={isAnalyzing}
@@ -331,12 +346,12 @@ export default function LiurenPage() {
                                                     {isAnalyzing ? (
                                                         <>
                                                             <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                                                            AI 分析中...
+                                                            {t("pages.liuren.ai.analyzing")}
                                                         </>
                                                     ) : (
                                                         <>
                                                             <Sparkles className="mr-2 h-4 w-4" />
-                                                            获取 AI 深度解读
+                                                            {t("pages.liuren.ai.action")}
                                                         </>
                                                     )}
                                                 </Button>
@@ -345,12 +360,12 @@ export default function LiurenPage() {
                                     ) : (
                                         <div className="text-center">
                                             <Sparkles className="h-8 w-8 text-muted-foreground mx-auto mb-4" />
-                                            <h3 className="font-semibold mb-2">AI 深度解读</h3>
+                                            <h3 className="font-semibold mb-2">{t("pages.liuren.ai.loginTitle")}</h3>
                                             <p className="text-sm text-muted-foreground mb-4">
-                                                登录后获取 AI 智能分析
+                                                {t("pages.liuren.ai.loginDesc")}
                                             </p>
                                             <Button variant="outline" className="cursor-pointer" asChild>
-                                                <a href="/sign-in">登录获取解读</a>
+                                                <a href="/sign-in">{t("pages.liuren.ai.loginAction")}</a>
                                             </Button>
                                         </div>
                                     )}
@@ -364,7 +379,7 @@ export default function LiurenPage() {
                                     className="cursor-pointer"
                                 >
                                     <RefreshCw className="mr-2 h-4 w-4" />
-                                    重新起课
+                                    {t("pages.liuren.actions.reset")}
                                 </Button>
                             </div>
                         </div>

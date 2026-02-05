@@ -1,4 +1,5 @@
 import { Metadata } from "next"
+import { defaultLocale, getTranslations, t as translate, type Locale } from "@/lib/i18n"
 
 /**
  * SEO 配置工具
@@ -15,6 +16,18 @@ const SITE_INFO = {
     twitterHandle: "@zhanbudashi",
 }
 
+function getSiteInfo(locale: Locale = defaultLocale) {
+    const translations = getTranslations(locale)
+    const name = translate(translations, "seo.appName")
+    const description = translate(translations, "seo.siteDescription")
+    return {
+        ...SITE_INFO,
+        name: name.startsWith("seo.") ? SITE_INFO.name : name,
+        description: description.startsWith("seo.") ? SITE_INFO.description : description,
+        locale,
+    }
+}
+
 /**
  * 生成页面元数据
  */
@@ -25,46 +38,49 @@ export function generatePageMetadata(options: {
     image?: string
     path?: string
     noIndex?: boolean
+    locale?: Locale
 }): Metadata {
     const {
         title,
-        description = SITE_INFO.description,
-        keywords = SITE_INFO.keywords,
+        description,
+        keywords,
         image = "/og-image.png",
         path = "",
         noIndex = false,
+        locale = defaultLocale,
     } = options
 
-    const fullTitle = `${title} | ${SITE_INFO.name}`
-    const url = `${SITE_INFO.url}${path}`
-    const imageUrl = image.startsWith("http") ? image : `${SITE_INFO.url}${image}`
+    const siteInfo = getSiteInfo(locale)
+    const fullTitle = `${title} | ${siteInfo.name}`
+    const url = `${siteInfo.url}${path}`
+    const imageUrl = image.startsWith("http") ? image : `${siteInfo.url}${image}`
 
     return {
         title: fullTitle,
-        description,
-        keywords: keywords.join(", "),
-        authors: [{ name: SITE_INFO.author }],
-        creator: SITE_INFO.author,
-        publisher: SITE_INFO.name,
+        description: description || siteInfo.description,
+        keywords: (keywords || siteInfo.keywords).join(", "),
+        authors: [{ name: siteInfo.author }],
+        creator: siteInfo.author,
+        publisher: siteInfo.name,
         formatDetection: {
             email: false,
             telephone: false,
         },
-        metadataBase: new URL(SITE_INFO.url),
+        metadataBase: new URL(siteInfo.url),
         alternates: {
             canonical: url,
             languages: {
                 "zh-CN": url,
-                "zh-TW": `${SITE_INFO.url}/zh-TW${path}`,
-                en: `${SITE_INFO.url}/en${path}`,
-                ja: `${SITE_INFO.url}/ja${path}`,
+                "zh-TW": `${siteInfo.url}/zh-TW${path}`,
+                en: `${siteInfo.url}/en${path}`,
+                ja: `${siteInfo.url}/ja${path}`,
             },
         },
         openGraph: {
             title: fullTitle,
-            description,
+            description: description || siteInfo.description,
             url,
-            siteName: SITE_INFO.name,
+            siteName: siteInfo.name,
             images: [
                 {
                     url: imageUrl,
@@ -73,15 +89,15 @@ export function generatePageMetadata(options: {
                     alt: title,
                 },
             ],
-            locale: SITE_INFO.locale,
+            locale: siteInfo.locale,
             type: "website",
         },
         twitter: {
             card: "summary_large_image",
             title: fullTitle,
-            description,
+            description: description || siteInfo.description,
             images: [imageUrl],
-            creator: SITE_INFO.twitterHandle,
+            creator: siteInfo.twitterHandle,
         },
         robots: noIndex
             ? { index: false, follow: false }

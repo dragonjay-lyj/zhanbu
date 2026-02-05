@@ -20,6 +20,7 @@ import { Badge } from "@/components/ui/badge"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import { AIAnalysisSection } from "@/components/ai/ai-analysis-section"
+import { useI18n, useTranslation, formatMessage } from "@/lib/i18n"
 
 // 八卦基本信息
 const BA_GUA: Record<string, { binary: string; element: string; nature: string; number: number }> = {
@@ -65,12 +66,22 @@ interface MeihuaResult {
  * 梅花易数页面
  */
 export default function MeihuaPage() {
+    const { locale } = useI18n()
+    const { t } = useTranslation()
     const [method, setMethod] = useState<"time" | "number" | "word">("time")
     const [numberInput, setNumberInput] = useState("")
     const [wordInput, setWordInput] = useState("")
     const [question, setQuestion] = useState("")
     const [result, setResult] = useState<MeihuaResult | null>(null)
     const [isCalculating, setIsCalculating] = useState(false)
+
+    const relationDescriptions: Record<string, string> = {
+        "生我": t("pages.meihua.relationDesc.shengwo"),
+        "我生": t("pages.meihua.relationDesc.wosheng"),
+        "克我": t("pages.meihua.relationDesc.kewo"),
+        "我克": t("pages.meihua.relationDesc.woke"),
+        "比和": t("pages.meihua.relationDesc.bihe"),
+    }
 
     // 时间起卦
     const castByTime = () => {
@@ -87,13 +98,13 @@ export default function MeihuaPage() {
         // 动爻 = （年+月+日+时）÷ 6 取余
         const movingLine = ((year + month + day + hour) % 6) || 6
 
-        calculateResult(upperNum, lowerNum, movingLine, "time", now.toLocaleString())
+        calculateResult(upperNum, lowerNum, movingLine, "time", now.toLocaleString(locale))
     }
 
     // 数字起卦
     const castByNumber = () => {
         if (!numberInput || numberInput.length < 2) {
-            alert("请输入至少两位数字")
+            window.alert(t("pages.meihua.errors.numberTooShort"))
             return
         }
 
@@ -120,7 +131,7 @@ export default function MeihuaPage() {
     // 文字起卦
     const castByWord = () => {
         if (!wordInput) {
-            alert("请输入文字")
+            window.alert(t("pages.meihua.errors.wordRequired"))
             return
         }
 
@@ -237,9 +248,9 @@ export default function MeihuaPage() {
                     <Flower2 className="h-8 w-8 text-primary" />
                 </div>
                 <div>
-                    <h1 className="font-serif text-3xl font-bold">梅花易数</h1>
+                    <h1 className="font-serif text-3xl font-bold">{t("pages.meihua.title")}</h1>
                     <p className="text-muted-foreground">
-                        万物皆可起卦，心诚则灵
+                        {t("pages.meihua.subtitle")}
                     </p>
                 </div>
             </div>
@@ -251,15 +262,15 @@ export default function MeihuaPage() {
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Info className="h-5 w-5" />
-                                问卦描述
+                                {t("pages.meihua.question.title")}
                             </CardTitle>
                             <CardDescription>
-                                心中默念所问之事
+                                {t("pages.meihua.question.description")}
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
                             <Textarea
-                                placeholder="请描述您想询问的问题..."
+                                placeholder={t("pages.meihua.question.placeholder")}
                                 value={question}
                                 onChange={(e) => setQuestion(e.target.value)}
                                 rows={4}
@@ -270,32 +281,32 @@ export default function MeihuaPage() {
                     {/* 起卦方式 */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>起卦方式</CardTitle>
+                            <CardTitle>{t("pages.meihua.method.title")}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <Tabs value={method} onValueChange={(v) => setMethod(v as typeof method)}>
                                 <TabsList className="grid grid-cols-3">
                                     <TabsTrigger value="time" className="cursor-pointer">
                                         <Clock className="mr-1 h-4 w-4" />
-                                        时间
+                                        {t("pages.meihua.method.time")}
                                     </TabsTrigger>
                                     <TabsTrigger value="number" className="cursor-pointer">
                                         <Hash className="mr-1 h-4 w-4" />
-                                        数字
+                                        {t("pages.meihua.method.number")}
                                     </TabsTrigger>
                                     <TabsTrigger value="word" className="cursor-pointer">
                                         <Type className="mr-1 h-4 w-4" />
-                                        文字
+                                        {t("pages.meihua.method.word")}
                                     </TabsTrigger>
                                 </TabsList>
 
                                 <TabsContent value="time" className="mt-4 space-y-4">
                                     <div className="text-center">
                                         <div className="text-4xl font-mono mb-2">
-                                            {new Date().toLocaleTimeString()}
+                                            {new Date().toLocaleTimeString(locale)}
                                         </div>
                                         <p className="text-sm text-muted-foreground">
-                                            以当前时间自动起卦
+                                            {t("pages.meihua.method.timeDesc")}
                                         </p>
                                     </div>
                                     <Button
@@ -305,21 +316,21 @@ export default function MeihuaPage() {
                                         disabled={isCalculating}
                                     >
                                         <Sparkles className="mr-2 h-5 w-5" />
-                                        立即起卦
+                                        {t("pages.meihua.actions.castNow")}
                                     </Button>
                                 </TabsContent>
 
                                 <TabsContent value="number" className="mt-4 space-y-4">
                                     <div className="space-y-2">
-                                        <Label>输入数字</Label>
+                                        <Label>{t("pages.meihua.labels.number")}</Label>
                                         <Input
                                             type="text"
-                                            placeholder="请输入任意数字，如 38、168、520"
+                                            placeholder={t("pages.meihua.placeholders.number")}
                                             value={numberInput}
                                             onChange={(e) => setNumberInput(e.target.value.replace(/\D/g, ""))}
                                         />
                                         <p className="text-xs text-muted-foreground">
-                                            可以是心中想到的数字、看到的数字等
+                                            {t("pages.meihua.hints.number")}
                                         </p>
                                     </div>
                                     <Button
@@ -329,21 +340,21 @@ export default function MeihuaPage() {
                                         disabled={isCalculating || !numberInput}
                                     >
                                         <Sparkles className="mr-2 h-5 w-5" />
-                                        数字起卦
+                                        {t("pages.meihua.actions.castNumber")}
                                     </Button>
                                 </TabsContent>
 
                                 <TabsContent value="word" className="mt-4 space-y-4">
                                     <div className="space-y-2">
-                                        <Label>输入文字</Label>
+                                        <Label>{t("pages.meihua.labels.word")}</Label>
                                         <Input
                                             type="text"
-                                            placeholder="请输入文字，如人名、物品名等"
+                                            placeholder={t("pages.meihua.placeholders.word")}
                                             value={wordInput}
                                             onChange={(e) => setWordInput(e.target.value)}
                                         />
                                         <p className="text-xs text-muted-foreground">
-                                            根据字数和笔画起卦
+                                            {t("pages.meihua.hints.word")}
                                         </p>
                                     </div>
                                     <Button
@@ -353,7 +364,7 @@ export default function MeihuaPage() {
                                         disabled={isCalculating || !wordInput}
                                     >
                                         <Sparkles className="mr-2 h-5 w-5" />
-                                        文字起卦
+                                        {t("pages.meihua.actions.castWord")}
                                     </Button>
                                 </TabsContent>
                             </Tabs>
@@ -366,9 +377,17 @@ export default function MeihuaPage() {
                     <Card>
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between text-sm text-muted-foreground">
-                                <span>起卦方式: {result.method === "time" ? "时间起卦" : result.method === "number" ? "数字起卦" : "文字起卦"}</span>
-                                <span>输入: {result.input}</span>
-                                <span>动爻: 第{result.movingLine}爻</span>
+                                <span>
+                                    {formatMessage(t("pages.meihua.result.method"), {
+                                        value: result.method === "time"
+                                            ? t("pages.meihua.method.timeLabel")
+                                            : result.method === "number"
+                                                ? t("pages.meihua.method.numberLabel")
+                                                : t("pages.meihua.method.wordLabel"),
+                                    })}
+                                </span>
+                                <span>{formatMessage(t("pages.meihua.result.input"), { value: result.input })}</span>
+                                <span>{formatMessage(t("pages.meihua.result.movingLine"), { value: result.movingLine })}</span>
                             </div>
                         </CardContent>
                     </Card>
@@ -378,14 +397,14 @@ export default function MeihuaPage() {
                         {/* 本卦 */}
                         <Card>
                             <CardHeader className="text-center">
-                                <CardTitle>本卦</CardTitle>
+                                <CardTitle>{t("pages.meihua.result.base")}</CardTitle>
                                 <CardDescription className="font-serif text-xl text-foreground">
                                     {result.benGua.name}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="flex flex-col items-center gap-4">
                                 <div className="space-y-1 text-center">
-                                    <div className="text-sm text-muted-foreground">上卦</div>
+                                    <div className="text-sm text-muted-foreground">{t("pages.meihua.labels.upper")}</div>
                                     <div className="font-serif text-lg font-bold">{result.upperGua.name}</div>
                                     {renderGua(result.upperGua.name)}
                                     <Badge variant="outline">{result.upperGua.element}</Badge>
@@ -395,7 +414,7 @@ export default function MeihuaPage() {
                                     <div className="font-serif text-lg font-bold">{result.lowerGua.name}</div>
                                     {renderGua(result.lowerGua.name)}
                                     <Badge variant="outline">{result.lowerGua.element}</Badge>
-                                    <div className="text-sm text-muted-foreground">下卦</div>
+                                    <div className="text-sm text-muted-foreground">{t("pages.meihua.labels.lower")}</div>
                                 </div>
                             </CardContent>
                         </Card>
@@ -403,14 +422,14 @@ export default function MeihuaPage() {
                         {/* 互卦 */}
                         <Card>
                             <CardHeader className="text-center">
-                                <CardTitle>互卦</CardTitle>
+                                <CardTitle>{t("pages.meihua.result.mutual")}</CardTitle>
                                 <CardDescription className="font-serif text-xl text-foreground">
                                     {result.huGua.name}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="flex flex-col items-center gap-4">
                                 <div className="space-y-1 text-center">
-                                    <div className="text-sm text-muted-foreground">上卦</div>
+                                    <div className="text-sm text-muted-foreground">{t("pages.meihua.labels.upper")}</div>
                                     <div className="font-serif text-lg font-bold">{result.huGua.upper}</div>
                                     {renderGua(result.huGua.upper)}
                                 </div>
@@ -418,7 +437,7 @@ export default function MeihuaPage() {
                                 <div className="space-y-1 text-center">
                                     <div className="font-serif text-lg font-bold">{result.huGua.lower}</div>
                                     {renderGua(result.huGua.lower)}
-                                    <div className="text-sm text-muted-foreground">下卦</div>
+                                    <div className="text-sm text-muted-foreground">{t("pages.meihua.labels.lower")}</div>
                                 </div>
                             </CardContent>
                         </Card>
@@ -426,14 +445,14 @@ export default function MeihuaPage() {
                         {/* 变卦 */}
                         <Card>
                             <CardHeader className="text-center">
-                                <CardTitle>变卦</CardTitle>
+                                <CardTitle>{t("pages.meihua.result.changed")}</CardTitle>
                                 <CardDescription className="font-serif text-xl text-foreground">
                                     {result.bianGua.name}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="text-center">
                                 <p className="text-sm text-muted-foreground">
-                                    第{result.movingLine}爻变动
+                                    {formatMessage(t("pages.meihua.result.movingLineDesc"), { value: result.movingLine })}
                                 </p>
                             </CardContent>
                         </Card>
@@ -442,38 +461,34 @@ export default function MeihuaPage() {
                     {/* 体用分析 */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>体用关系</CardTitle>
+                            <CardTitle>{t("pages.meihua.result.tiYongTitle")}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="flex items-center justify-center gap-8">
                                 <div className="text-center">
-                                    <div className="text-sm text-muted-foreground mb-1">体卦</div>
+                                    <div className="text-sm text-muted-foreground mb-1">{t("pages.meihua.labels.tiGua")}</div>
                                     <div className="font-serif text-2xl font-bold">{result.tiYong.ti}</div>
                                     <Badge className="mt-1">{BA_GUA[result.tiYong.ti].element}</Badge>
                                 </div>
                                 <div className="text-center">
                                     <Badge variant="outline" className="text-lg px-4 py-1">
-                                        {result.tiYong.relation}
+                                        {t(`pages.meihua.relation.${result.tiYong.relation}`)}
                                     </Badge>
                                 </div>
                                 <div className="text-center">
-                                    <div className="text-sm text-muted-foreground mb-1">用卦</div>
+                                    <div className="text-sm text-muted-foreground mb-1">{t("pages.meihua.labels.yongGua")}</div>
                                     <div className="font-serif text-2xl font-bold">{result.tiYong.yong}</div>
                                     <Badge className="mt-1">{BA_GUA[result.tiYong.yong].element}</Badge>
                                 </div>
                             </div>
                             <p className="text-center text-sm text-muted-foreground mt-4">
-                                {result.tiYong.relation === "生我" && "用生体，吉利之象"}
-                                {result.tiYong.relation === "我生" && "体生用，有所损耗"}
-                                {result.tiYong.relation === "克我" && "用克体，不利之象"}
-                                {result.tiYong.relation === "我克" && "体克用，有所收获"}
-                                {result.tiYong.relation === "比和" && "体用比和，平稳之象"}
+                                {relationDescriptions[result.tiYong.relation]}
                             </p>
                         </CardContent>
                     </Card>
 
                     {/* AI 解读 */}
-                    <AIAnalysisSection type="general" title="AI 卦象解读" />
+                    <AIAnalysisSection type="general" title={t("pages.meihua.aiTitle")} />
 
                     {/* 重新起卦 */}
                     <div className="text-center">
@@ -483,7 +498,7 @@ export default function MeihuaPage() {
                             className="cursor-pointer"
                         >
                             <RefreshCw className="mr-2 h-4 w-4" />
-                            重新起卦
+                            {t("pages.meihua.actions.reset")}
                         </Button>
                     </div>
                 </div>

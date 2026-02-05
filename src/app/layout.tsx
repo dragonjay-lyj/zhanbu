@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from "next"
+import { cookies } from "next/headers"
 import { Noto_Sans_TC, Noto_Serif_TC } from "next/font/google"
 import { ClerkProvider } from "@clerk/nextjs"
-import { zhCN } from "@clerk/localizations"
+import { enUS, zhCN, zhTW, jaJP } from "@clerk/localizations"
 import { ThemeProvider } from "@/components/providers/theme-provider"
-import { I18nProvider } from "@/lib/i18n"
+import { I18nProvider, defaultLocale, locales, type Locale } from "@/lib/i18n"
 import { defaultMetadata, viewport as defaultViewport, generateStructuredData } from "@/lib/seo"
 import "./globals.css"
 
@@ -29,17 +30,28 @@ export const metadata: Metadata = defaultMetadata
 // 视口配置
 export const viewport: Viewport = defaultViewport
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   // 结构化数据
   const structuredData = generateStructuredData()
+  const cookieStore = await cookies()
+  const cookieLocale = cookieStore.get("locale")?.value
+  const initialLocale = locales.includes(cookieLocale as Locale)
+    ? (cookieLocale as Locale)
+    : defaultLocale
+  const clerkLocalization = {
+    "zh-CN": zhCN,
+    "zh-TW": zhTW,
+    en: enUS,
+    ja: jaJP,
+  }[initialLocale] ?? zhCN
 
   return (
-    <ClerkProvider localization={zhCN}>
-      <html lang="zh-CN" suppressHydrationWarning>
+    <ClerkProvider localization={clerkLocalization}>
+      <html lang={initialLocale} suppressHydrationWarning>
         <head>
           {/* 结构化数据 */}
           <script
@@ -63,7 +75,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <I18nProvider>
+            <I18nProvider initialLocale={initialLocale}>
               {children}
             </I18nProvider>
           </ThemeProvider>
@@ -72,4 +84,3 @@ export default function RootLayout({
     </ClerkProvider>
   )
 }
-

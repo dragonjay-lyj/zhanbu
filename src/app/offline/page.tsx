@@ -1,11 +1,16 @@
+"use client"
+
 import Link from "next/link"
 import { WifiOff, Home } from "lucide-react"
 import { ReloadButton } from "@/components/offline/reload-button"
+import { useTranslation } from "@/lib/i18n"
 
 /**
  * 离线页面
  */
 export default function OfflinePage() {
+    const { t, translations } = useTranslation()
+    const tips = (translations.offline as { tips?: string[] })?.tips || []
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800 p-8">
             <div className="text-center max-w-lg text-white">
@@ -19,27 +24,23 @@ export default function OfflinePage() {
                 </div>
 
                 <h1 className="text-3xl font-bold mb-3">
-                    您当前处于离线状态
+                    {t("errors.offlineTitle")}
                 </h1>
                 <p className="text-slate-400 mb-8 text-lg">
-                    请检查您的网络连接，或者尝试以下操作：
+                    {t("errors.offlineSubtitle")}
                 </p>
 
                 {/* 提示列表 */}
                 <div className="bg-slate-800/50 rounded-lg p-6 mb-8 text-left">
                     <ul className="space-y-3 text-slate-300">
-                        <li className="flex items-start gap-3">
-                            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-sm">1</span>
-                            <span>检查 Wi-Fi 或移动数据是否已开启</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-sm">2</span>
-                            <span>尝试切换网络或重启路由器</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-sm">3</span>
-                            <span>等待网络恢复后刷新页面</span>
-                        </li>
+                        {tips.map((tip, index) => (
+                            <li key={tip} className="flex items-start gap-3">
+                                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-sm">
+                                    {index + 1}
+                                </span>
+                                <span>{tip}</span>
+                            </li>
+                        ))}
                     </ul>
                 </div>
 
@@ -51,14 +52,14 @@ export default function OfflinePage() {
                         className="inline-flex items-center px-6 py-3 border border-slate-600 hover:bg-slate-700 rounded-lg transition"
                     >
                         <Home className="w-5 h-5 mr-2" />
-                        返回首页
+                        {t("offline.actions.home")}
                     </Link>
                 </div>
 
                 {/* 离线可用功能提示 */}
                 <div className="mt-12 pt-8 border-t border-slate-700">
                     <p className="text-sm text-slate-500">
-                        部分已缓存的内容在离线状态下仍可访问
+                        {t("offline.cached")}
                     </p>
                 </div>
             </div>

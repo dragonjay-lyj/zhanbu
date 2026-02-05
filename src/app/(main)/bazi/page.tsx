@@ -28,6 +28,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
 import { cn, TIAN_GAN, DI_ZHI, getChineseHour } from "@/lib/utils"
+import { useTranslation, formatMessage } from "@/lib/i18n"
 
 import { BaziCalculator } from "@/components/bazi/bazi-calculator"
 import { BaziReverse } from "@/components/bazi/bazi-reverse"
@@ -82,6 +83,7 @@ interface BaziResult {
  * 八字排盘页面
  */
 export default function BaziPage() {
+    const { t } = useTranslation()
     const [result, setResult] = useState<BaziResult | null>(null)
     const [isLoading, setIsLoading] = useState(false)
     const [activeTab, setActiveTab] = useState("input")
@@ -158,9 +160,9 @@ export default function BaziPage() {
                     <LayoutGrid className="h-8 w-8 text-primary" />
                 </div>
                 <div>
-                    <h1 className="font-serif text-3xl font-bold">八字排盘</h1>
+                    <h1 className="font-serif text-3xl font-bold">{t("pages.bazi.title")}</h1>
                     <p className="text-muted-foreground">
-                        AI 智能八字分析系统，揭示个人命盘特质与发展规律
+                        {t("pages.bazi.subtitle")}
                     </p>
                 </div>
             </div>
@@ -169,19 +171,19 @@ export default function BaziPage() {
                 <TabsList className="grid w-full max-w-2xl grid-cols-4">
                     <TabsTrigger value="input" className="cursor-pointer">
                         <User className="mr-2 h-4 w-4" />
-                        排盘
+                        {t("pages.bazi.tabs.input")}
                     </TabsTrigger>
                     <TabsTrigger value="result" disabled={!result} className="cursor-pointer">
                         <Sparkles className="mr-2 h-4 w-4" />
-                        结果
+                        {t("pages.bazi.tabs.result")}
                     </TabsTrigger>
                     <TabsTrigger value="calculator" className="cursor-pointer">
                         <Calendar className="mr-2 h-4 w-4" />
-                        查询
+                        {t("pages.bazi.tabs.calculator")}
                     </TabsTrigger>
                     <TabsTrigger value="reverse" className="cursor-pointer">
                         <RefreshCw className="mr-2 h-4 w-4" />
-                        反推
+                        {t("pages.bazi.tabs.reverse")}
                     </TabsTrigger>
                 </TabsList>
 
@@ -195,23 +197,23 @@ export default function BaziPage() {
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2">
                                         <User className="h-5 w-5" />
-                                        基本信息
+                                        {t("pages.bazi.sections.basicInfo")}
                                     </CardTitle>
                                     <CardDescription>
-                                        请输入您的基本信息
+                                        {t("pages.bazi.sections.basicInfoDesc")}
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="space-y-2">
-                                        <Label htmlFor="name">姓名</Label>
+                                        <Label htmlFor="name">{t("pages.bazi.labels.name")}</Label>
                                         <Input
                                             id="name"
-                                            placeholder="请输入姓名"
+                                            placeholder={t("pages.bazi.placeholders.name")}
                                             {...form.register("name")}
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label>性别</Label>
+                                        <Label>{t("pages.bazi.labels.gender")}</Label>
                                         <div className="flex gap-4">
                                             <label className="flex items-center gap-2 cursor-pointer">
                                                 <input
@@ -220,7 +222,7 @@ export default function BaziPage() {
                                                     {...form.register("gender")}
                                                     className="w-4 h-4"
                                                 />
-                                                <span>男性</span>
+                                                <span>{t("pages.bazi.gender.male")}</span>
                                             </label>
                                             <label className="flex items-center gap-2 cursor-pointer">
                                                 <input
@@ -229,7 +231,7 @@ export default function BaziPage() {
                                                     {...form.register("gender")}
                                                     className="w-4 h-4"
                                                 />
-                                                <span>女性</span>
+                                                <span>{t("pages.bazi.gender.female")}</span>
                                             </label>
                                         </div>
                                     </div>
@@ -241,16 +243,16 @@ export default function BaziPage() {
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2">
                                         <Calendar className="h-5 w-5" />
-                                        出生时间
+                                        {t("pages.bazi.sections.birthTime")}
                                     </CardTitle>
                                     <CardDescription>
-                                        请选择准确的出生日期和时间
+                                        {t("pages.bazi.sections.birthTimeDesc")}
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="grid grid-cols-3 gap-2">
                                         <div className="space-y-2">
-                                            <Label>年</Label>
+                                            <Label>{t("pages.bazi.labels.year")}</Label>
                                             <Select
                                                 value={form.watch("birthYear")}
                                                 onValueChange={(v) => form.setValue("birthYear", v)}
@@ -265,14 +267,14 @@ export default function BaziPage() {
                                                             value={year.toString()}
                                                             className="cursor-pointer"
                                                         >
-                                                            {year}年
+                                                            {formatMessage(t("pages.bazi.options.year"), { value: year })}
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>
                                             </Select>
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>月</Label>
+                                            <Label>{t("pages.bazi.labels.month")}</Label>
                                             <Select
                                                 value={form.watch("birthMonth")}
                                                 onValueChange={(v) => form.setValue("birthMonth", v)}
@@ -287,14 +289,14 @@ export default function BaziPage() {
                                                             value={month.toString()}
                                                             className="cursor-pointer"
                                                         >
-                                                            {month}月
+                                                            {formatMessage(t("pages.bazi.options.month"), { value: month })}
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>
                                             </Select>
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>日</Label>
+                                            <Label>{t("pages.bazi.labels.day")}</Label>
                                             <Select
                                                 value={form.watch("birthDay")}
                                                 onValueChange={(v) => form.setValue("birthDay", v)}
@@ -309,7 +311,7 @@ export default function BaziPage() {
                                                             value={day.toString()}
                                                             className="cursor-pointer"
                                                         >
-                                                            {day}日
+                                                            {formatMessage(t("pages.bazi.options.day"), { value: day })}
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>
@@ -318,7 +320,7 @@ export default function BaziPage() {
                                     </div>
                                     <div className="grid grid-cols-2 gap-2">
                                         <div className="space-y-2">
-                                            <Label>时</Label>
+                                            <Label>{t("pages.bazi.labels.hour")}</Label>
                                             <Select
                                                 value={form.watch("birthHour")}
                                                 onValueChange={(v) => form.setValue("birthHour", v)}
@@ -340,7 +342,7 @@ export default function BaziPage() {
                                             </Select>
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>分</Label>
+                                            <Label>{t("pages.bazi.labels.minute")}</Label>
                                             <Select
                                                 value={form.watch("birthMinute")}
                                                 onValueChange={(v) => form.setValue("birthMinute", v)}
@@ -355,7 +357,7 @@ export default function BaziPage() {
                                                             value={i.toString()}
                                                             className="cursor-pointer"
                                                         >
-                                                            {i.toString().padStart(2, "0")}分
+                                                            {formatMessage(t("pages.bazi.options.minute"), { value: i.toString().padStart(2, "0") })}
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>
@@ -370,7 +372,7 @@ export default function BaziPage() {
                                                 onCheckedChange={(v) => form.setValue("isLunar", v)}
                                             />
                                             <Label htmlFor="isLunar" className="cursor-pointer">
-                                                农历日期
+                                                {t("pages.bazi.labels.lunarDate")}
                                             </Label>
                                         </div>
                                     </div>
@@ -382,15 +384,15 @@ export default function BaziPage() {
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2">
                                         <MapPin className="h-5 w-5" />
-                                        出生地点
+                                        {t("pages.bazi.sections.birthLocation")}
                                     </CardTitle>
                                     <CardDescription>
-                                        用于计算真太阳时校正
+                                        {t("pages.bazi.sections.birthLocationDesc")}
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="space-y-2">
-                                        <Label>省份/直辖市</Label>
+                                        <Label>{t("pages.bazi.labels.province")}</Label>
                                         <Select
                                             value={form.watch("province")}
                                             onValueChange={(v) => form.setValue("province", v)}
@@ -419,12 +421,12 @@ export default function BaziPage() {
                                                 onCheckedChange={(v) => form.setValue("useTrueSolar", v)}
                                             />
                                             <Label htmlFor="useTrueSolar" className="cursor-pointer">
-                                                使用真太阳时
+                                                {t("pages.bazi.labels.trueSolar")}
                                             </Label>
                                         </div>
                                         <Badge variant="outline" className="text-xs">
                                             <Info className="mr-1 h-3 w-3" />
-                                            推荐开启
+                                            {t("pages.bazi.badge.recommended")}
                                         </Badge>
                                     </div>
                                 </CardContent>
@@ -442,12 +444,12 @@ export default function BaziPage() {
                                         {isLoading ? (
                                             <>
                                                 <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                                                排盘中...
+                                                {t("pages.bazi.actions.calculating")}
                                             </>
                                         ) : (
                                             <>
                                                 <Sparkles className="mr-2 h-4 w-4" />
-                                                开始排盘
+                                                {t("pages.bazi.actions.start")}
                                             </>
                                         )}
                                     </Button>
@@ -466,19 +468,19 @@ export default function BaziPage() {
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2">
                                         <LayoutGrid className="h-5 w-5" />
-                                        四柱八字
+                                        {t("pages.bazi.results.pillarsTitle")}
                                     </CardTitle>
                                     <CardDescription>
-                                        您的八字命盘
+                                        {t("pages.bazi.results.pillarsDesc")}
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="grid grid-cols-4 gap-4">
                                         {[
-                                            { label: "年柱", ...result.yearPillar },
-                                            { label: "月柱", ...result.monthPillar },
-                                            { label: "日柱", ...result.dayPillar },
-                                            { label: "时柱", ...result.hourPillar },
+                                            { label: t("pages.bazi.pillars.year"), ...result.yearPillar },
+                                            { label: t("pages.bazi.pillars.month"), ...result.monthPillar },
+                                            { label: t("pages.bazi.pillars.day"), ...result.dayPillar },
+                                            { label: t("pages.bazi.pillars.hour"), ...result.hourPillar },
                                         ].map((pillar) => (
                                             <div
                                                 key={pillar.label}
@@ -502,9 +504,12 @@ export default function BaziPage() {
                             {/* 五行分布 */}
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>五行分布</CardTitle>
+                                    <CardTitle>{t("pages.bazi.results.wuxingTitle")}</CardTitle>
                                     <CardDescription>
-                                        日主: {result.dayMaster} ({result.dayMasterElement})
+                                        {formatMessage(t("pages.bazi.results.dayMasterLabel"), {
+                                            master: result.dayMaster,
+                                            element: result.dayMasterElement,
+                                        })}
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent>
@@ -542,7 +547,7 @@ export default function BaziPage() {
                                     className="cursor-pointer"
                                 >
                                     <RefreshCw className="mr-2 h-4 w-4" />
-                                    重新排盘
+                                    {t("pages.bazi.actions.reset")}
                                 </Button>
                             </div>
                         </div>

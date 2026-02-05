@@ -33,43 +33,44 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
 import { AIAnalysisSection } from "@/components/ai/ai-analysis-section"
+import { useTranslation, formatMessage } from "@/lib/i18n"
 
 // 分析类型
 const ANALYSIS_TYPES = [
     {
         id: "marriage",
-        name: "合婚分析",
         icon: Heart,
         color: "text-pink-500",
-        description: "分析两人婚姻契合度",
+        nameKey: "pages.relationship.types.marriage.title",
+        descKey: "pages.relationship.types.marriage.desc",
     },
     {
         id: "mother_in_law",
-        name: "婆媳关系",
         icon: Users,
         color: "text-purple-500",
-        description: "分析婆媳相处模式",
+        nameKey: "pages.relationship.types.motherInLaw.title",
+        descKey: "pages.relationship.types.motherInLaw.desc",
     },
     {
         id: "business",
-        name: "商业合作",
         icon: Briefcase,
         color: "text-blue-500",
-        description: "分析商业伙伴契合度",
+        nameKey: "pages.relationship.types.business.title",
+        descKey: "pages.relationship.types.business.desc",
     },
     {
         id: "friendship",
-        name: "友谊分析",
         icon: Users,
         color: "text-green-500",
-        description: "分析朋友间的友谊质量",
+        nameKey: "pages.relationship.types.friendship.title",
+        descKey: "pages.relationship.types.friendship.desc",
     },
     {
         id: "workplace",
-        name: "职场关系",
         icon: Briefcase,
         color: "text-orange-500",
-        description: "分析同事或上下级关系",
+        nameKey: "pages.relationship.types.workplace.title",
+        descKey: "pages.relationship.types.workplace.desc",
     },
 ]
 
@@ -131,6 +132,7 @@ interface RelationshipPageProps {
  * 关系分析页面
  */
 export default function RelationshipPage({ defaultType }: RelationshipPageProps) {
+    const { t } = useTranslation()
     const initialType = defaultType ? (TYPE_MAP[defaultType] || "marriage") : "marriage"
     const [analysisType, setAnalysisType] = useState(initialType)
     const [step, setStep] = useState<"input" | "result">("input")
@@ -204,13 +206,19 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
         setIsLoading(false)
     }
 
-    const selectedType = ANALYSIS_TYPES.find((t) => t.id === analysisType)
+    const analysisTypes = ANALYSIS_TYPES.map((type) => ({
+        ...type,
+        name: t(type.nameKey),
+        description: t(type.descKey),
+    }))
+
+    const selectedType = analysisTypes.find((t) => t.id === analysisType)
 
     const getScoreLevel = (score: number) => {
-        if (score >= 80) return { text: "极佳", color: "text-green-500" }
-        if (score >= 60) return { text: "良好", color: "text-blue-500" }
-        if (score >= 40) return { text: "一般", color: "text-yellow-500" }
-        return { text: "需注意", color: "text-red-500" }
+        if (score >= 80) return { text: t("pages.relationship.scoreLevels.excellent"), color: "text-green-500" }
+        if (score >= 60) return { text: t("pages.relationship.scoreLevels.good"), color: "text-blue-500" }
+        if (score >= 40) return { text: t("pages.relationship.scoreLevels.fair"), color: "text-yellow-500" }
+        return { text: t("pages.relationship.scoreLevels.caution"), color: "text-red-500" }
     }
 
     // 渲染人员输入表单
@@ -229,11 +237,11 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
             <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <Label>姓名</Label>
-                        <Input placeholder="请输入姓名" {...form.register("name")} />
+                        <Label>{t("pages.relationship.labels.name")}</Label>
+                        <Input placeholder={t("pages.relationship.placeholders.name")} {...form.register("name")} />
                     </div>
                     <div className="space-y-2">
-                        <Label>性别</Label>
+                        <Label>{t("pages.relationship.labels.gender")}</Label>
                         <Select
                             value={form.watch("gender")}
                             onValueChange={(v) => form.setValue("gender", v as "male" | "female")}
@@ -242,8 +250,12 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="male" className="cursor-pointer">男</SelectItem>
-                                <SelectItem value="female" className="cursor-pointer">女</SelectItem>
+                                <SelectItem value="male" className="cursor-pointer">
+                                    {t("pages.relationship.gender.male")}
+                                </SelectItem>
+                                <SelectItem value="female" className="cursor-pointer">
+                                    {t("pages.relationship.gender.female")}
+                                </SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
@@ -251,7 +263,7 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
 
                 <div className="grid grid-cols-3 gap-2">
                     <div className="space-y-2">
-                        <Label>年</Label>
+                        <Label>{t("pages.relationship.labels.year")}</Label>
                         <Select
                             value={form.watch("birthYear")}
                             onValueChange={(v) => form.setValue("birthYear", v)}
@@ -269,7 +281,7 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
                         </Select>
                     </div>
                     <div className="space-y-2">
-                        <Label>月</Label>
+                        <Label>{t("pages.relationship.labels.month")}</Label>
                         <Select
                             value={form.watch("birthMonth")}
                             onValueChange={(v) => form.setValue("birthMonth", v)}
@@ -280,14 +292,14 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
                             <SelectContent>
                                 {months.map((month) => (
                                     <SelectItem key={month} value={month.toString()} className="cursor-pointer">
-                                        {month}月
+                                        {formatMessage(t("pages.relationship.options.month"), { value: month })}
                                     </SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
                     </div>
                     <div className="space-y-2">
-                        <Label>日</Label>
+                        <Label>{t("pages.relationship.labels.day")}</Label>
                         <Select
                             value={form.watch("birthDay")}
                             onValueChange={(v) => form.setValue("birthDay", v)}
@@ -298,7 +310,7 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
                             <SelectContent>
                                 {days.map((day) => (
                                     <SelectItem key={day} value={day.toString()} className="cursor-pointer">
-                                        {day}日
+                                        {formatMessage(t("pages.relationship.options.day"), { value: day })}
                                     </SelectItem>
                                 ))}
                             </SelectContent>
@@ -307,7 +319,7 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
                 </div>
 
                 <div className="space-y-2">
-                    <Label>时辰</Label>
+                    <Label>{t("pages.relationship.labels.hour")}</Label>
                     <Select
                         value={form.watch("birthHour")}
                         onValueChange={(v) => form.setValue("birthHour", v)}
@@ -332,7 +344,7 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
                         onCheckedChange={(v) => form.setValue("isLunar", v)}
                     />
                     <Label htmlFor={`lunar-${title}`} className="cursor-pointer">
-                        农历日期
+                        {t("pages.relationship.labels.lunar")}
                     </Label>
                 </div>
             </CardContent>
@@ -347,9 +359,9 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
                     <Heart className="h-8 w-8 text-pink-500" />
                 </div>
                 <div>
-                    <h1 className="font-serif text-3xl font-bold">关系分析</h1>
+                    <h1 className="font-serif text-3xl font-bold">{t("pages.relationship.title")}</h1>
                     <p className="text-muted-foreground">
-                        AI 智能分析双方命盘，揭示关系契合度
+                        {t("pages.relationship.subtitle")}
                     </p>
                 </div>
             </div>
@@ -359,11 +371,11 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
                     {/* 分析类型选择 */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>选择分析类型</CardTitle>
+                            <CardTitle>{t("pages.relationship.sections.type")}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-                                {ANALYSIS_TYPES.map((type) => (
+                                {analysisTypes.map((type) => (
                                     <div
                                         key={type.id}
                                         onClick={() => setAnalysisType(type.id)}
@@ -386,12 +398,16 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
                     <div className="grid md:grid-cols-2 gap-6">
                         {renderPersonForm(
                             form1,
-                            analysisType === "mother_in_law" ? "媳妇信息" : "第一人信息",
+                            analysisType === "mother_in_law"
+                                ? t("pages.relationship.form.daughterInLaw")
+                                : t("pages.relationship.form.person1"),
                             <User className="h-5 w-5" />
                         )}
                         {renderPersonForm(
                             form2,
-                            analysisType === "mother_in_law" ? "婆婆信息" : "第二人信息",
+                            analysisType === "mother_in_law"
+                                ? t("pages.relationship.form.motherInLaw")
+                                : t("pages.relationship.form.person2"),
                             <UserPlus className="h-5 w-5" />
                         )}
                     </div>
@@ -406,12 +422,12 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
                         {isLoading ? (
                             <>
                                 <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                                分析中...
+                                {t("pages.relationship.actions.analyzing")}
                             </>
                         ) : (
                             <>
                                 <Sparkles className="mr-2 h-4 w-4" />
-                                开始分析
+                                {t("pages.relationship.actions.start")}
                             </>
                         )}
                     </Button>
@@ -423,7 +439,7 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Scale className="h-5 w-5" />
-                                综合契合度
+                                {t("pages.relationship.sections.overall")}
                             </CardTitle>
                             <CardDescription>{selectedType?.description}</CardDescription>
                         </CardHeader>
@@ -450,7 +466,7 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
                     {/* 分项分析 */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>分项分析</CardTitle>
+                            <CardTitle>{t("pages.relationship.sections.breakdown")}</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             {result.compatibility.map((item, i) => (
@@ -458,7 +474,7 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
                                     <div className="flex items-center justify-between">
                                         <span className="font-medium">{item.category}</span>
                                         <span className={cn("font-bold", getScoreLevel(item.score).color)}>
-                                            {item.score}分
+                                            {formatMessage(t("pages.relationship.scoreUnit"), { value: item.score })}
                                         </span>
                                     </div>
                                     <Progress value={item.score} className="h-2" />
@@ -474,7 +490,7 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-green-500">
                                     <CheckCircle className="h-5 w-5" />
-                                    关系优势
+                                    {t("pages.relationship.sections.strengths")}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
@@ -493,7 +509,7 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-orange-500">
                                     <AlertCircle className="h-5 w-5" />
-                                    需要注意
+                                    {t("pages.relationship.sections.challenges")}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
@@ -512,7 +528,7 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
                     {/* 建议 */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>专家建议</CardTitle>
+                            <CardTitle>{t("pages.relationship.sections.advice")}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <ul className="space-y-3">
@@ -527,7 +543,7 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
                     </Card>
 
                     {/* AI 解读 */}
-                    <AIAnalysisSection type="general" title="AI 关系分析" />
+                    <AIAnalysisSection type="general" title={t("pages.relationship.aiTitle")} />
 
                     {/* 重新分析 */}
                     <div className="text-center">
@@ -540,7 +556,7 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
                             className="cursor-pointer"
                         >
                             <RefreshCw className="mr-2 h-4 w-4" />
-                            重新分析
+                            {t("pages.relationship.actions.reset")}
                         </Button>
                     </div>
                 </div>

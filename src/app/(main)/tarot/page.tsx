@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
+import { useTranslation, formatMessage } from "@/lib/i18n"
 
 // 拥有的图片 ID 列表（22 张大阿卡纳）
 const availableImages = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
@@ -48,65 +49,6 @@ const majorArcana = [
     { id: 21, name: "世界", meaning: "完成、整合、成就" },
 ]
 
-// 牌阵类型
-const spreads = [
-    {
-        id: "single",
-        name: "单张牌",
-        description: "快速获取指引",
-        positions: ["当前情况"],
-        count: 1,
-    },
-    {
-        id: "three",
-        name: "三张牌",
-        description: "过去-现在-未来",
-        positions: ["过去", "现在", "未来"],
-        count: 3,
-    },
-    {
-        id: "love",
-        name: "爱情牌阵",
-        description: "分析感情关系",
-        positions: ["你的状态", "对方状态", "关系现状", "未来发展"],
-        count: 4,
-    },
-    {
-        id: "career",
-        name: "事业牌阵",
-        description: "工作与职业发展",
-        positions: ["当前状态", "挑战", "建议", "结果"],
-        count: 4,
-    },
-    {
-        id: "celtic",
-        name: "凯尔特十字",
-        description: "深度全面分析",
-        positions: [
-            "现状", "挑战", "过去", "未来",
-            "目标", "潜意识", "建议", "环境",
-            "希望/恐惧", "最终结果"
-        ],
-        count: 10,
-    },
-    {
-        id: "yesno",
-        name: "是非牌阵",
-        description: "是或否的回答",
-        positions: ["答案", "原因", "建议"],
-        count: 3,
-    },
-]
-
-
-// 解读风格
-const readingStyles = [
-    { id: "standard", name: "标准", description: "专业客观的塔罗牌解读" },
-    { id: "fire", name: "火神", description: "直白犀利的解读风格" },
-    { id: "moon", name: "月光", description: "温柔优雅的解读风格" },
-    { id: "wise", name: "维斯顿", description: "理性深度的哲学分析" },
-]
-
 // 抽到的牌
 interface DrawnCard {
     card: typeof majorArcana[0]
@@ -118,10 +60,94 @@ interface DrawnCard {
  * 塔罗占卜页面
  */
 export default function TarotPage() {
+    const { t } = useTranslation()
+    const spreads = [
+        {
+            id: "single",
+            name: t("pages.tarot.spreads.single.name"),
+            description: t("pages.tarot.spreads.single.description"),
+            positions: [t("pages.tarot.positions.current")],
+            count: 1,
+        },
+        {
+            id: "three",
+            name: t("pages.tarot.spreads.three.name"),
+            description: t("pages.tarot.spreads.three.description"),
+            positions: [
+                t("pages.tarot.positions.past"),
+                t("pages.tarot.positions.present"),
+                t("pages.tarot.positions.future"),
+            ],
+            count: 3,
+        },
+        {
+            id: "love",
+            name: t("pages.tarot.spreads.love.name"),
+            description: t("pages.tarot.spreads.love.description"),
+            positions: [
+                t("pages.tarot.positions.self"),
+                t("pages.tarot.positions.other"),
+                t("pages.tarot.positions.relationship"),
+                t("pages.tarot.positions.future"),
+            ],
+            count: 4,
+        },
+        {
+            id: "career",
+            name: t("pages.tarot.spreads.career.name"),
+            description: t("pages.tarot.spreads.career.description"),
+            positions: [
+                t("pages.tarot.positions.currentState"),
+                t("pages.tarot.positions.challenge"),
+                t("pages.tarot.positions.advice"),
+                t("pages.tarot.positions.outcome"),
+            ],
+            count: 4,
+        },
+        {
+            id: "celtic",
+            name: t("pages.tarot.spreads.celtic.name"),
+            description: t("pages.tarot.spreads.celtic.description"),
+            positions: [
+                t("pages.tarot.positions.present"),
+                t("pages.tarot.positions.challenge"),
+                t("pages.tarot.positions.past"),
+                t("pages.tarot.positions.future"),
+                t("pages.tarot.positions.goal"),
+                t("pages.tarot.positions.subconscious"),
+                t("pages.tarot.positions.advice"),
+                t("pages.tarot.positions.environment"),
+                t("pages.tarot.positions.hopeFear"),
+                t("pages.tarot.positions.finalOutcome"),
+            ],
+            count: 10,
+        },
+        {
+            id: "yesno",
+            name: t("pages.tarot.spreads.yesno.name"),
+            description: t("pages.tarot.spreads.yesno.description"),
+            positions: [
+                t("pages.tarot.positions.answer"),
+                t("pages.tarot.positions.reason"),
+                t("pages.tarot.positions.advice"),
+            ],
+            count: 3,
+        },
+    ]
+
+    const readingStyles = [
+        { id: "standard", name: t("pages.tarot.styles.standard.name"), description: t("pages.tarot.styles.standard.description") },
+        { id: "fire", name: t("pages.tarot.styles.fire.name"), description: t("pages.tarot.styles.fire.description") },
+        { id: "moon", name: t("pages.tarot.styles.moon.name"), description: t("pages.tarot.styles.moon.description") },
+        { id: "wise", name: t("pages.tarot.styles.wise.name"), description: t("pages.tarot.styles.wise.description") },
+    ]
+
     const [step, setStep] = useState<"question" | "spread" | "draw" | "result">("question")
     const [question, setQuestion] = useState("")
-    const [selectedSpread, setSelectedSpread] = useState(spreads[0])
-    const [selectedStyle, setSelectedStyle] = useState(readingStyles[0])
+    const [selectedSpreadId, setSelectedSpreadId] = useState(spreads[0].id)
+    const [selectedStyleId, setSelectedStyleId] = useState(readingStyles[0].id)
+    const selectedSpread = spreads.find((spread) => spread.id === selectedSpreadId) || spreads[0]
+    const selectedStyle = readingStyles.find((style) => style.id === selectedStyleId) || readingStyles[0]
     const [drawnCards, setDrawnCards] = useState<DrawnCard[]>([])
     const [isShuffling, setIsShuffling] = useState(false)
     const [deckCards, setDeckCards] = useState<number[]>([])
@@ -183,9 +209,9 @@ export default function TarotPage() {
                     <Flower2 className="h-8 w-8 text-amber-500" />
                 </div>
                 <div>
-                    <h1 className="font-serif text-3xl font-bold">塔罗占卜</h1>
+                    <h1 className="font-serif text-3xl font-bold">{t("pages.tarot.title")}</h1>
                     <p className="text-muted-foreground">
-                        聆听潜意识的声音，获取人生的指引与洞见
+                        {t("pages.tarot.subtitle")}
                     </p>
                 </div>
             </div>
@@ -194,24 +220,24 @@ export default function TarotPage() {
             {step === "question" && (
                 <Card>
                     <CardHeader>
-                        <CardTitle>静心冥想，提出您的问题</CardTitle>
+                        <CardTitle>{t("pages.tarot.steps.question.title")}</CardTitle>
                         <CardDescription>
-                            请先静下心来，集中精神，在心中默念您想咨询的问题
+                            {t("pages.tarot.steps.question.description")}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <div className="space-y-2">
-                            <Label htmlFor="question">您的问题（可选）</Label>
+                            <Label htmlFor="question">{t("pages.tarot.labels.question")}</Label>
                             <Input
                                 id="question"
-                                placeholder="例如：我的感情发展如何？"
+                                placeholder={t("pages.tarot.placeholders.question")}
                                 value={question}
                                 onChange={(e) => setQuestion(e.target.value)}
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <Label>选择解读风格</Label>
+                            <Label>{t("pages.tarot.labels.style")}</Label>
                             <div className="grid gap-3 md:grid-cols-2">
                                 {readingStyles.map((style) => (
                                     <div
@@ -222,7 +248,7 @@ export default function TarotPage() {
                                                 ? "border-primary bg-primary/5"
                                                 : "border-border hover:bg-accent"
                                         )}
-                                        onClick={() => setSelectedStyle(style)}
+                                        onClick={() => setSelectedStyleId(style.id)}
                                     >
                                         <div className="font-semibold">{style.name}</div>
                                         <div className="text-sm text-muted-foreground">
@@ -238,7 +264,7 @@ export default function TarotPage() {
                             className="w-full cursor-pointer"
                             onClick={() => setStep("spread")}
                         >
-                            继续选择牌阵
+                            {t("pages.tarot.actions.continue")}
                             <Sparkles className="ml-2 h-4 w-4" />
                         </Button>
                     </CardContent>
@@ -249,9 +275,9 @@ export default function TarotPage() {
             {step === "spread" && (
                 <Card>
                     <CardHeader>
-                        <CardTitle>选择牌阵</CardTitle>
+                        <CardTitle>{t("pages.tarot.steps.spread.title")}</CardTitle>
                         <CardDescription>
-                            不同的牌阵适合不同类型的问题
+                            {t("pages.tarot.steps.spread.description")}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
@@ -265,7 +291,7 @@ export default function TarotPage() {
                                             ? "border-primary bg-primary/5 shadow-lg shadow-primary/10"
                                             : "border-border hover:bg-accent"
                                     )}
-                                    onClick={() => setSelectedSpread(spread)}
+                                    onClick={() => setSelectedSpreadId(spread.id)}
                                 >
                                     <div className="text-3xl mb-2">
                                         {spread.count === 1 ? "🃏" : spread.count === 3 ? "🎴🎴🎴" : "🎴🎴🎴🎴"}
@@ -287,7 +313,7 @@ export default function TarotPage() {
                                 onClick={() => setStep("question")}
                                 className="cursor-pointer"
                             >
-                                返回
+                                {t("common.back")}
                             </Button>
                             <Button
                                 size="lg"
@@ -297,7 +323,7 @@ export default function TarotPage() {
                                     setStep("draw")
                                 }}
                             >
-                                开始抽牌
+                                {t("pages.tarot.actions.startDraw")}
                                 <Sparkles className="ml-2 h-4 w-4" />
                             </Button>
                         </div>
@@ -311,7 +337,7 @@ export default function TarotPage() {
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center justify-between">
-                                抽取您的塔罗牌
+                                {t("pages.tarot.steps.draw.title")}
                                 <Button
                                     variant="outline"
                                     size="sm"
@@ -324,11 +350,13 @@ export default function TarotPage() {
                                     ) : (
                                         <Shuffle className="h-4 w-4" />
                                     )}
-                                    洗牌
+                                    {t("pages.tarot.actions.shuffle")}
                                 </Button>
                             </CardTitle>
                             <CardDescription>
-                                点击卡牌抽取，共需抽取 {selectedSpread.count} 张
+                                {formatMessage(t("pages.tarot.steps.draw.description"), {
+                                    count: selectedSpread.count,
+                                })}
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -367,18 +395,18 @@ export default function TarotPage() {
                                                             drawn.reversed && "rotate-180"
                                                         )}
                                                     >
-                                                        <div className={cn("text-center", drawn.reversed && "rotate-180")}>
-                                                            <div className="font-serif text-lg font-bold">
-                                                                {drawn.card.name}
+                                                            <div className={cn("text-center", drawn.reversed && "rotate-180")}>
+                                                                <div className="font-serif text-lg font-bold">
+                                                                    {drawn.card.name}
+                                                                </div>
+                                                                {drawn.reversed && (
+                                                                    <Badge variant="outline" className="text-xs mt-1">
+                                                                        {t("pages.tarot.labels.reversed")}
+                                                                    </Badge>
+                                                                )}
                                                             </div>
-                                                            {drawn.reversed && (
-                                                                <Badge variant="outline" className="text-xs mt-1">
-                                                                    逆位
-                                                                </Badge>
-                                                            )}
                                                         </div>
-                                                    </div>
-                                                )
+                                                    )
                                             ) : (
                                                 <div
                                                     className="tarot-card w-24 h-36 flex items-center justify-center bg-muted/50 cursor-pointer hover:bg-muted transition-colors"
@@ -395,7 +423,7 @@ export default function TarotPage() {
                             {/* 牌堆 */}
                             <div className="text-center">
                                 <div className="text-sm text-muted-foreground mb-4">
-                                    点击下方牌堆抽牌
+                                    {t("pages.tarot.steps.draw.deckHint")}
                                 </div>
                                 <div
                                     className={cn(
@@ -437,10 +465,10 @@ export default function TarotPage() {
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Flower2 className="h-5 w-5" />
-                                塔罗解读
+                                {t("pages.tarot.steps.result.title")}
                             </CardTitle>
                             <CardDescription>
-                                {question || "您的塔罗占卜结果"}
+                                {question || t("pages.tarot.steps.result.fallbackQuestion")}
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -482,14 +510,14 @@ export default function TarotPage() {
                                                     </div>
                                                     {drawn.reversed && (
                                                         <Badge variant="destructive" className="text-xs mt-2">
-                                                            逆位
+                                                            {t("pages.tarot.labels.reversed")}
                                                         </Badge>
                                                     )}
                                                 </div>
                                             </div>
                                         )}
                                         <div className="text-center font-serif text-lg font-bold">
-                                            {drawn.card.name} {drawn.reversed && "(逆位)"}
+                                            {drawn.card.name} {drawn.reversed && t("pages.tarot.labels.reversedSuffix")}
                                         </div>
                                     </div>
                                 ))}
@@ -503,13 +531,20 @@ export default function TarotPage() {
                                             <Badge variant="outline">{drawn.position}</Badge>
                                             <span className="font-semibold">{drawn.card.name}</span>
                                             {drawn.reversed && (
-                                                <Badge variant="secondary">逆位</Badge>
+                                                <Badge variant="secondary">{t("pages.tarot.labels.reversed")}</Badge>
                                             )}
                                         </div>
                                         <p className="text-sm text-muted-foreground">
                                             {drawn.reversed
-                                                ? `${drawn.card.name}逆位代表能量受阻或内在挣扎。在${drawn.position}的位置上，这暗示着需要面对和处理某些障碍。`
-                                                : `${drawn.card.name}代表${drawn.card.meaning}。在${drawn.position}的位置上，这为您带来积极的能量指引。`}
+                                                ? formatMessage(t("pages.tarot.interpretation.reversed"), {
+                                                    card: drawn.card.name,
+                                                    position: drawn.position,
+                                                })
+                                                : formatMessage(t("pages.tarot.interpretation.upright"), {
+                                                    card: drawn.card.name,
+                                                    meaning: drawn.card.meaning,
+                                                    position: drawn.position,
+                                                })}
                                         </p>
                                     </div>
                                 ))}
@@ -518,7 +553,7 @@ export default function TarotPage() {
                     </Card>
 
                     {/* AI 解读 */}
-                    <AIAnalysisSection type="tarot" title="AI 塔罗解读" />
+                    <AIAnalysisSection type="tarot" title={t("pages.tarot.aiTitle")} />
 
                     <div className="text-center">
                         <Button
@@ -527,7 +562,7 @@ export default function TarotPage() {
                             className="cursor-pointer"
                         >
                             <RotateCcw className="mr-2 h-4 w-4" />
-                            重新开始
+                            {t("pages.tarot.actions.restart")}
                         </Button>
                     </div>
                 </div>

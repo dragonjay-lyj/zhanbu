@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { createAdminClient } from "@/lib/supabase/server"
+import { defaultLocale, getTranslations, locales, t as translate, type Locale } from "@/lib/i18n"
 
 // 支持的占卜类型
 type DivinationType =
@@ -105,6 +106,43 @@ interface InterpretRequest {
     data: Record<string, unknown>
     question?: string
     style?: string
+    locale?: string
+}
+
+const LOCALE_INSTRUCTIONS: Record<Locale, string> = {
+    "zh-CN": "请用简体中文回答。",
+    "zh-TW": "請用繁體中文回答。",
+    en: "Please respond in English.",
+    ja: "日本語で回答してください。",
+}
+
+function matchAcceptLanguage(headerValue: string | null): Locale | null {
+    if (!headerValue) return null
+    const parts = headerValue.split(",").map((part) => part.trim().split(";")[0])
+    for (const lang of parts) {
+        const lower = lang.toLowerCase()
+        if (lower.startsWith("zh")) {
+            if (lower.includes("tw") || lower.includes("hk") || lower.includes("mo")) {
+                return "zh-TW"
+            }
+            return "zh-CN"
+        }
+        if (lower.startsWith("ja")) return "ja"
+        if (lower.startsWith("en")) return "en"
+    }
+    return null
+}
+
+function resolveLocale(req: NextRequest, bodyLocale?: string): Locale {
+    if (bodyLocale && locales.includes(bodyLocale as Locale)) {
+        return bodyLocale as Locale
+    }
+    const cookieLocale = req.cookies.get("locale")?.value
+    if (cookieLocale && locales.includes(cookieLocale as Locale)) {
+        return cookieLocale as Locale
+    }
+    const headerLocale = matchAcceptLanguage(req.headers.get("accept-language"))
+    return headerLocale || defaultLocale
 }
 
 /**
@@ -143,7 +181,8 @@ export async function POST(request: NextRequest) {
         }
 
         const body: InterpretRequest = await request.json()
-        const { type, data, question, style = "standard" } = body
+        const { type, data, question, style = "standard", locale: bodyLocale } = body
+        const locale = resolveLocale(request, bodyLocale)
 
         // 验证类型
         if (!SYSTEM_PROMPTS[type]) {
@@ -153,6 +192,8 @@ export async function POST(request: NextRequest) {
         // 构建提示
         const systemPrompt = SYSTEM_PROMPTS[type]
         const styleModifier = STYLE_MODIFIERS[style] || STYLE_MODIFIERS.standard
+        const languageInstruction = LOCALE_INSTRUCTIONS[locale] || LOCALE_INSTRUCTIONS[defaultLocale]
+        const translations = getTranslations(locale)
 
         // 构建用户输入
         let userContent = ""
@@ -160,7 +201,7 @@ export async function POST(request: NextRequest) {
             userContent += `用户问题：${question}\n\n`
         }
         userContent += `占卜数据：\n${JSON.stringify(data, null, 2)}\n\n`
-        userContent += `${styleModifier}\n\n请给出详细的解读。`
+        userContent += `${styleModifier}\n\n${languageInstruction}\n\n${translate(translations, "ai.analysis.request")}`
 
         // 获取 AI 配置（从数据库读取，fallback 到环境变量）
         const { getAiConfig } = await import("@/lib/settings")
@@ -183,7 +224,7 @@ export async function POST(request: NextRequest) {
             body: JSON.stringify({
                 model: aiConfig.model,
                 messages: [
-                    { role: "system", content: systemPrompt },
+                    { role: "system", content: `${systemPrompt}\n\n${languageInstruction}` },
                     { role: "user", content: userContent },
                 ],
                 temperature: 0.8,

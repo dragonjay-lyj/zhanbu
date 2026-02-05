@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { cn } from "@/lib/utils"
+import { useI18n, useTranslation, formatMessage } from "@/lib/i18n"
 
 interface AIAnalysisSectionProps {
     /** 分析类型标题 */
@@ -32,14 +33,16 @@ const AI_INTERPRET_COST = 10
  * 调用真实 AI API 生成解读
  */
 export function AIAnalysisSection({
-    title = "AI 深度解读",
+    title,
     context = {},
-    loginPrompt = "登录后获取 AI 智能分析，深入解读您的命盘特质",
+    loginPrompt,
     question,
     type = "bazi",
     style = "standard"
 }: AIAnalysisSectionProps) {
     const { isSignedIn, user } = useUser()
+    const { locale } = useI18n()
+    const { t } = useTranslation()
     const [aiAnalysis, setAiAnalysis] = useState<string | null>(null)
     const [isAnalyzing, setIsAnalyzing] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -64,6 +67,7 @@ export function AIAnalysisSection({
                     data: context,
                     question,
                     style,
+                    locale,
                 }),
             })
 
@@ -82,11 +86,12 @@ export function AIAnalysisSection({
             }
 
             if (result.success && result.interpretation) {
-                const greeting = `您好，${user?.firstName || "用户"}！\n\n`
+                const greetingName = user?.firstName || t("nav.userFallback")
+                const greeting = formatMessage(t("ai.analysis.greeting"), { name: greetingName })
                 setAiAnalysis(greeting + result.interpretation)
                 setCreditsUsed(result.creditsUsed)
             } else {
-                throw new Error("AI 未返回有效内容")
+                throw new Error(t("errors.unknown"))
             }
         } catch (err) {
             console.error("AI 解读错误:", err)
@@ -108,11 +113,11 @@ export function AIAnalysisSection({
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 <Brain className="h-5 w-5 text-primary" />
-                                <h3 className="font-semibold">{title}</h3>
+                                <h3 className="font-semibold">{title || t("ai.analysis.title")}</h3>
                             </div>
                             <div className="flex items-center gap-1 text-xs text-muted-foreground">
                                 <Coins className="h-3 w-3" />
-                                <span>消耗 {AI_INTERPRET_COST} 积分</span>
+                                <span>{formatMessage(t("ai.analysis.costLabel"), { cost: AI_INTERPRET_COST })}</span>
                             </div>
                         </div>
 
@@ -122,12 +127,14 @@ export function AIAnalysisSection({
                                 <AlertCircle className="h-4 w-4" />
                                 <AlertDescription className="flex items-center justify-between">
                                     <span>
-                                        积分不足！需要 {insufficientCredits.required} 积分，
-                                        当前余额 {insufficientCredits.current} 积分
+                                        {formatMessage(t("ai.analysis.insufficient"), {
+                                            required: insufficientCredits.required,
+                                            current: insufficientCredits.current,
+                                        })}
                                     </span>
                                     <Link href="/pricing">
                                         <Button size="sm" variant="outline" className="ml-2">
-                                            充值积分
+                                            {t("ai.analysis.recharge")}
                                         </Button>
                                     </Link>
                                 </AlertDescription>
@@ -148,11 +155,11 @@ export function AIAnalysisSection({
                                         className="cursor-pointer"
                                     >
                                         <RefreshCw className={cn("mr-2 h-4 w-4", isAnalyzing && "animate-spin")} />
-                                        重新解读
+                                        {t("ai.analysis.refresh")}
                                     </Button>
                                     {creditsUsed && (
                                         <span className="text-xs text-muted-foreground">
-                                            本次消耗 {creditsUsed} 积分
+                                            {formatMessage(t("ai.analysis.used"), { used: creditsUsed })}
                                         </span>
                                     )}
                                 </div>
@@ -167,7 +174,7 @@ export function AIAnalysisSection({
                                     className="cursor-pointer"
                                 >
                                     <RefreshCw className={cn("mr-2 h-4 w-4", isAnalyzing && "animate-spin")} />
-                                    重试
+                                    {t("ai.analysis.retry")}
                                 </Button>
                             </div>
                         ) : (
@@ -179,12 +186,12 @@ export function AIAnalysisSection({
                                 {isAnalyzing ? (
                                     <>
                                         <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                                        AI 分析中...
+                                        {t("ai.analysis.analyzing")}
                                     </>
                                 ) : (
                                     <>
                                         <Sparkles className="mr-2 h-4 w-4" />
-                                        获取 AI 深度解读
+                                        {t("ai.analysis.fetch")}
                                     </>
                                 )}
                             </Button>
@@ -193,12 +200,12 @@ export function AIAnalysisSection({
                 ) : (
                     <div className="text-center">
                         <Sparkles className="h-8 w-8 text-muted-foreground mx-auto mb-4" />
-                        <h3 className="font-semibold mb-2">{title}</h3>
+                        <h3 className="font-semibold mb-2">{title || t("ai.analysis.title")}</h3>
                         <p className="text-sm text-muted-foreground mb-4">
-                            {loginPrompt}
+                            {loginPrompt || t("ai.analysis.loginPrompt")}
                         </p>
                         <Button variant="outline" className="cursor-pointer" asChild>
-                            <a href="/sign-in">登录获取解读</a>
+                            <a href="/sign-in">{t("ai.analysis.loginAction")}</a>
                         </Button>
                     </div>
                 )}

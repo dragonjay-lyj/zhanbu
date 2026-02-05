@@ -42,6 +42,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { useI18n, useTranslation, formatMessage } from "@/lib/i18n"
 
 interface Record {
     id: string
@@ -61,20 +62,12 @@ interface HistoryData {
     totalPages: number
 }
 
-const typeOptions = [
-    { value: "all", label: "全部类型" },
-    { value: "bazi", label: "八字排盘" },
-    { value: "ziwei", label: "紫微斗数" },
-    { value: "liuyao", label: "六爻排盘" },
-    { value: "meihua", label: "梅花易数" },
-    { value: "tarot", label: "塔罗占卜" },
-    { value: "daily", label: "每日运势" },
-]
-
 /**
  * 占卜历史记录页面
  */
 export default function HistoryPage() {
+    const { locale } = useI18n()
+    const { t } = useTranslation()
     const { user, isLoaded } = useUser()
     const [data, setData] = useState<HistoryData | null>(null)
     const [isLoading, setIsLoading] = useState(true)
@@ -83,6 +76,16 @@ export default function HistoryPage() {
     const [page, setPage] = useState(1)
     const [selectedRecord, setSelectedRecord] = useState<Record | null>(null)
     const [deleteRecord, setDeleteRecord] = useState<Record | null>(null)
+
+    const typeOptions = [
+        { value: "all", label: t("pages.history.filters.all") },
+        { value: "bazi", label: t("pages.history.types.bazi") },
+        { value: "ziwei", label: t("pages.history.types.ziwei") },
+        { value: "liuyao", label: t("pages.history.types.liuyao") },
+        { value: "meihua", label: t("pages.history.types.meihua") },
+        { value: "tarot", label: t("pages.history.types.tarot") },
+        { value: "daily", label: t("pages.history.types.daily") },
+    ]
 
     const fetchHistory = useCallback(async () => {
         if (!user) return
@@ -135,7 +138,7 @@ export default function HistoryPage() {
     }
 
     const formatDate = (dateStr: string) => {
-        return new Date(dateStr).toLocaleDateString("zh-CN", {
+        return new Date(dateStr).toLocaleDateString(locale, {
             year: "numeric",
             month: "long",
             day: "numeric",
@@ -161,10 +164,10 @@ export default function HistoryPage() {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
                 <History className="h-16 w-16 text-muted-foreground" />
-                <h2 className="text-xl font-semibold">登录后查看历史记录</h2>
-                <p className="text-muted-foreground">您需要登录才能查看占卜历史</p>
+                <h2 className="text-xl font-semibold">{t("pages.history.auth.title")}</h2>
+                <p className="text-muted-foreground">{t("pages.history.auth.subtitle")}</p>
                 <Link href="/sign-in">
-                    <Button className="cursor-pointer">前往登录</Button>
+                    <Button className="cursor-pointer">{t("pages.history.auth.action")}</Button>
                 </Link>
             </div>
         )
@@ -175,14 +178,14 @@ export default function HistoryPage() {
             {/* 页面标题 */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold">占卜历史</h1>
+                    <h1 className="text-3xl font-bold">{t("pages.history.title")}</h1>
                     <p className="text-muted-foreground">
-                        共 {data?.total || 0} 条记录
+                        {formatMessage(t("pages.history.total"), { count: data?.total || 0 })}
                     </p>
                 </div>
                 <Button onClick={fetchHistory} variant="outline" className="cursor-pointer">
                     <RefreshCw className="mr-2 h-4 w-4" />
-                    刷新
+                    {t("pages.history.actions.refresh")}
                 </Button>
             </div>
 
@@ -192,7 +195,7 @@ export default function HistoryPage() {
                     <div className="flex flex-col sm:flex-row gap-4">
                         <div className="flex-1 flex gap-2">
                             <Input
-                                placeholder="搜索问题或标题..."
+                                placeholder={t("pages.history.search.placeholder")}
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
@@ -203,7 +206,7 @@ export default function HistoryPage() {
                         </div>
                         <Select value={typeFilter} onValueChange={(v) => { setTypeFilter(v); setPage(1); }}>
                             <SelectTrigger className="w-[180px] cursor-pointer">
-                                <SelectValue placeholder="类型筛选" />
+                                <SelectValue placeholder={t("pages.history.filters.placeholder")} />
                             </SelectTrigger>
                             <SelectContent>
                                 {typeOptions.map((option) => (
@@ -236,7 +239,7 @@ export default function HistoryPage() {
                                             </span>
                                         </div>
                                         <h3 className="font-medium">
-                                            {record.title || record.question?.slice(0, 50) || "占卜记录"}
+                                            {record.title || record.question?.slice(0, 50) || t("pages.history.recordFallback")}
                                         </h3>
                                         {record.question && record.question !== record.title && (
                                             <p className="text-sm text-muted-foreground line-clamp-2">
@@ -246,7 +249,7 @@ export default function HistoryPage() {
                                         {record.ai_interpretation && (
                                             <Badge className="bg-primary/10 text-primary">
                                                 <Sparkles className="mr-1 h-3 w-3" />
-                                                已获取 AI 解读
+                                                {t("pages.history.aiLabel")}
                                             </Badge>
                                         )}
                                     </div>
@@ -277,7 +280,7 @@ export default function HistoryPage() {
                     {data.totalPages > 1 && (
                         <div className="flex items-center justify-between">
                             <p className="text-sm text-muted-foreground">
-                                第 {data.page} / {data.totalPages} 页
+                                {formatMessage(t("pages.history.pagination"), { page: data.page, total: data.totalPages })}
                             </p>
                             <div className="flex gap-2">
                                 <Button
@@ -288,7 +291,7 @@ export default function HistoryPage() {
                                     className="cursor-pointer"
                                 >
                                     <ChevronLeft className="h-4 w-4 mr-1" />
-                                    上一页
+                                    {t("pages.history.actions.prev")}
                                 </Button>
                                 <Button
                                     variant="outline"
@@ -297,7 +300,7 @@ export default function HistoryPage() {
                                     disabled={page >= data.totalPages}
                                     className="cursor-pointer"
                                 >
-                                    下一页
+                                    {t("pages.history.actions.next")}
                                     <ChevronRight className="h-4 w-4 ml-1" />
                                 </Button>
                             </div>
@@ -308,12 +311,12 @@ export default function HistoryPage() {
                 <Card>
                     <CardContent className="flex flex-col items-center justify-center py-16">
                         <History className="h-16 w-16 text-muted-foreground mb-4" />
-                        <h3 className="text-lg font-medium mb-2">暂无占卜记录</h3>
+                        <h3 className="text-lg font-medium mb-2">{t("pages.history.empty.title")}</h3>
                         <p className="text-muted-foreground text-center mb-4">
-                            开始您的第一次占卜之旅吧
+                            {t("pages.history.empty.subtitle")}
                         </p>
                         <Link href="/bazi">
-                            <Button className="cursor-pointer">开始占卜</Button>
+                            <Button className="cursor-pointer">{t("pages.history.empty.action")}</Button>
                         </Link>
                     </CardContent>
                 </Card>
@@ -323,7 +326,7 @@ export default function HistoryPage() {
             <Dialog open={!!selectedRecord} onOpenChange={() => setSelectedRecord(null)}>
                 <DialogContent className="max-w-2xl max-h-[80vh] overflow-auto">
                     <DialogHeader>
-                        <DialogTitle>{selectedRecord?.title || "占卜详情"}</DialogTitle>
+                        <DialogTitle>{selectedRecord?.title || t("pages.history.detail.title")}</DialogTitle>
                         <DialogDescription>
                             {selectedRecord && formatDate(selectedRecord.created_at)}
                         </DialogDescription>
@@ -334,14 +337,14 @@ export default function HistoryPage() {
 
                             {selectedRecord.question && (
                                 <div className="p-4 rounded-lg bg-muted/50">
-                                    <h4 className="font-medium mb-2">问题</h4>
+                                    <h4 className="font-medium mb-2">{t("pages.history.detail.question")}</h4>
                                     <p className="text-sm">{selectedRecord.question}</p>
                                 </div>
                             )}
 
                             {!!selectedRecord.result && (
                                 <div className="p-4 rounded-lg bg-muted/50">
-                                    <h4 className="font-medium mb-2">结果</h4>
+                                    <h4 className="font-medium mb-2">{t("pages.history.detail.result")}</h4>
                                     <pre className="text-sm whitespace-pre-wrap overflow-auto max-h-[200px]">
                                         {String(typeof selectedRecord.result === "string"
                                             ? selectedRecord.result
@@ -354,7 +357,7 @@ export default function HistoryPage() {
                                 <div className="p-4 rounded-lg bg-primary/5 border border-primary/10">
                                     <h4 className="font-medium mb-2 flex items-center gap-2">
                                         <Sparkles className="h-4 w-4 text-primary" />
-                                        AI 解读
+                                        {t("pages.history.detail.aiTitle")}
                                     </h4>
                                     <p className="text-sm whitespace-pre-wrap">{selectedRecord.ai_interpretation}</p>
                                 </div>
@@ -368,15 +371,15 @@ export default function HistoryPage() {
             <AlertDialog open={!!deleteRecord} onOpenChange={() => setDeleteRecord(null)}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>确认删除</AlertDialogTitle>
+                        <AlertDialogTitle>{t("pages.history.delete.title")}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            确定要删除这条占卜记录吗？此操作无法撤销。
+                            {t("pages.history.delete.description")}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel className="cursor-pointer">取消</AlertDialogCancel>
+                        <AlertDialogCancel className="cursor-pointer">{t("common.cancel")}</AlertDialogCancel>
                         <AlertDialogAction onClick={handleDelete} className="cursor-pointer bg-destructive">
-                            删除
+                            {t("common.delete")}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
