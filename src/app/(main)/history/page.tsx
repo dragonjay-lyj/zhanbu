@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useUser } from "@clerk/nextjs"
 import {
     History,
@@ -66,14 +67,20 @@ interface HistoryData {
  * 占卜历史记录页面
  */
 export default function HistoryPage() {
+    const router = useRouter()
+    const pathname = usePathname()
+    const searchParams = useSearchParams()
     const { locale } = useI18n()
     const { t } = useTranslation()
     const { user, isLoaded } = useUser()
     const [data, setData] = useState<HistoryData | null>(null)
     const [isLoading, setIsLoading] = useState(true)
-    const [search, setSearch] = useState("")
-    const [typeFilter, setTypeFilter] = useState("all")
-    const [page, setPage] = useState(1)
+    const [search, setSearch] = useState(() => searchParams.get("search") ?? "")
+    const [typeFilter, setTypeFilter] = useState(() => searchParams.get("type") ?? "all")
+    const [page, setPage] = useState(() => {
+        const fromQuery = Number(searchParams.get("page") || "1")
+        return Number.isFinite(fromQuery) && fromQuery > 0 ? fromQuery : 1
+    })
     const [selectedRecord, setSelectedRecord] = useState<Record | null>(null)
     const [deleteRecord, setDeleteRecord] = useState<Record | null>(null)
 
@@ -84,7 +91,22 @@ export default function HistoryPage() {
         { value: "liuyao", label: t("pages.history.types.liuyao") },
         { value: "meihua", label: t("pages.history.types.meihua") },
         { value: "tarot", label: t("pages.history.types.tarot") },
+        { value: "marriage", label: t("pages.history.types.marriage") },
         { value: "daily", label: t("pages.history.types.daily") },
+        { value: "name", label: t("pages.history.types.name") },
+        { value: "zodiac", label: t("pages.history.types.zodiac") },
+        { value: "shengxiao", label: t("pages.history.types.shengxiao") },
+        { value: "liunian", label: t("pages.history.types.liunian") },
+        { value: "qianwen", label: t("pages.history.types.qianwen") },
+        { value: "jiemeng", label: t("pages.history.types.jiemeng") },
+        { value: "zeji", label: t("pages.history.types.zeji") },
+        { value: "huangli", label: t("pages.history.types.huangli") },
+        { value: "ai_chat", label: t("pages.history.types.ai_chat") },
+        { value: "community_post", label: t("pages.history.types.community_post") },
+        { value: "qimen", label: t("pages.history.types.qimen") },
+        { value: "liuren", label: t("pages.history.types.liuren") },
+        { value: "jinkouque", label: t("pages.history.types.jinkouque") },
+        { value: "fengshui", label: t("pages.history.types.fengshui") },
     ]
 
     const fetchHistory = useCallback(async () => {
@@ -119,6 +141,15 @@ export default function HistoryPage() {
             setIsLoading(false)
         }
     }, [isLoaded, fetchHistory, user])
+
+    useEffect(() => {
+        const params = new URLSearchParams()
+        if (search) params.set("search", search)
+        if (typeFilter !== "all") params.set("type", typeFilter)
+        if (page > 1) params.set("page", page.toString())
+        const query = params.toString()
+        router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false })
+    }, [page, pathname, router, search, typeFilter])
 
     const handleSearch = () => {
         setPage(1)
@@ -199,8 +230,9 @@ export default function HistoryPage() {
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                                aria-label={t("pages.history.search.placeholder")}
                             />
-                            <Button onClick={handleSearch} className="cursor-pointer">
+                            <Button onClick={handleSearch} className="cursor-pointer" aria-label="搜索记录">
                                 <Search className="h-4 w-4" />
                             </Button>
                         </div>
@@ -259,6 +291,7 @@ export default function HistoryPage() {
                                             size="icon"
                                             onClick={() => setSelectedRecord(record)}
                                             className="cursor-pointer"
+                                            aria-label="查看详情"
                                         >
                                             <Eye className="h-4 w-4" />
                                         </Button>
@@ -267,6 +300,7 @@ export default function HistoryPage() {
                                             size="icon"
                                             onClick={() => setDeleteRecord(record)}
                                             className="cursor-pointer text-destructive"
+                                            aria-label="删除记录"
                                         >
                                             <Trash2 className="h-4 w-4" />
                                         </Button>

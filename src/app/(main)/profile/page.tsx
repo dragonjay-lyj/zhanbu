@@ -142,7 +142,13 @@ export default function ProfilePage() {
                                 <div className="flex items-center gap-4">
                                     <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center overflow-hidden">
                                         {user.imageUrl ? (
-                                            <img src={user.imageUrl} alt="" className="w-16 h-16 rounded-full" />
+                                            <img
+                                                src={user.imageUrl}
+                                                alt={`${user.fullName || user.username || "用户"}头像`}
+                                                width={64}
+                                                height={64}
+                                                className="w-16 h-16 rounded-full"
+                                            />
                                         ) : (
                                             <User className="h-8 w-8 text-muted-foreground" />
                                         )}

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { createServerClient } from "@/lib/supabase/server"
 import { getDbUserIdByClerkId } from "@/lib/auth/user"
+import { logFortune } from "@/lib/history/log-fortune"
 
 // 塔罗牌数据
 const MAJOR_ARCANA = [
@@ -134,13 +135,17 @@ ${cardDescriptions}
             )
         }
 
-        // 同时在 fortunes 表创建记录
-        await supabase.from("fortunes").insert({
-            user_id: dbUserId,
-            fortune_type: "tarot",
-            record_id: (record as { id: string }).id,
+        // 同时写入 fortunes 汇总表（幂等去重）
+        const fortuneResult = await logFortune({
+            dbUserId,
+            type: "tarot",
+            recordId: (record as { id: string }).id,
+            title: "塔罗占卜",
             summary: `${spread} - ${cardDetails.map((c) => c.name).join("、")}`,
-        } as never)
+        })
+        if (!fortuneResult.ok) {
+            console.error("保存塔罗历史失败:", fortuneResult.error)
+        }
 
         // 尝试调用 AI 生成解读
         let interpretation = ""

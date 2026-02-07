@@ -34,6 +34,7 @@ import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
 import { AIAnalysisSection } from "@/components/ai/ai-analysis-section"
 import { useTranslation, formatMessage } from "@/lib/i18n"
+import { logFortuneClient } from "@/lib/history/client-log"
 
 // 分析类型
 const ANALYSIS_TYPES = [
@@ -203,6 +204,12 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
         const analysisResult = calculateAnalysis()
         setResult(analysisResult)
         setStep("result")
+        void logFortuneClient({
+            type: "marriage",
+            title: `关系分析 · ${analysisType}`,
+            summary: `${analysisType} · 综合 ${analysisResult.overallScore} 分`,
+            meta: { analysisType },
+        })
         setIsLoading(false)
     }
 
@@ -376,11 +383,14 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
                         <CardContent>
                             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                                 {analysisTypes.map((type) => (
-                                    <div
+                                    <button
+                                        type="button"
                                         key={type.id}
                                         onClick={() => setAnalysisType(type.id)}
+                                        aria-pressed={analysisType === type.id}
                                         className={cn(
                                             "p-4 rounded-lg border cursor-pointer transition-all text-center",
+                                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                                             analysisType === type.id
                                                 ? "border-primary bg-primary/5"
                                                 : "border-border hover:bg-accent"
@@ -388,7 +398,7 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
                                     >
                                         <type.icon className={cn("h-6 w-6 mx-auto mb-2", type.color)} />
                                         <div className="font-medium text-sm">{type.name}</div>
-                                    </div>
+                                    </button>
                                 ))}
                             </div>
                         </CardContent>

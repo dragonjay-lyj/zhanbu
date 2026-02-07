@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
+import { auth } from "@clerk/nextjs/server"
+import { logFortune } from "@/lib/history/log-fortune"
 
 /**
  * 择吉选日 API
@@ -137,7 +139,7 @@ export async function GET(req: NextRequest) {
         // 筛选吉日（分数 >= 60）
         const auspiciousDates = dates.filter(d => d.score >= 60)
 
-        return NextResponse.json({
+        const responseData = {
             success: true,
             data: {
                 event,
@@ -145,7 +147,22 @@ export async function GET(req: NextRequest) {
                 auspiciousDates,
                 allDates: dates,
             },
-        })
+        }
+
+        const { userId } = await auth()
+        if (userId) {
+            const logResult = await logFortune({
+                clerkUserId: userId,
+                type: "zeji",
+                title: `择吉选日 · ${event.name}`,
+                summary: `${responseData.data.dateRange.start} 至 ${responseData.data.dateRange.end} · 命中吉日 ${auspiciousDates.length} 天`,
+            })
+            if (!logResult.ok) {
+                console.error("择吉历史记录失败:", logResult.error)
+            }
+        }
+
+        return NextResponse.json(responseData)
     } catch (error) {
         console.error("择吉选日 API 错误:", error)
         return NextResponse.json({ error: "服务器内部错误" }, { status: 500 })

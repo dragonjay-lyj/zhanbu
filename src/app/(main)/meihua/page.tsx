@@ -21,6 +21,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import { AIAnalysisSection } from "@/components/ai/ai-analysis-section"
 import { useI18n, useTranslation, formatMessage } from "@/lib/i18n"
+import { logFortuneClient } from "@/lib/history/client-log"
 
 // 八卦基本信息
 const BA_GUA: Record<string, { binary: string; element: string; nature: string; number: number }> = {
@@ -200,6 +201,11 @@ export default function MeihuaPage() {
                 tiYong: { ti: tiGua, yong: yongGua, relation },
                 method: methodType,
                 input: inputValue,
+            })
+            void logFortuneClient({
+                type: "meihua",
+                title: "梅花易数",
+                summary: `${benGuaName} · 动爻 ${movingLine}`,
             })
 
             setIsCalculating(false)

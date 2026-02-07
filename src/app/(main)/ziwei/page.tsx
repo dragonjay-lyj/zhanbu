@@ -32,6 +32,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn, ZIWEI_STARS, ZIWEI_PALACES } from "@/lib/utils"
 import { useTranslation, formatMessage } from "@/lib/i18n"
+import { logFortuneClient } from "@/lib/history/client-log"
 
 // 中国省份数据
 const provinces = [
@@ -136,6 +137,11 @@ export default function ZiweiPage() {
         const calculated = calculateZiwei(data)
         setResult(calculated)
         setActiveTab("result")
+        void logFortuneClient({
+            type: "ziwei",
+            title: "紫微斗数",
+            summary: `${data.chartType === "flow_year" ? "流年盘" : "本命盘"} · ${data.birthYear}-${data.birthMonth}-${data.birthDay}`,
+        })
         setIsLoading(false)
     }
 
@@ -484,20 +490,24 @@ export default function ZiweiPage() {
                                             const isMing = index === result.mingGong
                                             const isShen = index === result.shenGong
                                             return (
-                                                <div
+                                                <button
+                                                    type="button"
                                                     key={palace.name}
                                                     className={cn(
                                                         "p-2 rounded-lg border transition-all cursor-pointer hover:shadow-md",
                                                         isMing && "border-primary bg-primary/10",
                                                         isShen && !isMing && "border-secondary bg-secondary/10",
                                                         !isMing && !isShen && "border-border/50 bg-card hover:bg-accent",
-                                                        selectedPalace === index && "ring-2 ring-primary"
+                                                        selectedPalace === index && "ring-2 ring-primary",
+                                                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                                                     )}
                                                     style={{
                                                         gridColumn: pos.col,
                                                         gridRow: pos.row,
                                                     }}
                                                     onClick={() => setSelectedPalace(index)}
+                                                    aria-pressed={selectedPalace === index}
+                                                    aria-label={`查看${palace.name}`}
                                                 >
                                                     <div className="text-xs text-muted-foreground flex items-center gap-1">
                                                         {palace.name}
@@ -520,7 +530,7 @@ export default function ZiweiPage() {
                                                     <div className="text-[10px] text-muted-foreground mt-0.5">
                                                         {palace.otherStars.slice(0, 2).join(" ")}
                                                     </div>
-                                                </div>
+                                                </button>
                                             )
                                         })}
                                     </div>

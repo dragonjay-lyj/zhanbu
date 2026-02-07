@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
-import { supabase } from "@/lib/supabase/client"
 import { createAdminClient } from "@/lib/supabase/server"
+import { logFortune } from "@/lib/history/log-fortune"
 
 /**
  * 八字排盘 API
@@ -12,6 +12,7 @@ export async function POST(req: NextRequest) {
     try {
         const body = await req.json()
         const { userId } = await auth()
+        const adminClient = await createAdminClient()
 
         const {
             name,
@@ -46,23 +47,44 @@ export async function POST(req: NextRequest) {
             useTrueSolar,
         })
 
-        // 获取用户 ID（如果已登录）
-        let dbUserId = null
+        // 获取用户 ID（如果已登录），并在缺失时自动补一条 users 记录
+        let dbUserId: string | null = null
         if (userId) {
-            const adminClient = await createAdminClient()
             const { data: user } = await adminClient
                 .from("users")
                 .select("id")
                 .eq("clerk_id", userId)
                 .single()
 
-            if (user) {
+            if (user?.id) {
                 dbUserId = user.id
+            } else {
+                const { data: createdUser, error: upsertError } = await adminClient
+                    .from("users")
+                    .upsert(
+                        {
+                            clerk_id: userId,
+                            name: name || null,
+                            updated_at: new Date().toISOString(),
+                        },
+                        { onConflict: "clerk_id" }
+                    )
+                    .select("id")
+                    .single()
+
+                if (upsertError || !createdUser?.id) {
+                    console.error("Error syncing user:", upsertError)
+                    return NextResponse.json(
+                        { error: "用户同步失败" },
+                        { status: 500 }
+                    )
+                }
+
+                dbUserId = createdUser.id
             }
         }
 
         // 保存记录
-        const adminClient = await createAdminClient()
         const { data, error } = await adminClient
             .from("bazi_records")
             .insert({
@@ -89,6 +111,33 @@ export async function POST(req: NextRequest) {
                 { error: "保存记录失败" },
                 { status: 500 }
             )
+        }
+
+        // 登录用户写入 fortunes 汇总表，供 /history 使用
+        if (dbUserId) {
+            const fourPillars = [
+                `${baziResult.pillars.year.gan}${baziResult.pillars.year.zhi}`,
+                `${baziResult.pillars.month.gan}${baziResult.pillars.month.zhi}`,
+                `${baziResult.pillars.day.gan}${baziResult.pillars.day.zhi}`,
+                `${baziResult.pillars.hour.gan}${baziResult.pillars.hour.zhi}`,
+            ].join(" ")
+
+            const fortuneResult = await logFortune({
+                dbUserId,
+                type: "bazi",
+                recordId: data.id,
+                title: "八字排盘",
+                summary: `${fourPillars} · 日主${baziResult.dayMaster}`,
+                strict: !!userId,
+            })
+
+            if (!fortuneResult.ok) {
+                console.error("Error saving bazi summary:", fortuneResult.error)
+                return NextResponse.json(
+                    { error: "保存历史记录失败" },
+                    { status: 500 }
+                )
+            }
         }
 
         return NextResponse.json({

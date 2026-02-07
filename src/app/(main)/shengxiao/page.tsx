@@ -128,21 +128,23 @@ export default function ShengxiaoPage() {
             {!selectedAnimal && (
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
                     {animals.map((animal) => (
-                        <Card
-                            key={animal.id}
-                            className={cn(
-                                "cursor-pointer transition-all hover:scale-105 hover:shadow-lg",
-                                "border-2 border-transparent hover:border-primary/50"
-                            )}
-                            onClick={() => fetchFortune(animal)}
-                        >
-                            <CardContent className="p-4 text-center">
-                                <div className="text-4xl mb-2">{animal.emoji}</div>
-                                <h3 className="font-medium text-lg">{animal.name}</h3>
-                                <p className="text-xs text-muted-foreground">
-                                    {animal.years.slice(0, 3).join("、")}...
-                                </p>
-                            </CardContent>
+                        <Card key={animal.id} className="p-0 overflow-hidden border-2 border-transparent hover:border-primary/50">
+                            <button
+                                type="button"
+                                className={cn(
+                                    "w-full cursor-pointer transition-all hover:scale-105 hover:shadow-lg text-left",
+                                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                                )}
+                                onClick={() => fetchFortune(animal)}
+                            >
+                                <CardContent className="p-4 text-center">
+                                    <div className="text-4xl mb-2">{animal.emoji}</div>
+                                    <h3 className="font-medium text-lg">{animal.name}</h3>
+                                    <p className="text-xs text-muted-foreground">
+                                        {animal.years.slice(0, 3).join("、")}...
+                                    </p>
+                                </CardContent>
+                            </button>
                         </Card>
                     ))}
                 </div>

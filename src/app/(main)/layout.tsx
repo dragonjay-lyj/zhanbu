@@ -32,7 +32,7 @@ export default function MainLayout({
                         </aside>
 
                         {/* 主内容区 */}
-                        <main className="flex-1 md:pl-64">
+                        <main id="main-content" className="flex-1 md:pl-64">
                             <div className="container mx-auto px-4 py-8">
                                 {children}
                             </div>

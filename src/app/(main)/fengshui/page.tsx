@@ -34,6 +34,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
 import { AIAnalysisSection } from "@/components/ai/ai-analysis-section"
 import { useTranslation, formatMessage } from "@/lib/i18n"
+import { logFortuneClient } from "@/lib/history/client-log"
 
 // 九宫飞星基础
 const FLYING_STARS = [
@@ -192,6 +193,11 @@ export default function FengshuiPage() {
         const calculated = calculateFengShui()
         setResult(calculated)
         setStep("result")
+        void logFortuneClient({
+            type: "fengshui",
+            title: "玄空风水",
+            summary: `${calculated.year}年 · 坐${calculated.mountain}向${calculated.facing}`,
+        })
         setIsLoading(false)
     }
 

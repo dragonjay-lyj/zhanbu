@@ -2,6 +2,7 @@ import { NextRequest } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { createAdminClient } from "@/lib/supabase/server"
 import { defaultLocale, getTranslations, locales, t as translate, type Locale } from "@/lib/i18n"
+import { logFortune } from "@/lib/history/log-fortune"
 
 /**
  * AI 对话占卜 API - 流式响应
@@ -210,6 +211,19 @@ export async function POST(req: NextRequest) {
             description: `AI Chat (${modeName || chatMode.name})`,
             reference_id: `ai_chat:${mode}`,
         })
+
+        // 仅记录新会话首条消息，避免消息级噪声
+        if (Array.isArray(history) && history.length === 0) {
+            const logResult = await logFortune({
+                clerkUserId: userId,
+                type: "ai_chat",
+                title: `AI 对话 · ${modeName || chatMode.name}`,
+                summary: `${modeName || chatMode.name} · ${String(message).slice(0, 160)}`,
+            })
+            if (!logResult.ok) {
+                console.error("AI 对话历史记录失败:", logResult.error)
+            }
+        }
 
         // 返回流式响应
         return new Response(aiResponse.body, {

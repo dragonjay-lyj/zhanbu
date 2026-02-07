@@ -131,7 +131,9 @@ export default function AdminUsersPage() {
     }
 
     const formatDate = (dateStr: string) => {
-        return new Date(dateStr).toLocaleDateString("zh-CN")
+        return new Intl.DateTimeFormat(undefined, {
+            dateStyle: "medium",
+        }).format(new Date(dateStr))
     }
 
     const getRoleBadge = (role: string) => {
@@ -171,8 +173,9 @@ export default function AdminUsersPage() {
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                                aria-label="搜索邮箱或用户名"
                             />
-                            <Button onClick={handleSearch} className="cursor-pointer">
+                            <Button onClick={handleSearch} className="cursor-pointer" aria-label="搜索用户">
                                 <Search className="h-4 w-4" />
                             </Button>
                         </div>
@@ -218,7 +221,7 @@ export default function AdminUsersPage() {
                                                     <div className="flex items-center gap-3">
                                                         <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
                                                             {user.avatar_url ? (
-                                                                <img src={user.avatar_url} alt="" className="w-8 h-8 rounded-full" />
+                                                                <img src={user.avatar_url} alt={`${user.name || "用户"}头像`} width={32} height={32} className="w-8 h-8 rounded-full" />
                                                             ) : (
                                                                 <Users className="h-4 w-4 text-muted-foreground" />
                                                             )}
@@ -246,7 +249,7 @@ export default function AdminUsersPage() {
                                                 <TableCell className="text-right">
                                                     <DropdownMenu>
                                                         <DropdownMenuTrigger asChild>
-                                                            <Button variant="ghost" size="icon" className="cursor-pointer">
+                                                            <Button variant="ghost" size="icon" className="cursor-pointer" aria-label="更多操作">
                                                                 <MoreHorizontal className="h-4 w-4" />
                                                             </Button>
                                                         </DropdownMenuTrigger>
@@ -294,6 +297,7 @@ export default function AdminUsersPage() {
                                             onClick={() => setPage((p) => Math.max(1, p - 1))}
                                             disabled={page === 1}
                                             className="cursor-pointer"
+                                            aria-label="上一页"
                                         >
                                             <ChevronLeft className="h-4 w-4" />
                                         </Button>
@@ -303,6 +307,7 @@ export default function AdminUsersPage() {
                                             onClick={() => setPage((p) => p + 1)}
                                             disabled={page >= data.totalPages}
                                             className="cursor-pointer"
+                                            aria-label="下一页"
                                         >
                                             <ChevronRight className="h-4 w-4" />
                                         </Button>

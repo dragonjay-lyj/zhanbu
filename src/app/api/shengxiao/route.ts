@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
+import { auth } from "@clerk/nextjs/server"
+import { logFortune } from "@/lib/history/log-fortune"
 
 /**
  * 生肖运程 API
@@ -184,10 +186,25 @@ export async function GET(req: NextRequest) {
         // 生成运势
         const fortune = generateFortune(animal, period, year)
 
-        return NextResponse.json({
+        const responseData = {
             success: true,
             data: fortune,
-        })
+        }
+
+        const { userId } = await auth()
+        if (userId && fortune) {
+            const logResult = await logFortune({
+                clerkUserId: userId,
+                type: "shengxiao",
+                title: `生肖运程 · ${fortune.animal.name}`,
+                summary: `${period} · ${year}年 · 综合 ${fortune.fortune.scores.overall} 分`,
+            })
+            if (!logResult.ok) {
+                console.error("生肖历史记录失败:", logResult.error)
+            }
+        }
+
+        return NextResponse.json(responseData)
     } catch (error) {
         console.error("生肖运程 API 错误:", error)
         return NextResponse.json({ error: "服务器内部错误" }, { status: 500 })
@@ -208,10 +225,25 @@ export async function POST(req: NextRequest) {
         const animalIndex = (year - 4) % 12
         const animal = zodiacAnimals[animalIndex]
 
-        return NextResponse.json({
+        const responseData = {
             success: true,
             data: { animal },
-        })
+        }
+
+        const { userId } = await auth()
+        if (userId && animal) {
+            const logResult = await logFortune({
+                clerkUserId: userId,
+                type: "shengxiao",
+                title: "生肖查询",
+                summary: `出生年 ${year} · 生肖 ${animal.name}`,
+            })
+            if (!logResult.ok) {
+                console.error("生肖历史记录失败:", logResult.error)
+            }
+        }
+
+        return NextResponse.json(responseData)
     } catch (error) {
         console.error("生肖计算 API 错误:", error)
         return NextResponse.json({ error: "服务器内部错误" }, { status: 500 })

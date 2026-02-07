@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
+import { auth } from "@clerk/nextjs/server"
+import { logFortune } from "@/lib/history/log-fortune"
 
 /**
  * 八字合婚 API - 双方配对分析
@@ -178,7 +180,7 @@ export async function POST(req: NextRequest) {
         // 综合评分
         const overall = calculateOverallScore(shengxiaoScore, wuxingComplement.score, dayMasterScore)
 
-        return NextResponse.json({
+        const responseData = {
             success: true,
             data: {
                 male: {
@@ -210,7 +212,22 @@ export async function POST(req: NextRequest) {
                     overall,
                 },
             },
-        })
+        }
+
+        const { userId } = await auth()
+        if (userId) {
+            const logResult = await logFortune({
+                clerkUserId: userId,
+                type: "marriage",
+                title: "关系分析",
+                summary: `关系类型: marriage · 评分 ${overall.score}`,
+            })
+            if (!logResult.ok) {
+                console.error("合婚历史记录失败:", logResult.error)
+            }
+        }
+
+        return NextResponse.json(responseData)
     } catch (error) {
         console.error("八字合婚 API 错误:", error)
         return NextResponse.json({ error: "服务器内部错误" }, { status: 500 })

@@ -26,8 +26,7 @@ import {
 import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Separator } from "@/components/ui/separator"
-import { cn, TIAN_GAN, DI_ZHI, getChineseHour } from "@/lib/utils"
+import { cn, getChineseHour } from "@/lib/utils"
 import { useTranslation, formatMessage } from "@/lib/i18n"
 
 import { BaziCalculator } from "@/components/bazi/bazi-calculator"
@@ -79,6 +78,18 @@ interface BaziResult {
     dayMasterElement: string
 }
 
+interface BaziApiResult {
+    pillars: {
+        year: { gan: string; zhi: string }
+        month: { gan: string; zhi: string }
+        day: { gan: string; zhi: string }
+        hour: { gan: string; zhi: string }
+    }
+    wuxing: Record<string, number>
+    dayMaster: string
+    dayMasterElement: string
+}
+
 /**
  * 八字排盘页面
  */
@@ -86,6 +97,7 @@ export default function BaziPage() {
     const { t } = useTranslation()
     const [result, setResult] = useState<BaziResult | null>(null)
     const [isLoading, setIsLoading] = useState(false)
+    const [submitError, setSubmitError] = useState<string | null>(null)
     const [activeTab, setActiveTab] = useState("input")
 
     const form = useForm<BaziFormData>({
@@ -104,52 +116,55 @@ export default function BaziPage() {
         },
     })
 
-    // 模拟八字计算（实际需要使用专业算法库）
-    const calculateBazi = (data: BaziFormData): BaziResult => {
-        // 这里使用简化的模拟计算
-        // 实际应用中需要使用专业的八字计算库
-        const yearIndex = (parseInt(data.birthYear) - 4) % 10
-        const yearZhiIndex = (parseInt(data.birthYear) - 4) % 12
-
-        return {
-            yearPillar: {
-                gan: TIAN_GAN[yearIndex],
-                zhi: DI_ZHI[yearZhiIndex],
-            },
-            monthPillar: {
-                gan: TIAN_GAN[(yearIndex * 2 + parseInt(data.birthMonth)) % 10],
-                zhi: DI_ZHI[(parseInt(data.birthMonth) + 1) % 12],
-            },
-            dayPillar: {
-                gan: TIAN_GAN[parseInt(data.birthDay) % 10],
-                zhi: DI_ZHI[parseInt(data.birthDay) % 12],
-            },
-            hourPillar: {
-                gan: TIAN_GAN[(parseInt(data.birthDay) * 2 + Math.floor(parseInt(data.birthHour) / 2)) % 10],
-                zhi: DI_ZHI[Math.floor((parseInt(data.birthHour) + 1) / 2) % 12],
-            },
-            wuxing: {
-                木: 2,
-                火: 1,
-                土: 2,
-                金: 2,
-                水: 1,
-            },
-            dayMaster: TIAN_GAN[parseInt(data.birthDay) % 10],
-            dayMasterElement: "土",
-        }
-    }
-
     const onSubmit = async (data: BaziFormData) => {
         setIsLoading(true)
+        setSubmitError(null)
 
-        // 模拟 API 延迟
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+        try {
+            const response = await fetch("/api/bazi", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: data.name || null,
+                    gender: data.gender,
+                    birthYear: parseInt(data.birthYear),
+                    birthMonth: parseInt(data.birthMonth),
+                    birthDay: parseInt(data.birthDay),
+                    birthHour: parseInt(data.birthHour),
+                    birthMinute: parseInt(data.birthMinute || "0"),
+                    isLunar: data.isLunar,
+                    useTrueSolar: data.useTrueSolar,
+                    birthProvince: data.province,
+                    birthCity: data.city || null,
+                }),
+            })
 
-        const calculated = calculateBazi(data)
-        setResult(calculated)
-        setActiveTab("result")
-        setIsLoading(false)
+            const result = await response.json()
+            if (!response.ok) {
+                throw new Error(result.error || t("errors.unknown"))
+            }
+
+            const apiResult = result?.data?.baziResult as BaziApiResult | undefined
+            if (!apiResult) {
+                throw new Error(t("errors.unknown"))
+            }
+
+            setResult({
+                yearPillar: apiResult.pillars.year,
+                monthPillar: apiResult.pillars.month,
+                dayPillar: apiResult.pillars.day,
+                hourPillar: apiResult.pillars.hour,
+                wuxing: apiResult.wuxing,
+                dayMaster: apiResult.dayMaster,
+                dayMasterElement: apiResult.dayMasterElement,
+            })
+            setActiveTab("result")
+        } catch (error) {
+            console.error("提交八字计算失败:", error)
+            setSubmitError((error as Error).message || t("errors.unknown"))
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return (
@@ -435,6 +450,9 @@ export default function BaziPage() {
                             {/* 提交按钮 */}
                             <Card className="md:col-span-2">
                                 <CardContent className="pt-6">
+                                    {submitError && (
+                                        <p className="mb-4 text-sm text-destructive">{submitError}</p>
+                                    )}
                                     <Button
                                         type="submit"
                                         size="lg"

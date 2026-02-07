@@ -119,21 +119,23 @@ export default function ZejiPage() {
             {!selectedType && (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {eventTypes.map((type) => (
-                        <Card
-                            key={type.id}
-                            className={cn(
-                                "cursor-pointer transition-all hover:scale-105 hover:shadow-lg",
-                                "border-2 border-transparent hover:border-primary/50"
-                            )}
-                            onClick={() => selectEventType(type)}
-                        >
-                            <CardContent className="p-6 text-center">
-                                <div className="text-4xl mb-3">{type.icon}</div>
-                                <h3 className="font-bold text-lg">{type.name}</h3>
-                                <p className="text-xs text-muted-foreground mt-1">
-                                    {type.description}
-                                </p>
-                            </CardContent>
+                        <Card key={type.id} className="p-0 overflow-hidden border-2 border-transparent hover:border-primary/50">
+                            <button
+                                type="button"
+                                className={cn(
+                                    "w-full cursor-pointer transition-all hover:scale-105 hover:shadow-lg text-left",
+                                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                                )}
+                                onClick={() => selectEventType(type)}
+                            >
+                                <CardContent className="p-6 text-center">
+                                    <div className="text-4xl mb-3">{type.icon}</div>
+                                    <h3 className="font-bold text-lg">{type.name}</h3>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                        {type.description}
+                                    </p>
+                                </CardContent>
+                            </button>
                         </Card>
                     ))}
                 </div>
@@ -148,7 +150,7 @@ export default function ZejiPage() {
                             {t("pages.zeji.actions.back")}
                         </Button>
                         <div className="flex items-center gap-2">
-                            <Button variant="ghost" size="icon" onClick={() => changeMonth(-1)}>
+                            <Button variant="ghost" size="icon" onClick={() => changeMonth(-1)} aria-label="上个月">
                                 <ChevronLeft className="w-4 h-4" />
                             </Button>
                             <span className="font-medium min-w-[120px] text-center">
@@ -157,7 +159,7 @@ export default function ZejiPage() {
                                     month: currentMonth.getMonth() + 1,
                                 })}
                             </span>
-                            <Button variant="ghost" size="icon" onClick={() => changeMonth(1)}>
+                            <Button variant="ghost" size="icon" onClick={() => changeMonth(1)} aria-label="下个月">
                                 <ChevronRight className="w-4 h-4" />
                             </Button>
                         </div>
@@ -192,31 +194,36 @@ export default function ZejiPage() {
                                         <Card
                                             key={date.date}
                                             className={cn(
-                                                "cursor-pointer transition-all hover:shadow-md",
+                                                "transition-all hover:shadow-md",
                                                 selectedDate?.date === date.date && "ring-2 ring-primary"
                                             )}
-                                            onClick={() => setSelectedDate(date)}
                                         >
-                                            <CardContent className="p-4">
-                                                <div className="flex items-center justify-between">
-                                                    <div>
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="font-bold text-lg">
-                                                                {formatDate(date.date)}
-                                                            </span>
-                                                            <span className="text-sm text-muted-foreground">
-                                                                {date.weekday}
-                                                            </span>
+                                            <button
+                                                type="button"
+                                                className="w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg"
+                                                onClick={() => setSelectedDate(date)}
+                                            >
+                                                <CardContent className="p-4">
+                                                    <div className="flex items-center justify-between">
+                                                        <div>
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="font-bold text-lg">
+                                                                    {formatDate(date.date)}
+                                                                </span>
+                                                                <span className="text-sm text-muted-foreground">
+                                                                    {date.weekday}
+                                                                </span>
+                                                            </div>
+                                                            <div className="text-sm text-muted-foreground">
+                                                                {date.lunar} · {date.ganzhi}日
+                                                            </div>
                                                         </div>
-                                                        <div className="text-sm text-muted-foreground">
-                                                            {date.lunar} · {date.ganzhi}日
-                                                        </div>
+                                                        <Badge className={levelColors[date.level]}>
+                                                            {date.level}
+                                                        </Badge>
                                                     </div>
-                                                    <Badge className={levelColors[date.level]}>
-                                                        {date.level}
-                                                    </Badge>
-                                                </div>
-                                            </CardContent>
+                                                </CardContent>
+                                            </button>
                                         </Card>
                                     ))
                                 ) : (

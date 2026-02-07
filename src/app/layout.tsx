@@ -62,6 +62,7 @@ export default async function RootLayout({
           />
           {/* PWA 配置 */}
           <link rel="manifest" href="/site.webmanifest" />
+          <meta name="theme-color" content="#12081f" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-status-bar-style" content="default" />
           <meta name="apple-mobile-web-app-title" content="占卜网" />
@@ -69,6 +70,12 @@ export default async function RootLayout({
         <body
           className={`${notoSansTC.variable} ${notoSerifTC.variable} font-sans antialiased`}
         >
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:rounded-md focus:bg-background focus:px-3 focus:py-2 focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            跳转到主内容
+          </a>
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"

@@ -176,16 +176,19 @@ export function ZiweiChart({
                     if (!palace) return <div key={i} className="aspect-square" />
 
                     return (
-                        <div
+                        <button
+                            type="button"
                             key={i}
                             onClick={() => onPalaceClick?.(pos)}
+                            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg"
+                            aria-label={`查看${palace.name}`}
                         >
                             <ZiweiPalace
                                 palace={palace}
                                 position={pos}
                                 isActive={activePalace === pos}
                             />
-                        </div>
+                        </button>
                     )
                 })}
             </div>

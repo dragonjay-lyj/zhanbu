@@ -29,6 +29,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import { AIAnalysisSection } from "@/components/ai/ai-analysis-section"
 import { useTranslation, formatMessage } from "@/lib/i18n"
+import { logFortuneClient } from "@/lib/history/client-log"
 
 // 八卦数据
 const BA_GUA = {
@@ -222,6 +223,12 @@ export default function LiuyaoPage() {
             bianGua: bianGuaBinary ? { name: bianGuaName!, binary: bianGuaBinary } : undefined,
             shiYao,
             yingYao,
+        })
+
+        void logFortuneClient({
+            type: "liuyao",
+            title: "六爻排盘",
+            summary: `${benGuaName}${bianGuaName ? ` → ${bianGuaName}` : ""}`,
         })
 
         setStep("result")

@@ -18,6 +18,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { useI18n, useTranslation, formatMessage } from "@/lib/i18n"
+import { logFortuneClient } from "@/lib/history/client-log"
 
 // 天干地支
 const TIAN_GAN = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
@@ -83,6 +84,7 @@ export default function HuangliPage() {
     const { t } = useTranslation()
     const [selectedDate, setSelectedDate] = useState(new Date())
     const [huangliData, setHuangliData] = useState<HuangliData | null>(null)
+    const [hasManualQuery, setHasManualQuery] = useState(false)
 
     const jiXiongLabels: Record<"吉" | "凶" | "中", string> = {
         吉: t("pages.huangli.jiXiong.good"),
@@ -166,13 +168,27 @@ export default function HuangliPage() {
     }
 
     useEffect(() => {
-        setHuangliData(calculateHuangli(selectedDate))
-    }, [selectedDate])
+        const data = calculateHuangli(selectedDate)
+        setHuangliData(data)
+        if (hasManualQuery) {
+            void logFortuneClient({
+                type: "huangli",
+                title: "黄历查询",
+                summary: `${selectedDate.toISOString().split("T")[0]} · ${data.ganZhi.day}`,
+            })
+        }
+    }, [hasManualQuery, selectedDate])
 
     const navigateDate = (days: number) => {
         const newDate = new Date(selectedDate)
         newDate.setDate(newDate.getDate() + days)
+        setHasManualQuery(true)
         setSelectedDate(newDate)
+    }
+
+    const jumpToToday = () => {
+        setHasManualQuery(true)
+        setSelectedDate(new Date())
     }
 
     const formatGregorian = (date: Date) => {
@@ -205,7 +221,7 @@ export default function HuangliPage() {
             <Card>
                 <CardContent className="pt-6">
                     <div className="flex items-center justify-between">
-                        <Button variant="ghost" size="icon" onClick={() => navigateDate(-1)} className="cursor-pointer">
+                        <Button variant="ghost" size="icon" onClick={() => navigateDate(-1)} className="cursor-pointer" aria-label="上一天">
                             <ChevronLeft className="h-5 w-5" />
                         </Button>
                         <div className="text-center">
@@ -222,12 +238,12 @@ export default function HuangliPage() {
                                 </Badge>
                             </div>
                         </div>
-                        <Button variant="ghost" size="icon" onClick={() => navigateDate(1)} className="cursor-pointer">
+                        <Button variant="ghost" size="icon" onClick={() => navigateDate(1)} className="cursor-pointer" aria-label="下一天">
                             <ChevronRight className="h-5 w-5" />
                         </Button>
                     </div>
                     <div className="flex justify-center mt-4">
-                        <Button variant="outline" size="sm" onClick={() => setSelectedDate(new Date())} className="cursor-pointer">
+                        <Button variant="outline" size="sm" onClick={jumpToToday} className="cursor-pointer">
                             {t("pages.huangli.actions.today")}
                         </Button>
                     </div>

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { createAdminClient } from "@/lib/supabase/server"
 import { defaultLocale, getTranslations, locales, t as translate, type Locale } from "@/lib/i18n"
+import { logFortune } from "@/lib/history/log-fortune"
 
 // 支持的占卜类型
 type DivinationType =
@@ -282,6 +283,16 @@ export async function POST(request: NextRequest) {
             credits_cost: AI_INTERPRET_COST,
             created_at: new Date().toISOString(),
         })
+
+        const logResult = await logFortune({
+            clerkUserId: userId,
+            type: "ai_chat",
+            title: `AI 解读 · ${type}`,
+            summary: `${type} · ${String(question || "").slice(0, 160) || "自动解读"}`,
+        })
+        if (!logResult.ok) {
+            console.error("AI 解读历史记录失败:", logResult.error)
+        }
 
         return NextResponse.json({
             success: true,

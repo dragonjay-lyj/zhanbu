@@ -28,6 +28,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
 import { AIAnalysisSection } from "@/components/ai/ai-analysis-section"
 import { useTranslation, formatMessage } from "@/lib/i18n"
+import { logFortuneClient } from "@/lib/history/client-log"
 
 // 天干地支
 const TIAN_GAN = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
@@ -152,6 +153,12 @@ export default function QimenPage() {
         const calculated = calculateQimen()
         setResult(calculated)
         setStep("result")
+        const historyType = panType === "jinkou" ? "jinkouque" : panType
+        void logFortuneClient({
+            type: historyType,
+            title: getPanTypeName(),
+            summary: `${calculated.year}-${calculated.month}-${calculated.day} ${calculated.ganZhi.day}`,
+        })
         setIsLoading(false)
     }
 

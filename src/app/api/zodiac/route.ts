@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
+import { auth } from "@clerk/nextjs/server"
+import { logFortune } from "@/lib/history/log-fortune"
 
 /**
  * 星座运势 API
@@ -146,7 +148,7 @@ export async function GET(req: NextRequest) {
         // 生成运势
         const fortune = generateFortune(sign, period, new Date())
 
-        return NextResponse.json({
+        const responseData = {
             success: true,
             data: {
                 sign: zodiac,
@@ -154,7 +156,22 @@ export async function GET(req: NextRequest) {
                 date: new Date().toISOString().split("T")[0],
                 fortune,
             },
-        })
+        }
+
+        const { userId } = await auth()
+        if (userId) {
+            const logResult = await logFortune({
+                clerkUserId: userId,
+                type: "zodiac",
+                title: `星座运势 · ${zodiac.name}`,
+                summary: `${period} · 综合 ${fortune.overall.score} 分`,
+            })
+            if (!logResult.ok) {
+                console.error("星座历史记录失败:", logResult.error)
+            }
+        }
+
+        return NextResponse.json(responseData)
     } catch (error) {
         console.error("星座运势 API 错误:", error)
         return NextResponse.json({ error: "服务器内部错误" }, { status: 500 })
@@ -203,10 +220,25 @@ export async function POST(req: NextRequest) {
 
         const zodiac = zodiacSigns.find(z => z.id === foundSign)
 
-        return NextResponse.json({
+        const responseData = {
             success: true,
             data: { sign: zodiac },
-        })
+        }
+
+        const { userId } = await auth()
+        if (userId && zodiac) {
+            const logResult = await logFortune({
+                clerkUserId: userId,
+                type: "zodiac",
+                title: "星座查询",
+                summary: `生日 ${m}/${d} · 星座 ${zodiac.name}`,
+            })
+            if (!logResult.ok) {
+                console.error("星座历史记录失败:", logResult.error)
+            }
+        }
+
+        return NextResponse.json(responseData)
     } catch (error) {
         console.error("星座计算 API 错误:", error)
         return NextResponse.json({ error: "服务器内部错误" }, { status: 500 })

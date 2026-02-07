@@ -27,5 +27,5 @@ export default async function AdminLayout({
         redirect("/?error=unauthorized")
     }
 
-    return <>{children}</>
+    return <main id="main-content">{children}</main>
 }

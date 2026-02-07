@@ -135,7 +135,10 @@ export default function AdminRecordsPage() {
     }
 
     const formatDate = (dateStr: string) => {
-        return new Date(dateStr).toLocaleString("zh-CN")
+        return new Intl.DateTimeFormat(undefined, {
+            dateStyle: "medium",
+            timeStyle: "short",
+        }).format(new Date(dateStr))
     }
 
     const getTypeLabel = (type: string) => {
@@ -169,8 +172,9 @@ export default function AdminRecordsPage() {
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                                aria-label="搜索问题或标题"
                             />
-                            <Button onClick={handleSearch} className="cursor-pointer">
+                            <Button onClick={handleSearch} className="cursor-pointer" aria-label="搜索记录">
                                 <Search className="h-4 w-4" />
                             </Button>
                         </div>
@@ -234,6 +238,7 @@ export default function AdminRecordsPage() {
                                                             size="icon"
                                                             onClick={() => setSelectedRecord(record)}
                                                             className="cursor-pointer"
+                                                            aria-label="查看详情"
                                                         >
                                                             <Eye className="h-4 w-4" />
                                                         </Button>
@@ -242,6 +247,7 @@ export default function AdminRecordsPage() {
                                                             size="icon"
                                                             onClick={() => setDeleteRecord(record)}
                                                             className="cursor-pointer text-destructive"
+                                                            aria-label="删除记录"
                                                         >
                                                             <Trash2 className="h-4 w-4" />
                                                         </Button>
@@ -272,6 +278,7 @@ export default function AdminRecordsPage() {
                                             onClick={() => setPage((p) => Math.max(1, p - 1))}
                                             disabled={page === 1}
                                             className="cursor-pointer"
+                                            aria-label="上一页"
                                         >
                                             <ChevronLeft className="h-4 w-4" />
                                         </Button>
@@ -281,6 +288,7 @@ export default function AdminRecordsPage() {
                                             onClick={() => setPage((p) => p + 1)}
                                             disabled={page >= data.totalPages}
                                             className="cursor-pointer"
+                                            aria-label="下一页"
                                         >
                                             <ChevronRight className="h-4 w-4" />
                                         </Button>

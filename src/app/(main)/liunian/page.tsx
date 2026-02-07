@@ -166,7 +166,7 @@ export default function LiunianPage() {
                 <div className="space-y-6">
                     {/* 年份切换 */}
                     <div className="flex items-center justify-center gap-4">
-                        <Button variant="ghost" size="icon" onClick={() => changeYear(-1)}>
+                        <Button variant="ghost" size="icon" onClick={() => changeYear(-1)} aria-label="上一年">
                             <ChevronLeft className="w-5 h-5" />
                         </Button>
                         <div className="text-center">
@@ -179,7 +179,7 @@ export default function LiunianPage() {
                                 {formatMessage(t("pages.liunian.birthInfo"), { birthYear: result.birthYear, age: result.age })}
                             </p>
                         </div>
-                        <Button variant="ghost" size="icon" onClick={() => changeYear(1)}>
+                        <Button variant="ghost" size="icon" onClick={() => changeYear(1)} aria-label="下一年">
                             <ChevronRight className="w-5 h-5" />
                         </Button>
                     </div>

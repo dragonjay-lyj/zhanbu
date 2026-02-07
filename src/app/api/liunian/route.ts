@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
+import { auth } from "@clerk/nextjs/server"
+import { logFortune } from "@/lib/history/log-fortune"
 
 /**
  * 流年运势 API - 年度运势曲线
@@ -145,7 +147,7 @@ export async function GET(req: NextRequest) {
         // 年份干支
         const ganzhi = getYearGanzhi(target)
 
-        return NextResponse.json({
+        const responseData = {
             success: true,
             data: {
                 birthYear: birth,
@@ -160,7 +162,22 @@ export async function GET(req: NextRequest) {
                 categories: categoryFortune,
                 advice: generateAdvice(overallScore),
             },
-        })
+        }
+
+        const { userId } = await auth()
+        if (userId) {
+            const logResult = await logFortune({
+                clerkUserId: userId,
+                type: "liunian",
+                title: `流年运势 · ${target}年`,
+                summary: `出生年 ${birth} · 综合 ${overallScore} 分`,
+            })
+            if (!logResult.ok) {
+                console.error("流年历史记录失败:", logResult.error)
+            }
+        }
+
+        return NextResponse.json(responseData)
     } catch (error) {
         console.error("流年运势 API 错误:", error)
         return NextResponse.json({ error: "服务器内部错误" }, { status: 500 })

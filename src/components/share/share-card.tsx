@@ -24,7 +24,7 @@ export function ShareCard({
     subtitle,
     content,
     score,
-    date = new Date().toLocaleDateString("zh-CN"),
+    date = new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(new Date()),
     className,
 }: ShareCardProps) {
     // 根据类型选择背景渐变
@@ -135,7 +135,9 @@ export function BaziShareCard({
                 {/* 标题 */}
                 <div className="text-center mb-6">
                     <h2 className="text-2xl font-bold">八字命盘</h2>
-                    <p className="text-white/70 text-sm mt-1">{new Date().toLocaleDateString("zh-CN")}</p>
+                    <p className="text-white/70 text-sm mt-1">
+                        {new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(new Date())}
+                    </p>
                 </div>
 
                 {/* 八字展示 */}

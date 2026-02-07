@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
+import { auth } from "@clerk/nextjs/server"
+import { logFortune } from "@/lib/history/log-fortune"
 
 /**
  * 姓名测算 API - 基于五格剖象法
@@ -185,7 +187,7 @@ export async function POST(req: NextRequest) {
             sancaiLuck.score * 0.3
         )
 
-        return NextResponse.json({
+        const responseData = {
             success: true,
             data: {
                 surname,
@@ -209,7 +211,23 @@ export async function POST(req: NextRequest) {
                 },
                 totalScore: Math.min(100, totalScore),
             },
-        })
+        }
+
+        const { userId } = await auth()
+        if (userId) {
+            const nameText = `${surname}${givenName}`
+            const logResult = await logFortune({
+                clerkUserId: userId,
+                type: "name",
+                title: `姓名测算 · ${nameText}`,
+                summary: `总分 ${Math.min(100, totalScore)} 分`,
+            })
+            if (!logResult.ok) {
+                console.error("姓名测算历史记录失败:", logResult.error)
+            }
+        }
+
+        return NextResponse.json(responseData)
     } catch (error) {
         console.error("姓名测算 API 错误:", error)
         return NextResponse.json({ error: "服务器内部错误" }, { status: 500 })

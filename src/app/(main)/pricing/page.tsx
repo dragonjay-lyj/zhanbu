@@ -359,6 +359,7 @@ export default function PricingPage() {
                                             size="icon"
                                             className="h-8 w-8 cursor-pointer"
                                             onClick={copyOrderId}
+                                            aria-label="复制订单号"
                                         >
                                             {copied ? (
                                                 <CheckCircle className="h-4 w-4 text-green-500" />

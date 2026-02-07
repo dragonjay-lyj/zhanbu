@@ -178,20 +178,21 @@ export default function CommunityPage() {
                         </DialogHeader>
                         <div className="space-y-4 mt-4">
                             <div>
-                                <Label>{t("pages.community.titleLabel")}</Label>
+                                <Label htmlFor="community-post-title">{t("pages.community.titleLabel")}</Label>
                                 <Input
+                                    id="community-post-title"
                                     placeholder={t("pages.community.titlePlaceholder")}
                                     value={newPost.title}
                                     onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
                                 />
                             </div>
                             <div>
-                                <Label>{t("pages.community.categoryLabel")}</Label>
+                                <Label htmlFor="community-post-category">{t("pages.community.categoryLabel")}</Label>
                                 <Select
                                     value={newPost.category}
                                     onValueChange={(v) => setNewPost({ ...newPost, category: v })}
                                 >
-                                    <SelectTrigger>
+                                    <SelectTrigger id="community-post-category">
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -204,8 +205,9 @@ export default function CommunityPage() {
                                 </Select>
                             </div>
                             <div>
-                                <Label>{t("pages.community.contentLabel")}</Label>
+                                <Label htmlFor="community-post-content">{t("pages.community.contentLabel")}</Label>
                                 <Textarea
+                                    id="community-post-content"
                                     placeholder={t("pages.community.contentPlaceholder")}
                                     rows={6}
                                     value={newPost.content}

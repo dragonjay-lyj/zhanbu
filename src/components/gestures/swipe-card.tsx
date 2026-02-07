@@ -155,9 +155,10 @@ export function TarotFlipCard({
     }
 
     return (
-        <div
+        <button
+            type="button"
             className={cn(
-                "relative w-24 h-36 cursor-pointer perspective-1000",
+                "relative w-24 h-36 cursor-pointer perspective-1000 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg",
                 className
             )}
             onClick={handleClick}
@@ -188,6 +189,6 @@ export function TarotFlipCard({
                     {frontContent}
                 </div>
             </div>
-        </div>
+        </button>
     )
 }

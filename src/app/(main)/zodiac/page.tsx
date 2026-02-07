@@ -140,24 +140,26 @@ export default function ZodiacPage() {
             {!selectedSign && (
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
                     {signs.map((sign) => (
-                        <Card
-                            key={sign.id}
-                            className={cn(
-                                "cursor-pointer transition-all hover:scale-105 hover:shadow-lg",
-                                "border-2 border-transparent hover:border-primary/50"
-                            )}
-                            onClick={() => fetchFortune(sign)}
-                        >
-                            <CardContent className="p-4 text-center">
-                                <div className={cn(
-                                    "w-12 h-12 mx-auto rounded-full flex items-center justify-center text-2xl mb-2",
-                                    `bg-gradient-to-br ${elementColors[sign.element]}`
-                                )}>
-                                    {sign.symbol}
-                                </div>
-                                <h3 className="font-medium">{sign.name}</h3>
-                                <p className="text-xs text-muted-foreground">{sign.dates}</p>
-                            </CardContent>
+                        <Card key={sign.id} className="p-0 overflow-hidden border-2 border-transparent hover:border-primary/50">
+                            <button
+                                type="button"
+                                className={cn(
+                                    "w-full cursor-pointer transition-all hover:scale-105 hover:shadow-lg text-left",
+                                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                                )}
+                                onClick={() => fetchFortune(sign)}
+                            >
+                                <CardContent className="p-4 text-center">
+                                    <div className={cn(
+                                        "w-12 h-12 mx-auto rounded-full flex items-center justify-center text-2xl mb-2",
+                                        `bg-gradient-to-br ${elementColors[sign.element]}`
+                                    )}>
+                                        {sign.symbol}
+                                    </div>
+                                    <h3 className="font-medium">{sign.name}</h3>
+                                    <p className="text-xs text-muted-foreground">{sign.dates}</p>
+                                </CardContent>
+                            </button>
                         </Card>
                     ))}
                 </div>

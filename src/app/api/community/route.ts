@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase/server"
 import { auth } from "@clerk/nextjs/server"
+import { logFortune } from "@/lib/history/log-fortune"
 
 /**
  * 占卜社区 API - 帖子管理
@@ -142,16 +143,39 @@ export async function POST(req: NextRequest) {
         if (error) {
             console.error("创建帖子失败:", error)
             // 返回模拟成功
+            const mockPost = {
+                id: Date.now().toString(),
+                title,
+                content,
+                category: category || "general",
+                created_at: new Date().toISOString(),
+            }
+
+            const logResult = await logFortune({
+                clerkUserId: userId,
+                type: "community_post",
+                title: mockPost.title,
+                summary: `${mockPost.category} · ${mockPost.content.slice(0, 120)}`,
+            })
+            if (!logResult.ok) {
+                console.error("社区发帖历史记录失败:", logResult.error)
+            }
+
             return NextResponse.json({
                 success: true,
-                data: {
-                    id: Date.now().toString(),
-                    title,
-                    content,
-                    category: category || "general",
-                    created_at: new Date().toISOString(),
-                },
+                data: mockPost,
             })
+        }
+
+        const logResult = await logFortune({
+            clerkUserId: userId,
+            type: "community_post",
+            recordId: post.id,
+            title: post.title,
+            summary: `${post.category || "general"} · ${String(post.content || "").slice(0, 120)}`,
+        })
+        if (!logResult.ok) {
+            console.error("社区发帖历史记录失败:", logResult.error)
         }
 
         return NextResponse.json({

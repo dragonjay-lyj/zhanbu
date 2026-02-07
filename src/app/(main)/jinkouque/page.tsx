@@ -28,6 +28,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
 import { useTranslation, formatMessage } from "@/lib/i18n"
+import { logFortuneClient } from "@/lib/history/client-log"
 
 // 十二地支
 const DI_ZHI = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
@@ -138,6 +139,11 @@ export default function JinkoujuePage() {
         const calculated = calculateJinkoujue(data)
         setResult(calculated)
         setActiveTab("result")
+        void logFortuneClient({
+            type: "jinkouque",
+            title: "金口诀",
+            summary: `${data.year}-${data.month}-${data.day} · ${String(data.question || "起课").slice(0, 120)}`,
+        })
         setIsLoading(false)
     }
 

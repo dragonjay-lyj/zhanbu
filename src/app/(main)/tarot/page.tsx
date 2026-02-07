@@ -19,6 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
 import { useTranslation, formatMessage } from "@/lib/i18n"
+import { logFortuneClient } from "@/lib/history/client-log"
 
 // 拥有的图片 ID 列表（22 张大阿卡纳）
 const availableImages = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
@@ -186,9 +187,15 @@ export default function TarotPage() {
             reversed: Math.random() > 0.7, // 30% 概率逆位
         }
 
-        setDrawnCards([...drawnCards, newCard])
+        const nextCards = [...drawnCards, newCard]
+        setDrawnCards(nextCards)
 
-        if (drawnCards.length + 1 >= selectedSpread.count) {
+        if (nextCards.length >= selectedSpread.count) {
+            void logFortuneClient({
+                type: "tarot",
+                title: "塔罗占卜",
+                summary: `${selectedSpread.name} · ${nextCards.map((c) => c.card.name).join("、")}`,
+            })
             setTimeout(() => setStep("result"), 500)
         }
     }
@@ -240,21 +247,24 @@ export default function TarotPage() {
                             <Label>{t("pages.tarot.labels.style")}</Label>
                             <div className="grid gap-3 md:grid-cols-2">
                                 {readingStyles.map((style) => (
-                                    <div
+                                    <button
+                                        type="button"
                                         key={style.id}
                                         className={cn(
-                                            "p-4 rounded-lg border cursor-pointer transition-all",
+                                            "p-4 rounded-lg border cursor-pointer transition-all text-left",
+                                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                                             selectedStyle.id === style.id
                                                 ? "border-primary bg-primary/5"
                                                 : "border-border hover:bg-accent"
                                         )}
                                         onClick={() => setSelectedStyleId(style.id)}
+                                        aria-pressed={selectedStyle.id === style.id}
                                     >
                                         <div className="font-semibold">{style.name}</div>
                                         <div className="text-sm text-muted-foreground">
                                             {style.description}
                                         </div>
-                                    </div>
+                                    </button>
                                 ))}
                             </div>
                         </div>
@@ -283,15 +293,18 @@ export default function TarotPage() {
                     <CardContent className="space-y-6">
                         <div className="grid gap-4 md:grid-cols-3">
                             {spreads.map((spread) => (
-                                <div
+                                <button
+                                    type="button"
                                     key={spread.id}
                                     className={cn(
                                         "p-6 rounded-xl border cursor-pointer transition-all text-center",
+                                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                                         selectedSpread.id === spread.id
                                             ? "border-primary bg-primary/5 shadow-lg shadow-primary/10"
                                             : "border-border hover:bg-accent"
                                     )}
                                     onClick={() => setSelectedSpreadId(spread.id)}
+                                    aria-pressed={selectedSpread.id === spread.id}
                                 >
                                     <div className="text-3xl mb-2">
                                         {spread.count === 1 ? "🃏" : spread.count === 3 ? "🎴🎴🎴" : "🎴🎴🎴🎴"}
@@ -303,7 +316,7 @@ export default function TarotPage() {
                                     <div className="text-xs text-muted-foreground mt-2">
                                         {spread.positions.join(" · ")}
                                     </div>
-                                </div>
+                                </button>
                             ))}
                         </div>
 
@@ -408,12 +421,14 @@ export default function TarotPage() {
                                                         </div>
                                                     )
                                             ) : (
-                                                <div
+                                                <button
+                                                    type="button"
                                                     className="tarot-card w-24 h-36 flex items-center justify-center bg-muted/50 cursor-pointer hover:bg-muted transition-colors"
                                                     onClick={() => drawCard(i)}
+                                                    aria-label={`抽取${pos}`}
                                                 >
                                                     <span className="text-2xl">?</span>
-                                                </div>
+                                                </button>
                                             )}
                                         </div>
                                     )
@@ -425,13 +440,16 @@ export default function TarotPage() {
                                 <div className="text-sm text-muted-foreground mb-4">
                                     {t("pages.tarot.steps.draw.deckHint")}
                                 </div>
-                                <div
+                                <button
+                                    type="button"
                                     className={cn(
                                         "inline-block cursor-pointer transition-transform hover:scale-105",
+                                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                                         isShuffling && "animate-pulse",
                                         drawnCards.length >= selectedSpread.count && "opacity-50 cursor-not-allowed"
                                     )}
                                     onClick={() => drawnCards.length < selectedSpread.count && drawCard(drawnCards.length)}
+                                    aria-label="从牌堆抽牌"
                                 >
                                     <div className="relative">
                                         {[0, 1, 2].map((i) => (
@@ -451,7 +469,7 @@ export default function TarotPage() {
                                             </div>
                                         ))}
                                     </div>
-                                </div>
+                                </button>
                             </div>
                         </CardContent>
                     </Card>

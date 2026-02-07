@@ -341,9 +341,12 @@ export default function AdminCreditsPage() {
                                 {transactions.slice(0, 50).map((tx) => {
                                     const typeInfo = formatType(tx.type)
                                     return (
-                                        <TableRow key={tx.id}>
+                                            <TableRow key={tx.id}>
                                             <TableCell className="text-muted-foreground">
-                                                {new Date(tx.createdAt).toLocaleString("zh-CN")}
+                                                {new Intl.DateTimeFormat(undefined, {
+                                                    dateStyle: "medium",
+                                                    timeStyle: "short",
+                                                }).format(new Date(tx.createdAt))}
                                             </TableCell>
                                             <TableCell className="font-medium">{tx.userName}</TableCell>
                                             <TableCell>

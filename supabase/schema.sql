@@ -43,7 +43,31 @@ CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE TABLE IF NOT EXISTS fortunes (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  fortune_type TEXT NOT NULL CHECK (fortune_type IN ('bazi', 'ziwei', 'liuyao', 'meihua', 'tarot', 'marriage', 'daily')),
+  fortune_type TEXT NOT NULL CHECK (
+    fortune_type IN (
+      'bazi',
+      'ziwei',
+      'liuyao',
+      'meihua',
+      'tarot',
+      'marriage',
+      'daily',
+      'name',
+      'zodiac',
+      'shengxiao',
+      'liunian',
+      'qianwen',
+      'jiemeng',
+      'zeji',
+      'huangli',
+      'ai_chat',
+      'community_post',
+      'qimen',
+      'liuren',
+      'jinkouque',
+      'fengshui'
+    )
+  ),
   -- 关联的具体记录 ID
   record_id UUID,
   -- 基本信息
@@ -65,6 +89,7 @@ CREATE INDEX IF NOT EXISTS idx_fortunes_user_id ON fortunes(user_id);
 CREATE INDEX IF NOT EXISTS idx_fortunes_type ON fortunes(fortune_type);
 CREATE INDEX IF NOT EXISTS idx_fortunes_share_code ON fortunes(share_code);
 CREATE INDEX IF NOT EXISTS idx_fortunes_created_at ON fortunes(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_fortunes_user_type_record ON fortunes(user_id, fortune_type, record_id) WHERE record_id IS NOT NULL;
 
 -- =====================================================
 -- 3. 八字记录表 (bazi_records)

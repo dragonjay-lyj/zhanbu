@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { createServerClient } from "@/lib/supabase/server"
 import { getDbUserIdByClerkId } from "@/lib/auth/user"
+import { logFortune } from "@/lib/history/log-fortune"
 
 // 八卦数据
 const BA_GUA: Record<string, { element: string; nature: string }> = {
@@ -143,13 +144,17 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        // 同时在 fortunes 表创建记录
-        await supabase.from("fortunes").insert({
-            user_id: dbUserId,
-            fortune_type: "liuyao",
-            record_id: (record as { id: string }).id,
+        // 同时写入 fortunes 汇总表（幂等去重）
+        const fortuneResult = await logFortune({
+            dbUserId,
+            type: "liuyao",
+            recordId: (record as { id: string }).id,
+            title: "六爻排盘",
             summary: `${benGua.name}${bianGua ? " → " + bianGua.name : ""}`,
-        } as never)
+        })
+        if (!fortuneResult.ok) {
+            console.error("保存六爻历史失败:", fortuneResult.error)
+        }
 
         // 构建 AI 提示
         const changingLinesDesc = hexagramResult.changingLines.length > 0

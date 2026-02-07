@@ -56,7 +56,22 @@ export async function GET() {
             liuyao: "六爻",
             meihua: "梅花",
             tarot: "塔罗",
+            marriage: "关系分析",
             daily: "每日运势",
+            name: "姓名测算",
+            zodiac: "星座运势",
+            shengxiao: "生肖运程",
+            liunian: "流年运势",
+            qianwen: "抽签占卜",
+            jiemeng: "周公解梦",
+            zeji: "择吉选日",
+            huangli: "黄历查询",
+            ai_chat: "AI 解读",
+            community_post: "社区发帖",
+            qimen: "奇门遁甲",
+            liuren: "大六壬",
+            jinkouque: "金口诀",
+            fengshui: "玄空风水",
         }
 
         // 最近占卜

@@ -25,6 +25,7 @@ import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
 import { AIAnalysisSection } from "@/components/ai/ai-analysis-section"
 import { useI18n, useTranslation, formatMessage } from "@/lib/i18n"
+import { logFortuneClient } from "@/lib/history/client-log"
 
 // 天干地支
 const TIAN_GAN = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
@@ -79,6 +80,7 @@ export default function DailyFortunePage() {
     const [selectedDate, setSelectedDate] = useState(new Date())
     const [fortune, setFortune] = useState<DailyFortune | null>(null)
     const [isLoading, setIsLoading] = useState(false)
+    const [hasManualQuery, setHasManualQuery] = useState(false)
 
     // 计算日期的干支
     const getGanZhi = (date: Date) => {
@@ -192,15 +194,24 @@ export default function DailyFortunePage() {
         setIsLoading(true)
         // 模拟加载
         setTimeout(() => {
-            setFortune(generateFortune(selectedDate))
+            const generated = generateFortune(selectedDate)
+            setFortune(generated)
+            if (hasManualQuery) {
+                void logFortuneClient({
+                    type: "daily",
+                    title: "每日运势",
+                    summary: `${selectedDate.toISOString().split("T")[0]} · 综合 ${generated.overallScore} 分`,
+                })
+            }
             setIsLoading(false)
         }, 500)
-    }, [selectedDate])
+    }, [hasManualQuery, selectedDate])
 
     // 日期导航
     const navigateDate = (days: number) => {
         const newDate = new Date(selectedDate)
         newDate.setDate(newDate.getDate() + days)
+        setHasManualQuery(true)
         setSelectedDate(newDate)
     }
 
@@ -255,6 +266,7 @@ export default function DailyFortunePage() {
                             size="icon"
                             onClick={() => navigateDate(-1)}
                             className="cursor-pointer"
+                            aria-label="上一天"
                         >
                             <ChevronLeft className="h-5 w-5" />
                         </Button>
@@ -276,6 +288,7 @@ export default function DailyFortunePage() {
                             size="icon"
                             onClick={() => navigateDate(1)}
                             className="cursor-pointer"
+                            aria-label="下一天"
                         >
                             <ChevronRight className="h-5 w-5" />
                         </Button>

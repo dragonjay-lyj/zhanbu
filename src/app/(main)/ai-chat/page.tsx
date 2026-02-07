@@ -6,7 +6,6 @@ import { Send, Bot, User, Loader2, Sparkles, Trash2, MessageSquarePlus, Coins, A
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { cn } from "@/lib/utils"
@@ -218,17 +217,20 @@ export default function AiChatPage() {
             {/* 对话模式选择 */}
             <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-2">
                 {modes.map((mode) => (
-                    <Badge
+                    <Button
+                        type="button"
                         key={mode.id}
                         variant={selectedMode === mode.id ? "default" : "outline"}
+                        size="sm"
                         className={cn(
                             "cursor-pointer whitespace-nowrap",
                             selectedMode === mode.id && "bg-gradient-to-r from-violet-500 to-purple-600"
                         )}
                         onClick={() => setSelectedMode(mode.id)}
+                        aria-pressed={selectedMode === mode.id}
                     >
                         {t(`ai.modes.${mode.id}`)}
-                    </Badge>
+                    </Button>
                 ))}
                 <div className="flex-1" />
                 <Button variant="ghost" size="sm" onClick={newChat} className="gap-1">
@@ -255,9 +257,11 @@ export default function AiChatPage() {
                             </p>
                             <div className="flex flex-wrap justify-center gap-2 mt-6">
                                 {(translations.ai as { chat?: { promptSamples?: string[] } })?.chat?.promptSamples?.map((prompt) => (
-                                    <Badge
+                                    <Button
+                                        type="button"
                                         key={prompt}
                                         variant="secondary"
+                                        size="sm"
                                         className="cursor-pointer hover:bg-primary hover:text-primary-foreground"
                                         onClick={() => {
                                             setInput(prompt)
@@ -265,7 +269,7 @@ export default function AiChatPage() {
                                         }}
                                     >
                                         {prompt}
-                                    </Badge>
+                                    </Button>
                                 ))}
                             </div>
                         </div>
@@ -329,11 +333,13 @@ export default function AiChatPage() {
                             onChange={(e) => setInput(e.target.value)}
                             onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
                             disabled={!isSignedIn || isLoading}
+                            aria-label={t("ai.chat.inputPlaceholder")}
                         />
                         <Button
                             onClick={sendMessage}
                             disabled={!isSignedIn || isLoading || !input.trim()}
                             className="bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700"
+                            aria-label="发送消息"
                         >
                             {isLoading ? (
                                 <Loader2 className="w-4 h-4 animate-spin" />

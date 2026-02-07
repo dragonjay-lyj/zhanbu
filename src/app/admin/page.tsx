@@ -77,7 +77,7 @@ export default function AdminPage() {
 
         if (minutes < 60) return `${minutes} 分钟前`
         if (hours < 24) return `${hours} 小时前`
-        return date.toLocaleDateString("zh-CN")
+        return new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(date)
     }
 
     const getTypeLabel = (type: string) => {

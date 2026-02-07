@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
+import { auth } from "@clerk/nextjs/server"
+import { logFortune } from "@/lib/history/log-fortune"
 
 /**
  * 周公解梦 API
@@ -90,10 +92,23 @@ export async function GET(req: NextRequest) {
             })
         }
 
+        const { userId } = await auth()
+
         // 搜索解梦
         const interpretation = dreamInterpretations[keyword]
 
         if (interpretation) {
+            if (userId) {
+                const logResult = await logFortune({
+                    clerkUserId: userId,
+                    type: "jiemeng",
+                    title: `周公解梦 · ${keyword}`,
+                    summary: interpretation.fortune,
+                })
+                if (!logResult.ok) {
+                    console.error("解梦历史记录失败:", logResult.error)
+                }
+            }
             return NextResponse.json({
                 success: true,
                 data: {
@@ -112,6 +127,17 @@ export async function GET(req: NextRequest) {
         )
 
         if (matches.length > 0) {
+            if (userId) {
+                const logResult = await logFortune({
+                    clerkUserId: userId,
+                    type: "jiemeng",
+                    title: `周公解梦 · ${keyword}`,
+                    summary: `命中建议词: ${matches.slice(0, 3).join("、")}`,
+                })
+                if (!logResult.ok) {
+                    console.error("解梦历史记录失败:", logResult.error)
+                }
+            }
             return NextResponse.json({
                 success: true,
                 data: {
@@ -120,6 +146,18 @@ export async function GET(req: NextRequest) {
                     interpretation: null,
                 },
             })
+        }
+
+        if (userId) {
+            const logResult = await logFortune({
+                clerkUserId: userId,
+                type: "jiemeng",
+                title: `周公解梦 · ${keyword}`,
+                summary: "未命中解释词条",
+            })
+            if (!logResult.ok) {
+                console.error("解梦历史记录失败:", logResult.error)
+            }
         }
 
         return NextResponse.json({

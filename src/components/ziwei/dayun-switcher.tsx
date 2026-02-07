@@ -179,6 +179,7 @@ export function DayunSwitcher({
                                 size="icon"
                                 className="h-7 w-7 cursor-pointer"
                                 onClick={() => onFlowYearChange(flowYear - 1)}
+                                aria-label="上一年"
                             >
                                 <ChevronLeft className="h-4 w-4" />
                             </Button>
@@ -206,6 +207,7 @@ export function DayunSwitcher({
                                 size="icon"
                                 className="h-7 w-7 cursor-pointer"
                                 onClick={() => onFlowYearChange(flowYear + 1)}
+                                aria-label="下一年"
                             >
                                 <ChevronRight className="h-4 w-4" />
                             </Button>

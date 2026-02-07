@@ -27,6 +27,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
 import { useTranslation, formatMessage } from "@/lib/i18n"
+import { logFortuneClient } from "@/lib/history/client-log"
 
 // 十二将神
 const TWELVE_GENERALS = ["贵人", "腾蛇", "朱雀", "六合", "勾陈", "青龙", "天空", "白虎", "太常", "玄武", "太阴", "天后"]
@@ -124,6 +125,11 @@ export default function LiurenPage() {
         const calculated = calculateLiuren(data)
         setResult(calculated)
         setActiveTab("result")
+        void logFortuneClient({
+            type: "liuren",
+            title: "大六壬",
+            summary: `${data.year}-${data.month}-${data.day} · ${String(data.question || "起课").slice(0, 120)}`,
+        })
         setIsLoading(false)
     }
 

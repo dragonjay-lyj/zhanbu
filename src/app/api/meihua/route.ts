@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { createServerClient } from "@/lib/supabase/server"
 import { getDbUserIdByClerkId } from "@/lib/auth/user"
+import { logFortune } from "@/lib/history/log-fortune"
 
 // 八卦基本信息
 const BA_GUA: Record<string, { binary: string; element: string; nature: string }> = {
@@ -144,13 +145,17 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        // 同时在 fortunes 表创建记录
-        await supabase.from("fortunes").insert({
-            user_id: dbUserId,
-            fortune_type: "meihua",
-            record_id: (record as { id: string }).id,
+        // 同时写入 fortunes 汇总表（幂等去重）
+        const fortuneResult = await logFortune({
+            dbUserId,
+            type: "meihua",
+            recordId: (record as { id: string }).id,
+            title: "梅花易数",
             summary: `${benGuaName} - 体${tiGua}(${tiElement}) ${tiYongRelation} 用${yongGua}(${yongElement})`,
-        } as never)
+        })
+        if (!fortuneResult.ok) {
+            console.error("保存梅花历史失败:", fortuneResult.error)
+        }
 
         // 构建 AI 提示
         const prompt = `你是一位精通梅花易数的占卜师。请对以下卦象进行详细解读。

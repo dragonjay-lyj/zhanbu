@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
+import { auth } from "@clerk/nextjs/server"
+import { logFortune } from "@/lib/history/log-fortune"
 
 /**
  * 抽签占卜 API
@@ -94,14 +96,29 @@ export async function GET(req: NextRequest) {
         // 抽签
         const sign = drawSign(type)
 
-        return NextResponse.json({
+        const responseData = {
             success: true,
             data: {
                 type: signType,
                 sign,
                 drawnAt: new Date().toISOString(),
             },
-        })
+        }
+
+        const { userId } = await auth()
+        if (userId) {
+            const logResult = await logFortune({
+                clerkUserId: userId,
+                type: "qianwen",
+                title: `${signType.name} · 第${sign.number}签`,
+                summary: `${sign.level} · ${sign.meaning}`,
+            })
+            if (!logResult.ok) {
+                console.error("抽签历史记录失败:", logResult.error)
+            }
+        }
+
+        return NextResponse.json(responseData)
     } catch (error) {
         console.error("抽签占卜 API 错误:", error)
         return NextResponse.json({ error: "服务器内部错误" }, { status: 500 })

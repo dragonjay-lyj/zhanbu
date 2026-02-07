@@ -145,13 +145,17 @@ export function ZiweiPalaceGrid({
                     return (
                         <Tooltip key={idx}>
                             <TooltipTrigger asChild>
-                                <div
+                                <button
+                                    type="button"
                                     onClick={() => onSelectPalace(palace.position)}
+                                    aria-pressed={isSelected}
+                                    aria-label={`选择${palace.name}`}
                                     className={cn(
                                         "relative p-2 rounded-lg border cursor-pointer transition-all duration-200",
                                         "hover:border-primary/50 hover:bg-primary/5",
                                         isSelected && "border-primary bg-primary/10 ring-2 ring-primary/30",
-                                        !isSelected && "border-border/50 bg-card/50"
+                                        !isSelected && "border-border/50 bg-card/50",
+                                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                                     )}
                                 >
                                     {/* 宫位名称 */}
@@ -218,7 +222,7 @@ export function ZiweiPalaceGrid({
                                             </Badge>
                                         </div>
                                     )}
-                                </div>
+                                </button>
                             </TooltipTrigger>
                             <TooltipContent side="top" className="max-w-xs">
                                 <div className="space-y-1">
