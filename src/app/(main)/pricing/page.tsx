@@ -44,6 +44,8 @@ export default function PricingPage() {
         planName: string
         amount: number
         paymentUrl: string
+        paymentProvider?: "linuxdo_credit" | "manual" | "xianyu"
+        message?: string
     } | null>(null)
     const [isProcessing, setIsProcessing] = useState(false)
     const [copied, setCopied] = useState(false)
@@ -374,7 +376,7 @@ export default function PricingPage() {
                             <div className="p-4 rounded-lg border border-amber-500/30 bg-amber-500/5">
                                 <p className="text-sm">
                                     <strong>{t("pages.pricing.dialog.noticeTitle")}</strong>
-                                    {t("pages.pricing.dialog.noticeBody")}
+                                    {orderInfo.message || t("pages.pricing.dialog.noticeBody")}
                                 </p>
                             </div>
                         </div>
