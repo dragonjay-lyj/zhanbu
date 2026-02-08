@@ -1,5 +1,18 @@
 import { NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase/server"
+import { normalizeLinuxDoCreditRate } from "@/lib/payment/linuxdo"
+
+const PAYMENT_KEYS = [
+    "payment_url",
+    "payment_linuxdo_pid",
+    "payment_linuxdo_key",
+    "payment_linuxdo_credit_rate",
+] as const
+
+function sanitizeSettingValue(value: unknown) {
+    if (value === null || value === undefined) return ""
+    return String(value).replace(/"/g, "").trim()
+}
 
 /**
  * 获取所有会员套餐
@@ -22,20 +35,56 @@ export async function GET() {
             )
         }
 
-        // 获取支付链接
         const { data: paymentSetting } = await supabase
             .from("system_settings")
             .select("value")
             .eq("key", "payment_url")
             .single()
 
-        const paymentUrl = paymentSetting?.value ?? null
+        const paymentUrl = sanitizeSettingValue(paymentSetting?.value ?? "")
+
+        const { data: paymentRows } = await supabase
+            .from("system_settings")
+            .select("key, value")
+            .in("key", [...PAYMENT_KEYS])
+
+        const settingsMap = new Map<string, string>()
+        for (const row of paymentRows || []) {
+            settingsMap.set(row.key, sanitizeSettingValue(row.value))
+        }
+
+        const linuxDoPid =
+            process.env.LINUX_DO_CREDIT_PID?.trim() ||
+            settingsMap.get("payment_linuxdo_pid") ||
+            ""
+        const linuxDoKey =
+            process.env.LINUX_DO_CREDIT_KEY?.trim() ||
+            settingsMap.get("payment_linuxdo_key") ||
+            ""
+        const linuxDoCreditRate = normalizeLinuxDoCreditRate(
+            process.env.LINUX_DO_CREDIT_RATE?.trim() ||
+                settingsMap.get("payment_linuxdo_credit_rate") ||
+                10
+        )
+        const linuxDoEnabled = Boolean(linuxDoPid && linuxDoKey)
+        const manualEnabled = Boolean(paymentUrl)
+        const defaultProvider = linuxDoEnabled
+            ? "linuxdo_credit"
+            : manualEnabled
+                ? "xianyu"
+                : null
 
         return NextResponse.json({
             success: true,
             data: {
                 plans,
-                paymentUrl,
+                paymentUrl: paymentUrl || null,
+                paymentOptions: {
+                    linuxDoEnabled,
+                    manualEnabled,
+                    defaultProvider,
+                    linuxDoCreditRate,
+                },
             },
         })
     } catch (error) {

@@ -59,6 +59,12 @@ export default function AdminSettingsPage() {
     const [saveSuccess, setSaveSuccess] = useState(false)
 
     const [paymentUrl, setPaymentUrl] = useState("")
+    const [linuxDoPid, setLinuxDoPid] = useState("")
+    const [linuxDoKey, setLinuxDoKey] = useState("")
+    const [linuxDoGateway, setLinuxDoGateway] = useState("https://credit.linux.do/epay")
+    const [linuxDoNotifyUrl, setLinuxDoNotifyUrl] = useState("")
+    const [linuxDoReturnUrl, setLinuxDoReturnUrl] = useState("")
+    const [linuxDoCreditRate, setLinuxDoCreditRate] = useState("10")
     const [siteName, setSiteName] = useState("")
     const [siteDescription, setSiteDescription] = useState("")
     const [maintenanceMode, setMaintenanceMode] = useState(false)
@@ -100,6 +106,12 @@ export default function AdminSettingsPage() {
                 // 初始化表单值
                 const s = result.data.settings
                 setPaymentUrl(String(s.payment_url || "").replace(/"/g, ""))
+                setLinuxDoPid(String(s.payment_linuxdo_pid || "").replace(/"/g, ""))
+                setLinuxDoKey(String(s.payment_linuxdo_key || "").replace(/"/g, ""))
+                setLinuxDoGateway(String(s.payment_linuxdo_gateway || "https://credit.linux.do/epay").replace(/"/g, ""))
+                setLinuxDoNotifyUrl(String(s.payment_linuxdo_notify_url || "").replace(/"/g, ""))
+                setLinuxDoReturnUrl(String(s.payment_linuxdo_return_url || "").replace(/"/g, ""))
+                setLinuxDoCreditRate(String(s.payment_linuxdo_credit_rate || "10").replace(/"/g, ""))
                 setSiteName(String(s.site_name || "").replace(/"/g, ""))
                 setSiteDescription(String(s.site_description || "").replace(/"/g, ""))
                 setMaintenanceMode(s.maintenance_mode === true || s.maintenance_mode === "true")
@@ -143,6 +155,12 @@ export default function AdminSettingsPage() {
 
     const savePaymentSettings = async () => {
         await updateSetting("payment_url", paymentUrl)
+        await updateSetting("payment_linuxdo_pid", linuxDoPid)
+        await updateSetting("payment_linuxdo_key", linuxDoKey)
+        await updateSetting("payment_linuxdo_gateway", linuxDoGateway || "https://credit.linux.do/epay")
+        await updateSetting("payment_linuxdo_notify_url", linuxDoNotifyUrl)
+        await updateSetting("payment_linuxdo_return_url", linuxDoReturnUrl)
+        await updateSetting("payment_linuxdo_credit_rate", linuxDoCreditRate || "10")
     }
 
     const saveAiSettings = async () => {
@@ -224,6 +242,10 @@ export default function AdminSettingsPage() {
     }
 
     const formatPrice = (cents: number) => (cents / 100).toFixed(2)
+    const monthlyPlan = data?.plans?.find((plan) => plan.id === "monthly")
+    const monthlyLinuxDoCredits = monthlyPlan
+        ? ((monthlyPlan.price / 100) * (parseFloat(linuxDoCreditRate) || 10)).toFixed(2)
+        : null
 
     if (isLoading) {
         return (
@@ -456,7 +478,7 @@ export default function AdminSettingsPage() {
                                 <LinkIcon className="h-5 w-5" />
                                 支付设置
                             </CardTitle>
-                            <CardDescription>配置闲鱼支付链接</CardDescription>
+                            <CardDescription>配置闲鱼和 Linux DO Credit 支付参数</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="space-y-2">
@@ -469,6 +491,76 @@ export default function AdminSettingsPage() {
                                 />
                                 <p className="text-sm text-muted-foreground">
                                     用户点击"立即开通"后会跳转到此链接
+                                </p>
+                            </div>
+
+                            <Separator />
+
+                            <div className="space-y-2">
+                                <Label htmlFor="linuxDoPid">Linux DO Client ID (PID)</Label>
+                                <Input
+                                    id="linuxDoPid"
+                                    value={linuxDoPid}
+                                    onChange={(e) => setLinuxDoPid(e.target.value)}
+                                    placeholder="例如：001"
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="linuxDoKey">Linux DO Client Secret (KEY)</Label>
+                                <Input
+                                    id="linuxDoKey"
+                                    type="password"
+                                    value={linuxDoKey}
+                                    onChange={(e) => setLinuxDoKey(e.target.value)}
+                                    placeholder="请输入密钥"
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="linuxDoGateway">Linux DO 网关地址</Label>
+                                <Input
+                                    id="linuxDoGateway"
+                                    value={linuxDoGateway}
+                                    onChange={(e) => setLinuxDoGateway(e.target.value)}
+                                    placeholder="https://credit.linux.do/epay"
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="linuxDoNotifyUrl">通知地址（可选）</Label>
+                                <Input
+                                    id="linuxDoNotifyUrl"
+                                    value={linuxDoNotifyUrl}
+                                    onChange={(e) => setLinuxDoNotifyUrl(e.target.value)}
+                                    placeholder="https://your-domain.com/api/payment/callback"
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="linuxDoReturnUrl">返回地址（可选）</Label>
+                                <Input
+                                    id="linuxDoReturnUrl"
+                                    value={linuxDoReturnUrl}
+                                    onChange={(e) => setLinuxDoReturnUrl(e.target.value)}
+                                    placeholder="https://your-domain.com/pricing"
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="linuxDoCreditRate">Linux DO 汇率（每 1 元兑换 Credit）</Label>
+                                <Input
+                                    id="linuxDoCreditRate"
+                                    type="number"
+                                    step="0.01"
+                                    min="0.01"
+                                    value={linuxDoCreditRate}
+                                    onChange={(e) => setLinuxDoCreditRate(e.target.value)}
+                                    placeholder="10"
+                                />
+                                <p className="text-sm text-muted-foreground">
+                                    例如填写 10：29 元会转换为 290 Credit。
+                                    {monthlyLinuxDoCredits ? ` 当前月卡预览：${monthlyLinuxDoCredits} Credit` : ""}
                                 </p>
                             </div>
 

@@ -26,10 +26,18 @@ interface MembershipInfo {
     features: string[]
 }
 
+interface PaymentOptions {
+    linuxDoEnabled: boolean
+    manualEnabled: boolean
+    defaultProvider: "linuxdo_credit" | "xianyu" | null
+    linuxDoCreditRate: number
+}
+
 interface MembershipContextType {
     membership: MembershipInfo | null
     plans: MembershipPlan[]
     paymentUrl: string | null
+    paymentOptions: PaymentOptions
     isLoading: boolean
     error: string | null
     refreshMembership: () => Promise<void>
@@ -47,6 +55,13 @@ const defaultMembership: MembershipInfo = {
     features: [],
 }
 
+const defaultPaymentOptions: PaymentOptions = {
+    linuxDoEnabled: false,
+    manualEnabled: false,
+    defaultProvider: null,
+    linuxDoCreditRate: 10,
+}
+
 const MembershipContext = createContext<MembershipContextType | undefined>(undefined)
 
 interface MembershipProviderProps {
@@ -58,6 +73,7 @@ export function MembershipProvider({ children }: MembershipProviderProps) {
     const [membership, setMembership] = useState<MembershipInfo | null>(null)
     const [plans, setPlans] = useState<MembershipPlan[]>([])
     const [paymentUrl, setPaymentUrl] = useState<string | null>(null)
+    const [paymentOptions, setPaymentOptions] = useState<PaymentOptions>(defaultPaymentOptions)
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
@@ -98,6 +114,7 @@ export function MembershipProvider({ children }: MembershipProviderProps) {
             if (data.success) {
                 setPlans(data.data.plans || [])
                 setPaymentUrl(data.data.paymentUrl)
+                setPaymentOptions(data.data.paymentOptions || defaultPaymentOptions)
             }
         } catch (err) {
             console.error("获取套餐列表失败:", err)
@@ -140,6 +157,7 @@ export function MembershipProvider({ children }: MembershipProviderProps) {
                 membership,
                 plans,
                 paymentUrl,
+                paymentOptions,
                 isLoading,
                 error,
                 refreshMembership,

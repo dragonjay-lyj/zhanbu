@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { createServerClient } from "@/lib/supabase/server"
-import { formatCentsToMoney } from "@/lib/payment/linuxdo"
+import { formatCentsToMoney, parseMoneyToCents } from "@/lib/payment/linuxdo"
 
 interface RefundRequest {
     orderId: string
@@ -209,7 +209,9 @@ export async function POST(request: NextRequest) {
             tradeNo = queriedTradeNo
         }
 
-        const money = formatCentsToMoney(order.amount)
+        const money = order.payment_amount && parseMoneyToCents(order.payment_amount)
+            ? order.payment_amount
+            : formatCentsToMoney(order.amount)
         const refundResult = await requestLinuxDoRefund(config, tradeNo, orderId, money)
 
         if (!refundResult) {

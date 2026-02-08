@@ -12,6 +12,7 @@ import {
     Activity,
     Crown,
     Loader2,
+    Wallet,
 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -253,6 +254,15 @@ export default function AdminPage() {
                                 <span className="flex items-center gap-2">
                                     <CreditCard className="h-4 w-4" />
                                     系统设置
+                                </span>
+                                <ArrowUpRight className="h-4 w-4" />
+                            </Button>
+                        </Link>
+                        <Link href="/admin/orders" className="block">
+                            <Button variant="outline" className="w-full justify-between cursor-pointer">
+                                <span className="flex items-center gap-2">
+                                    <Wallet className="h-4 w-4" />
+                                    订单管理
                                 </span>
                                 <ArrowUpRight className="h-4 w-4" />
                             </Button>

@@ -64,3 +64,28 @@ export function parseMoneyToCents(rawMoney: string | number | null | undefined):
 
     return intValue * 100 + decimalValue
 }
+
+export function normalizeLinuxDoCreditRate(rawRate: unknown, defaultRate = 10): number {
+    const rate = Number(rawRate)
+    if (!Number.isFinite(rate) || rate <= 0) {
+        return defaultRate
+    }
+
+    return Math.round(rate * 100) / 100
+}
+
+/**
+ * 将人民币分（orders.amount）按汇率转换为 Linux DO Credit 金额字符串
+ * 例：2900 分 + rate=10 => "290.00"
+ */
+export function convertOrderCentsToLinuxDoMoney(orderCents: number, creditRate: number): string {
+    if (!Number.isInteger(orderCents) || orderCents <= 0) {
+        throw new Error("订单金额必须为大于 0 的整数（分）")
+    }
+
+    const normalizedRate = normalizeLinuxDoCreditRate(creditRate)
+    const rateBasisPoints = Math.round(normalizedRate * 100)
+    const gatewayCents = Math.round((orderCents * rateBasisPoints) / 100)
+
+    return formatCentsToMoney(gatewayCents)
+}

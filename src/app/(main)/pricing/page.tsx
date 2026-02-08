@@ -31,24 +31,35 @@ import { useMembership } from "@/lib/membership"
 import Link from "next/link"
 import { useTranslation, formatMessage } from "@/lib/i18n"
 
+type PaymentProvider = "linuxdo_credit" | "xianyu"
+
 /**
  * 会员定价页面
  */
 export default function PricingPage() {
     const { t } = useTranslation()
     const { user, isLoaded } = useUser()
-    const { plans, paymentUrl, membership, isLoading } = useMembership()
+    const { plans, paymentOptions, membership, isLoading } = useMembership()
+    const [selectedPaymentProvider, setSelectedPaymentProvider] = useState<PaymentProvider>("linuxdo_credit")
     const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
     const [orderInfo, setOrderInfo] = useState<{
         orderId: string
         planName: string
         amount: number
+        gatewayAmount?: string
+        gatewayRate?: number
         paymentUrl: string
         paymentProvider?: "linuxdo_credit" | "manual" | "xianyu"
         message?: string
     } | null>(null)
     const [isProcessing, setIsProcessing] = useState(false)
     const [copied, setCopied] = useState(false)
+
+    useEffect(() => {
+        if (paymentOptions.defaultProvider) {
+            setSelectedPaymentProvider(paymentOptions.defaultProvider)
+        }
+    }, [paymentOptions.defaultProvider])
 
     const handlePurchase = async (planId: string) => {
         if (!user) {
@@ -58,6 +69,16 @@ export default function PricingPage() {
 
         if (planId === "free") return
 
+        if (selectedPaymentProvider === "linuxdo_credit" && !paymentOptions.linuxDoEnabled) {
+            alert("Linux DO Credit 支付暂未配置")
+            return
+        }
+
+        if (selectedPaymentProvider === "xianyu" && !paymentOptions.manualEnabled) {
+            alert("闲鱼支付暂未配置")
+            return
+        }
+
         setSelectedPlan(planId)
         setIsProcessing(true)
 
@@ -65,7 +86,10 @@ export default function PricingPage() {
             const response = await fetch("/api/payment", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ planId }),
+                body: JSON.stringify({
+                    planId,
+                    provider: selectedPaymentProvider,
+                }),
             })
 
             const data = await response.json()
@@ -171,6 +195,31 @@ export default function PricingPage() {
                 <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
                     {t("pages.pricing.subtitle")}
                 </p>
+                <div className="flex items-center justify-center gap-2 flex-wrap">
+                    <Button
+                        type="button"
+                        variant={selectedPaymentProvider === "linuxdo_credit" ? "default" : "outline"}
+                        className="cursor-pointer"
+                        disabled={!paymentOptions.linuxDoEnabled}
+                        onClick={() => setSelectedPaymentProvider("linuxdo_credit")}
+                    >
+                        Linux DO Credit
+                    </Button>
+                    <Button
+                        type="button"
+                        variant={selectedPaymentProvider === "xianyu" ? "default" : "outline"}
+                        className="cursor-pointer"
+                        disabled={!paymentOptions.manualEnabled}
+                        onClick={() => setSelectedPaymentProvider("xianyu")}
+                    >
+                        闲鱼支付
+                    </Button>
+                </div>
+                {selectedPaymentProvider === "linuxdo_credit" && (
+                    <p className="text-sm text-muted-foreground">
+                        当前汇率：1 元 = {paymentOptions.linuxDoCreditRate} Linux DO Credit
+                    </p>
+                )}
                 {membership?.isPremium && (
                     <Badge variant="secondary" className="text-lg px-4 py-1">
                         <Crown className="mr-2 h-4 w-4" />
@@ -347,7 +396,9 @@ export default function PricingPage() {
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">{t("pages.pricing.dialog.amountLabel")}</span>
                                     <span className="font-bold text-lg">
-                                        {formatMessage(t("pages.pricing.price"), { amount: formatPrice(orderInfo.amount) })}
+                                        {orderInfo.paymentProvider === "linuxdo_credit" && orderInfo.gatewayAmount
+                                            ? `${orderInfo.gatewayAmount} Linux DO Credit`
+                                            : formatMessage(t("pages.pricing.price"), { amount: formatPrice(orderInfo.amount) })}
                                     </span>
                                 </div>
                                 <div className="flex justify-between items-center">

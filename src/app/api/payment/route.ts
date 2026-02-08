@@ -2,11 +2,17 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { createServerClient } from "@/lib/supabase/server"
-import { formatCentsToMoney, parseMoneyToCents, signLinuxDoParams } from "@/lib/payment/linuxdo"
+import {
+    convertOrderCentsToLinuxDoMoney,
+    normalizeLinuxDoCreditRate,
+    parseMoneyToCents,
+    signLinuxDoParams,
+} from "@/lib/payment/linuxdo"
 import { fulfillPaidMembershipOrder } from "@/lib/payment/order-fulfillment"
 
 interface PaymentRequest {
     planId: string
+    provider?: "linuxdo_credit" | "xianyu" | "manual" | "auto"
 }
 
 interface LinuxDoConfig {
@@ -34,6 +40,8 @@ interface LinuxDoOrderQueryResponse {
     status?: number | string
 }
 
+type PaymentProvider = "linuxdo_credit" | "xianyu"
+
 const SYSTEM_SETTING_KEYS = [
     "payment_url",
     "payment_linuxdo_pid",
@@ -41,6 +49,7 @@ const SYSTEM_SETTING_KEYS = [
     "payment_linuxdo_gateway",
     "payment_linuxdo_notify_url",
     "payment_linuxdo_return_url",
+    "payment_linuxdo_credit_rate",
     "app_url",
 ] as const
 
@@ -114,6 +123,14 @@ function resolveLinuxDoConfig(settings: Map<string, string>, orderId: string): L
         notifyUrl,
         returnUrl,
     }
+}
+
+function resolveLinuxDoCreditRate(settings: Map<string, string>) {
+    return normalizeLinuxDoCreditRate(
+        process.env.LINUX_DO_CREDIT_RATE?.trim() ||
+            settings.get("payment_linuxdo_credit_rate") ||
+            10
+    )
 }
 
 function extractPaymentUrl(submitResponse: Response, responseBody: string, parsedJson: LinuxDoSubmitResponse | null): string | null {
@@ -206,6 +223,7 @@ export async function POST(request: NextRequest) {
 
         const body: PaymentRequest = await request.json()
         const { planId } = body
+        const requestedProvider = body.provider || "auto"
 
         if (!planId) {
             return NextResponse.json(
@@ -242,14 +260,53 @@ export async function POST(request: NextRequest) {
         const orderId = `ORD_${Date.now()}_${Math.random().toString(36).slice(2, 8).toUpperCase()}`
         const linuxDoConfig = resolveLinuxDoConfig(settings, orderId)
         const manualPaymentUrl = settings.get("payment_url") || null
+        const linuxDoCreditRate = resolveLinuxDoCreditRate(settings)
+
+        const manualProviderAvailable = Boolean(manualPaymentUrl)
+        const linuxProviderAvailable = Boolean(linuxDoConfig)
+
+        let finalProvider: PaymentProvider
+        if (requestedProvider === "linuxdo_credit") {
+            if (!linuxProviderAvailable) {
+                return NextResponse.json(
+                    { error: "Linux DO Credit 支付未配置" },
+                    { status: 503 }
+                )
+            }
+            finalProvider = "linuxdo_credit"
+        } else if (requestedProvider === "xianyu" || requestedProvider === "manual") {
+            if (!manualProviderAvailable) {
+                return NextResponse.json(
+                    { error: "闲鱼支付未配置" },
+                    { status: 503 }
+                )
+            }
+            finalProvider = "xianyu"
+        } else {
+            if (linuxProviderAvailable) {
+                finalProvider = "linuxdo_credit"
+            } else if (manualProviderAvailable) {
+                finalProvider = "xianyu"
+            } else {
+                return NextResponse.json(
+                    { error: "支付功能未配置：请配置 Linux DO 或闲鱼支付" },
+                    { status: 503 }
+                )
+            }
+        }
+
+        const linuxDoMoney = finalProvider === "linuxdo_credit"
+            ? convertOrderCentsToLinuxDoMoney(plan.price, linuxDoCreditRate)
+            : null
 
         const { error: orderError } = await supabase.from("orders").insert({
             id: orderId,
             user_id: userId,
             plan_id: plan.id,
             amount: plan.price,
-            payment_method: linuxDoConfig ? "linuxdo_credit" : "xianyu",
-            payment_url: linuxDoConfig ? null : manualPaymentUrl,
+            payment_method: finalProvider,
+            payment_url: finalProvider === "linuxdo_credit" ? null : manualPaymentUrl,
+            payment_amount: linuxDoMoney,
             status: "pending",
             created_at: new Date().toISOString(),
         })
@@ -262,14 +319,7 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        if (!linuxDoConfig) {
-            if (!manualPaymentUrl) {
-                return NextResponse.json(
-                    { error: "支付功能未配置：请配置 Linux DO PID/KEY 或 payment_url" },
-                    { status: 503 }
-                )
-            }
-
+        if (finalProvider === "xianyu") {
             return NextResponse.json({
                 success: true,
                 data: {
@@ -278,13 +328,20 @@ export async function POST(request: NextRequest) {
                     planName: plan.name,
                     amount: plan.price,
                     paymentUrl: manualPaymentUrl,
-                    paymentProvider: "manual",
+                    paymentProvider: "xianyu",
                     message: `请前往支付页面完成支付，备注订单号：${orderId}`,
                 },
             })
         }
 
-        const money = formatCentsToMoney(plan.price)
+        if (!linuxDoConfig || !linuxDoMoney) {
+            return NextResponse.json(
+                { error: "Linux DO 支付配置缺失" },
+                { status: 503 }
+            )
+        }
+
+        const money = linuxDoMoney
         const linuxDoName = `${plan.name}会员订阅`.slice(0, 64)
         const submitParams = {
             pid: linuxDoConfig.pid,
@@ -358,6 +415,8 @@ export async function POST(request: NextRequest) {
                 planId: plan.id,
                 planName: plan.name,
                 amount: plan.price,
+                gatewayAmount: money,
+                gatewayRate: linuxDoCreditRate,
                 paymentUrl,
                 paymentProvider: "linuxdo_credit",
                 message: "请在 Linux DO Credit 页面完成认证支付",

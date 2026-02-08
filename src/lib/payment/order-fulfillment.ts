@@ -1,4 +1,5 @@
 import { createServerClient } from "@/lib/supabase/server"
+import { parseMoneyToCents } from "@/lib/payment/linuxdo"
 
 export type FulfillOrderStatus =
     | "paid"
@@ -42,7 +43,11 @@ export async function fulfillPaidMembershipOrder({
             return { status: "not_found", error: orderError }
         }
 
-        if (order.amount !== moneyCents) {
+        const expectedMoneyCents = order.payment_amount
+            ? parseMoneyToCents(order.payment_amount)
+            : order.amount
+
+        if (!expectedMoneyCents || expectedMoneyCents !== moneyCents) {
             return { status: "amount_mismatch" }
         }
 
