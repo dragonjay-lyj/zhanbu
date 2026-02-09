@@ -131,6 +131,15 @@ export default function PricingPage() {
         return t("pages.pricing.period.lifetime")
     }
 
+    const isLinuxDoOrder = orderInfo?.paymentProvider === "linuxdo_credit"
+    const payButtonLabel = isLinuxDoOrder ? "前往 Linux DO Credit" : t("pages.pricing.dialog.actions.pay")
+    const dialogNoticeBody = isLinuxDoOrder
+        ? (orderInfo?.message || "请在 Linux DO Credit 页面完成认证支付。")
+        : (orderInfo?.message || t("pages.pricing.dialog.noticeBody"))
+    const dialogDescription = isLinuxDoOrder
+        ? "将跳转到 Linux DO Credit 认证页面完成支付"
+        : t("pages.pricing.dialog.description")
+
     const faqs = [
         {
             question: t("pages.pricing.faqs.upgrade.question"),
@@ -381,9 +390,7 @@ export default function PricingPage() {
                             <Crown className="h-5 w-5 text-amber-500" />
                             {t("pages.pricing.dialog.title")}
                         </DialogTitle>
-                        <DialogDescription>
-                            {t("pages.pricing.dialog.description")}
-                        </DialogDescription>
+                        <DialogDescription>{dialogDescription}</DialogDescription>
                     </DialogHeader>
 
                     {orderInfo && (
@@ -427,7 +434,7 @@ export default function PricingPage() {
                             <div className="p-4 rounded-lg border border-amber-500/30 bg-amber-500/5">
                                 <p className="text-sm">
                                     <strong>{t("pages.pricing.dialog.noticeTitle")}</strong>
-                                    {orderInfo.message || t("pages.pricing.dialog.noticeBody")}
+                                    {dialogNoticeBody}
                                 </p>
                             </div>
                         </div>
@@ -439,7 +446,7 @@ export default function PricingPage() {
                         </Button>
                         <Button onClick={goToPayment} className="cursor-pointer">
                             <ExternalLink className="mr-2 h-4 w-4" />
-                            {t("pages.pricing.dialog.actions.pay")}
+                            {payButtonLabel}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
