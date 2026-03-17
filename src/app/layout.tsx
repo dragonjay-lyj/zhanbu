@@ -12,16 +12,19 @@ import "./globals.css"
 const notoSansTC = Noto_Sans_TC({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "600"],
   display: "swap",
+  fallback: ["system-ui", "sans-serif"],
 })
 
 // 中文衬线字体（标题）
 const notoSerifTC = Noto_Serif_TC({
   variable: "--font-serif",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["600"],
   display: "swap",
+  preload: false,
+  fallback: ["Georgia", "serif"],
 })
 
 // SEO 元数据
@@ -72,7 +75,7 @@ export default async function RootLayout({
         >
           <a
             href="#main-content"
-            className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:rounded-md focus:bg-background focus:px-3 focus:py-2 focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:z-[200] focus-visible:rounded-md focus-visible:bg-background focus-visible:px-3 focus-visible:py-2 focus-visible:text-foreground focus-visible:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             跳转到主内容
           </a>

@@ -1,34 +1,37 @@
 "use client"
 
+import dynamic from "next/dynamic"
 import Link from "next/link"
-import { SignInButton, SignUpButton, useUser, useClerk } from "@clerk/nextjs"
-import { Menu, Sparkles, User, History, Crown, Settings, LogOut, Coins, ChevronDown } from "lucide-react"
+import { Menu, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { Sidebar } from "./sidebar"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageSwitcher } from "@/components/language-switcher"
-import { useCreditsOptional } from "@/lib/credits/provider"
 import { useTranslation } from "@/lib/i18n"
+
+const NavbarAuthControls = dynamic(
+    () => import("./navbar-auth-controls").then((mod) => mod.NavbarAuthControls),
+    {
+        ssr: false,
+        loading: () => (
+            <div className="flex items-center gap-2">
+                <Button variant="ghost" size="sm" className="hidden sm:inline-flex" asChild>
+                    <Link href="/sign-in">Sign In</Link>
+                </Button>
+                <Button size="sm" asChild>
+                    <Link href="/sign-up">Sign Up</Link>
+                </Button>
+            </div>
+        ),
+    }
+)
 
 /**
  * 主导航栏组件
  * 包含 Logo、主题切换、语言切换、用户认证
  */
 export function Navbar() {
-    const { isSignedIn, isLoaded, user } = useUser()
-    const { signOut } = useClerk()
-    const creditsContext = useCreditsOptional()
     const { t } = useTranslation()
     const navLinkClass = "rounded-full px-3 py-2 text-sm font-medium text-foreground/72 transition-[background-color,color,box-shadow] duration-200 hover:bg-primary/8 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
 
@@ -92,105 +95,9 @@ export function Navbar() {
 
                 {/* 右侧操作区 */}
                 <div className="flex items-center gap-1 md:gap-2">
-                    {/* 语言切换 */}
                     <LanguageSwitcher />
-
-                    {/* 主题切换 */}
                     <ThemeToggle />
-
-                    {/* 用户认证 */}
-                    {isLoaded && (
-                        <>
-                            {isSignedIn ? (
-                                <div className="flex items-center gap-2">
-                                    {/* 积分显示 */}
-                                    {creditsContext?.credits && (
-                                        <Link href="/pricing">
-                                            <Badge
-                                                variant="secondary"
-                                                className="gap-1 rounded-full border border-cta/20 bg-cta/10 px-3 py-1 text-cta transition-[background-color,color] duration-200 hover:bg-cta/16 hover:text-cta"
-                                            >
-                                                <Coins className="h-3 w-3" />
-                                                <span>{creditsContext.credits.balance}</span>
-                                            </Badge>
-                                        </Link>
-                                    )}
-
-                                    {/* 用户下拉菜单 */}
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" className="gap-2 rounded-full px-2">
-                                                <Avatar className="h-8 w-8">
-                                                    <AvatarImage src={user?.imageUrl} alt={user?.fullName || t("nav.userFallback")} />
-                                                    <AvatarFallback>
-                                                        {user?.firstName?.charAt(0) || "U"}
-                                                    </AvatarFallback>
-                                                </Avatar>
-                                                <ChevronDown className="h-4 w-4 hidden sm:block" />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end" className="w-56">
-                                            <DropdownMenuLabel>
-                                                <div className="flex flex-col">
-                                                    <span>{user?.fullName || t("nav.userFallback")}</span>
-                                                    <span className="text-xs text-muted-foreground font-normal">
-                                                        {user?.primaryEmailAddress?.emailAddress}
-                                                    </span>
-                                                </div>
-                                            </DropdownMenuLabel>
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem asChild>
-                                                <Link href="/profile">
-                                                    <User className="mr-2 h-4 w-4" />
-                                                    {t("nav.profile")}
-                                                </Link>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem asChild>
-                                                <Link href="/history">
-                                                    <History className="mr-2 h-4 w-4" />
-                                                    {t("nav.history")}
-                                                </Link>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem asChild>
-                                                <Link href="/pricing">
-                                                    <Crown className="mr-2 h-4 w-4 text-cta" />
-                                                    {t("nav.pricing")}
-                                                </Link>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem asChild>
-                                                <Link href="/admin">
-                                                    <Settings className="mr-2 h-4 w-4" />
-                                                    {t("nav.admin")}
-                                                </Link>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem
-                                                onClick={() => signOut({ redirectUrl: "/" })}
-                                                className="cursor-pointer text-destructive focus:text-destructive"
-                                            >
-                                                <LogOut className="mr-2 h-4 w-4" />
-                                                {t("nav.signOut")}
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </div>
-                            ) : (
-                                <div className="flex items-center gap-2">
-                                    <SignInButton mode="modal">
-                                        <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
-                                            {t("nav.signIn")}
-                                        </Button>
-                                    </SignInButton>
-                                    <SignUpButton mode="modal">
-                                        <Button size="sm">
-                                            {t("nav.signUp")}
-                                        </Button>
-                                    </SignUpButton>
-                                </div>
-                            )}
-                        </>
-                    )}
+                    <NavbarAuthControls />
                 </div>
             </div>
         </header>
