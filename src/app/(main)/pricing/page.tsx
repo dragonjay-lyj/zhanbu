@@ -14,6 +14,7 @@ import {
     ExternalLink,
     Copy,
     CheckCircle,
+    Loader2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -250,7 +251,7 @@ export default function PricingPage() {
                         <Card
                             key={plan.id}
                             className={cn(
-                                "relative overflow-hidden transition-all hover:shadow-lg",
+                                "relative overflow-hidden transition-[box-shadow,border-color] duration-200 hover:shadow-lg",
                                 isRecommended && "border-primary shadow-primary/20",
                                 isCurrentPlan && "border-green-500"
                             )}
@@ -316,7 +317,7 @@ export default function PricingPage() {
                                         </>
                                     ) : selectedPlan === plan.id && isProcessing ? (
                                         <>
-                                            <span className="animate-spin mr-2">⏳</span>
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                             {t("pages.pricing.actions.processing")}
                                         </>
                                     ) : plan.id === "free" ? (

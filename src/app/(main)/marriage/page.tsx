@@ -285,14 +285,20 @@ export default function MarriagePage() {
                         <CardContent className="p-6 text-center">
                             <div className="flex items-center justify-center gap-4 mb-4">
                                 <div className="text-center">
-                                    <div className="text-4xl">🧑</div>
+                                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-white/16">
+                                        <User className="h-7 w-7" />
+                                    </div>
                                     <p className="text-sm mt-1">
                                         {formatMessage(t("pages.marriage.result.zodiac"), { value: result.male.bazi.shengxiao })}
                                     </p>
                                 </div>
-                                <div className="text-4xl">💕</div>
+                                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/16">
+                                    <Heart className="h-7 w-7" />
+                                </div>
                                 <div className="text-center">
-                                    <div className="text-4xl">👩</div>
+                                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-white/16">
+                                        <Users className="h-7 w-7" />
+                                    </div>
                                     <p className="text-sm mt-1">
                                         {formatMessage(t("pages.marriage.result.zodiac"), { value: result.female.bazi.shengxiao })}
                                     </p>
@@ -329,12 +335,16 @@ export default function MarriagePage() {
                                 <CardContent>
                                     <div className="flex items-center justify-center gap-8 mb-6">
                                         <div className="text-center">
-                                            <div className="text-6xl">🧑</div>
+                                            <div className="mx-auto flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-full bg-primary/10 text-primary">
+                                                <User className="h-8 w-8" />
+                                            </div>
                                             <p className="font-bold mt-2">{result.analysis.shengxiao.male}</p>
                                         </div>
                                         <Heart className="w-12 h-12 text-pink-500" />
                                         <div className="text-center">
-                                            <div className="text-6xl">👩</div>
+                                            <div className="mx-auto flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-full bg-secondary/18 text-primary">
+                                                <Users className="h-8 w-8" />
+                                            </div>
                                             <p className="font-bold mt-2">{result.analysis.shengxiao.female}</p>
                                         </div>
                                     </div>

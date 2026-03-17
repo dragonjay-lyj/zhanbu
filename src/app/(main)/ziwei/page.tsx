@@ -494,7 +494,7 @@ export default function ZiweiPage() {
                                                     type="button"
                                                     key={palace.name}
                                                     className={cn(
-                                                        "p-2 rounded-lg border transition-all cursor-pointer hover:shadow-md",
+                                                        "cursor-pointer rounded-lg border p-2 transition-[background-color,border-color,box-shadow] duration-200 hover:shadow-md",
                                                         isMing && "border-primary bg-primary/10",
                                                         isShen && !isMing && "border-secondary bg-secondary/10",
                                                         !isMing && !isShen && "border-border/50 bg-card hover:bg-accent",

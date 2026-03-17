@@ -151,7 +151,7 @@ export function ZiweiPalaceGrid({
                                     aria-pressed={isSelected}
                                     aria-label={`选择${palace.name}`}
                                     className={cn(
-                                        "relative p-2 rounded-lg border cursor-pointer transition-all duration-200",
+                                        "relative cursor-pointer rounded-lg border p-2 transition-[background-color,border-color,box-shadow] duration-200",
                                         "hover:border-primary/50 hover:bg-primary/5",
                                         isSelected && "border-primary bg-primary/10 ring-2 ring-primary/30",
                                         !isSelected && "border-border/50 bg-card/50",
@@ -203,7 +203,7 @@ export function ZiweiPalaceGrid({
                                     {palace.minorStars.length > 0 && (
                                         <div className="mt-1 text-[10px] text-muted-foreground truncate">
                                             {palace.minorStars.slice(0, 3).join(" ")}
-                                            {palace.minorStars.length > 3 && "..."}
+                                            {palace.minorStars.length > 3 && "…"}
                                         </div>
                                     )}
 

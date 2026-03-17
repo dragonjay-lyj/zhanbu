@@ -144,13 +144,16 @@ const advancedNavigation = [
 export function Sidebar() {
     const pathname = usePathname()
     const { t } = useTranslation()
+    const linkClass = "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-[background-color,color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
 
     return (
-        <div className="flex h-full flex-col bg-sidebar">
+        <div className="glass flex h-full flex-col rounded-none border-0 border-r border-primary/10 bg-sidebar/88 shadow-none">
             {/* Logo */}
-            <div className="flex h-16 items-center gap-2 border-b border-sidebar-border px-6">
-                <Sparkles className="h-6 w-6 text-sidebar-primary" />
-                <span className="font-serif text-lg font-bold">{t("sidebar.logo")}</span>
+            <div className="flex h-[4.5rem] items-center gap-3 border-b border-sidebar-border px-6">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-sidebar-primary shadow-[var(--shadow-sm)]">
+                    <Sparkles className="h-5 w-5" />
+                </div>
+                <span className="font-serif text-lg font-semibold">{t("sidebar.logo")}</span>
             </div>
 
             {/* 导航区域 */}
@@ -165,11 +168,10 @@ export function Sidebar() {
                                     key={item.href}
                                     href={item.href}
                                     className={cn(
-                                        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                                        linkClass,
                                         isActive
-                                            ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                                            : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                                        "cursor-pointer"
+                                            ? "bg-white/90 text-sidebar-accent-foreground shadow-[var(--shadow-sm)]"
+                                            : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                                     )}
                                 >
                                     <item.icon className="h-4 w-4" />
@@ -189,10 +191,8 @@ export function Sidebar() {
                                 <AccordionItem value={item.titleKey} className="border-none">
                                     <AccordionTrigger
                                         className={cn(
-                                            "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:no-underline",
-                                            "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                                            "[&[data-state=open]]:bg-sidebar-accent",
-                                            "cursor-pointer"
+                                            linkClass,
+                                            "hover:no-underline text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground [&[data-state=open]]:bg-sidebar-accent"
                                         )}
                                     >
                                         <div className="flex items-center gap-3">
@@ -210,11 +210,10 @@ export function Sidebar() {
                                                         key={subItem.href}
                                                         href={subItem.href}
                                                         className={cn(
-                                                            "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
+                                                            "flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm transition-[background-color,color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30",
                                                             isActive
-                                                                ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                                                                : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                                                            "cursor-pointer"
+                                                                ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-[var(--shadow-sm)]"
+                                                                : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                                                         )}
                                                     >
                                                         {SubIcon && <SubIcon className="h-3.5 w-3.5" />}
@@ -245,11 +244,10 @@ export function Sidebar() {
                                     key={item.href}
                                     href={item.href}
                                     className={cn(
-                                        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                                        linkClass,
                                         isActive
-                                            ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                                            : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                                        "cursor-pointer"
+                                            ? "bg-white/90 text-sidebar-accent-foreground shadow-[var(--shadow-sm)]"
+                                            : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                                     )}
                                 >
                                     <item.icon className="h-4 w-4" />
@@ -266,11 +264,10 @@ export function Sidebar() {
                 <Link
                     href="/profile"
                     className={cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                        linkClass,
                         pathname === "/profile"
-                            ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                            : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                        "cursor-pointer"
+                            ? "bg-white/90 text-sidebar-accent-foreground shadow-[var(--shadow-sm)]"
+                            : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                     )}
                 >
                     <User className="h-4 w-4" />
@@ -279,11 +276,10 @@ export function Sidebar() {
                 <Link
                     href="/history"
                     className={cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                        linkClass,
                         pathname === "/history"
-                            ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                            : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                        "cursor-pointer"
+                            ? "bg-white/90 text-sidebar-accent-foreground shadow-[var(--shadow-sm)]"
+                            : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                     )}
                 >
                     <History className="h-4 w-4" />
@@ -292,11 +288,10 @@ export function Sidebar() {
                 <Link
                     href="/pricing"
                     className={cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                        linkClass,
                         pathname === "/pricing"
-                            ? "bg-amber-500/20 text-amber-500"
-                            : "text-amber-500/80 hover:bg-amber-500/10 hover:text-amber-500",
-                        "cursor-pointer"
+                            ? "bg-cta/14 text-cta shadow-[var(--shadow-sm)]"
+                            : "text-cta/84 hover:bg-cta/10 hover:text-cta"
                     )}
                 >
                     <Crown className="h-4 w-4" />
@@ -305,9 +300,8 @@ export function Sidebar() {
                 <Link
                     href="/admin"
                     className={cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                        "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                        "cursor-pointer"
+                        linkClass,
+                        "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                     )}
                 >
                     <Settings className="h-4 w-4" />

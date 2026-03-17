@@ -108,15 +108,16 @@ export default function ShengxiaoPage() {
         if (score >= 50) return "text-yellow-500"
         return "text-red-500"
     }
+    const getAnimalMark = (animal: ZodiacAnimal) => animal.name.slice(0, 1)
 
     return (
         <div className="container mx-auto px-4 py-8 max-w-5xl">
             {/* 页面标题 */}
             <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-red-500 to-orange-500 mb-4">
-                    <span className="text-3xl">🐲</span>
+                <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary to-cta text-3xl font-serif font-semibold text-white">
+                    龙
                 </div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
+                <h1 className="bg-gradient-to-r from-primary to-cta bg-clip-text text-3xl font-bold text-transparent">
                     {t("pages.shengxiao.title")}
                 </h1>
                 <p className="text-muted-foreground mt-2">
@@ -132,16 +133,18 @@ export default function ShengxiaoPage() {
                             <button
                                 type="button"
                                 className={cn(
-                                    "w-full cursor-pointer transition-all hover:scale-105 hover:shadow-lg text-left",
+                                    "w-full cursor-pointer text-left transition-[box-shadow,border-color,transform] duration-200 hover:-translate-y-px hover:shadow-lg",
                                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                                 )}
                                 onClick={() => fetchFortune(animal)}
                             >
                                 <CardContent className="p-4 text-center">
-                                    <div className="text-4xl mb-2">{animal.emoji}</div>
+                                    <div className="mb-2 inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-2xl font-serif font-semibold text-primary">
+                                        {getAnimalMark(animal)}
+                                    </div>
                                     <h3 className="font-medium text-lg">{animal.name}</h3>
                                     <p className="text-xs text-muted-foreground">
-                                        {animal.years.slice(0, 3).join("、")}...
+                                        {animal.years.slice(0, 3).join("、")}…
                                     </p>
                                 </CardContent>
                             </button>
@@ -158,7 +161,9 @@ export default function ShengxiaoPage() {
                         <CardHeader>
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-4">
-                                    <div className="text-6xl">{selectedAnimal.emoji}</div>
+                                    <div className="flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-full bg-white/18 text-4xl font-serif font-semibold">
+                                        {getAnimalMark(selectedAnimal)}
+                                    </div>
                                     <div>
                                         <CardTitle className="text-2xl">
                                             {formatMessage(t("pages.shengxiao.cardTitle"), { animal: selectedAnimal.name })}

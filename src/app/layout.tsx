@@ -62,7 +62,7 @@ export default async function RootLayout({
           />
           {/* PWA 配置 */}
           <link rel="manifest" href="/site.webmanifest" />
-          <meta name="theme-color" content="#12081f" />
+          <meta name="theme-color" content="#FDF2F8" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-status-bar-style" content="default" />
           <meta name="apple-mobile-web-app-title" content="占卜网" />
@@ -78,7 +78,7 @@ export default async function RootLayout({
           </a>
           <ThemeProvider
             attribute="class"
-            defaultTheme="dark"
+            defaultTheme="light"
             enableSystem
             disableTransitionOnChange
           >

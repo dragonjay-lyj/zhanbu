@@ -99,6 +99,7 @@ export default function ZejiPage() {
             day: date.getDate(),
         })
     }
+    const getEventMark = (type: EventType) => type.name.slice(0, 1)
 
     return (
         <div className="container mx-auto px-4 py-8 max-w-5xl">
@@ -123,13 +124,15 @@ export default function ZejiPage() {
                             <button
                                 type="button"
                                 className={cn(
-                                    "w-full cursor-pointer transition-all hover:scale-105 hover:shadow-lg text-left",
+                                    "w-full cursor-pointer text-left transition-[box-shadow,border-color,transform] duration-200 hover:-translate-y-px hover:shadow-lg",
                                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                                 )}
                                 onClick={() => selectEventType(type)}
                             >
                                 <CardContent className="p-6 text-center">
-                                    <div className="text-4xl mb-3">{type.icon}</div>
+                                    <div className="mb-3 inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-2xl font-serif font-semibold text-primary">
+                                        {getEventMark(type)}
+                                    </div>
                                     <h3 className="font-bold text-lg">{type.name}</h3>
                                     <p className="text-xs text-muted-foreground mt-1">
                                         {type.description}
@@ -168,7 +171,9 @@ export default function ZejiPage() {
                     {/* 当前事项 */}
                     <Card className="bg-gradient-to-r from-green-500 to-emerald-600 text-white">
                         <CardContent className="p-4 flex items-center gap-4">
-                            <span className="text-4xl">{selectedType.icon}</span>
+                            <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-white/16 text-2xl font-serif font-semibold">
+                                {getEventMark(selectedType)}
+                            </span>
                             <div>
                                 <h2 className="text-xl font-bold">
                                     {formatMessage(t("pages.zeji.current.title"), { name: selectedType.name })}
@@ -194,7 +199,7 @@ export default function ZejiPage() {
                                         <Card
                                             key={date.date}
                                             className={cn(
-                                                "transition-all hover:shadow-md",
+                                                "transition-[box-shadow,border-color] duration-200 hover:shadow-md",
                                                 selectedDate?.date === date.date && "ring-2 ring-primary"
                                             )}
                                         >

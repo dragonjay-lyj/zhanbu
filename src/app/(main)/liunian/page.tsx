@@ -98,7 +98,7 @@ export default function LiunianPage() {
                             >
                                 <div
                                     className={cn(
-                                        "w-full rounded-t transition-all",
+                                        "w-full rounded-t transition-[height,background-color] duration-300 ease-out",
                                         item.score >= 70 ? "bg-green-500" :
                                             item.score >= 50 ? "bg-blue-500" : "bg-red-500"
                                     )}
@@ -117,10 +117,10 @@ export default function LiunianPage() {
         <div className="container mx-auto px-4 py-8 max-w-4xl">
             {/* 页面标题 */}
             <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 mb-4">
+                <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary to-cta">
                     <TrendingUp className="w-8 h-8 text-white" />
                 </div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                <h1 className="bg-gradient-to-r from-primary to-cta bg-clip-text text-3xl font-bold text-transparent">
                     {t("pages.liunian.title")}
                 </h1>
                 <p className="text-muted-foreground mt-2">
@@ -148,7 +148,7 @@ export default function LiunianPage() {
                         <Button
                             onClick={fetchFortune}
                             disabled={isLoading || !birthYear}
-                            className="w-full bg-gradient-to-r from-indigo-500 to-purple-600"
+                            className="w-full"
                         >
                             {isLoading ? (
                                 <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -185,7 +185,7 @@ export default function LiunianPage() {
                     </div>
 
                     {/* 综合运势 */}
-                    <Card className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+                    <Card className="bg-gradient-to-r from-primary to-cta text-white">
                         <CardContent className="p-6 text-center">
                             <div className="text-5xl font-bold mb-2">{result.overall.score}{t("pages.liunian.scoreUnit")}</div>
                             <Badge className={levelColors[result.overall.level]}>

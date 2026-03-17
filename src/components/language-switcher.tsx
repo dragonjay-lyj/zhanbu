@@ -1,6 +1,6 @@
 "use client"
 
-import { Globe } from "lucide-react"
+import { Check, Globe } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -17,8 +17,12 @@ interface LanguageSwitcherProps {
 export function LanguageSwitcher({ variant = "icon" }: LanguageSwitcherProps) {
     const { locale, setLocale } = useI18n()
     const { t } = useTranslation()
-
-    const currentLocale = localeConfig[locale]
+    const labels: Record<Locale, { short: string; name: string }> = {
+        "zh-CN": { short: "简", name: "简体中文" },
+        "zh-TW": { short: "繁", name: "繁體中文" },
+        en: { short: "EN", name: "English" },
+        ja: { short: "JP", name: "日本語" },
+    }
 
     if (variant === "full") {
         return (
@@ -30,10 +34,13 @@ export function LanguageSwitcher({ variant = "icon" }: LanguageSwitcherProps) {
                             key={loc}
                             variant={locale === loc ? "secondary" : "ghost"}
                             size="sm"
-                            className="cursor-pointer"
+                            className="gap-2"
                             onClick={() => setLocale(loc)}
                         >
-                            {localeConfig[loc].flag} {localeConfig[loc].nativeName}
+                            <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full border border-primary/15 bg-background/80 px-2 text-[11px] font-semibold text-primary">
+                                {labels[loc].short}
+                            </span>
+                            {labels[loc].name}
                         </Button>
                     ))}
                 </div>
@@ -44,7 +51,7 @@ export function LanguageSwitcher({ variant = "icon" }: LanguageSwitcherProps) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="cursor-pointer">
+                <Button variant="ghost" size="icon">
                     <Globe className="h-5 w-5" />
                     <span className="sr-only">{t("language.switcherLabel")}</span>
                 </Button>
@@ -54,11 +61,12 @@ export function LanguageSwitcher({ variant = "icon" }: LanguageSwitcherProps) {
                     <DropdownMenuItem
                         key={loc}
                         onClick={() => setLocale(loc)}
-                        className="cursor-pointer"
                     >
-                        <span className="mr-2">{localeConfig[loc].flag}</span>
-                        <span>{localeConfig[loc].nativeName}</span>
-                        {locale === loc && <span className="ml-auto">✓</span>}
+                        <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full border border-primary/15 bg-background/80 px-2 text-[11px] font-semibold text-primary">
+                            {labels[loc].short}
+                        </span>
+                        <span>{labels[loc].name}</span>
+                        {locale === loc && <Check className="ml-auto h-4 w-4 text-primary" />}
                     </DropdownMenuItem>
                 ))}
             </DropdownMenuContent>

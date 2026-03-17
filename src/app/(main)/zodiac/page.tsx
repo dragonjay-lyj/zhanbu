@@ -38,12 +38,6 @@ const elementColors: Record<string, string> = {
 }
 
 // 星座背景图案
-const zodiacPatterns: Record<string, string> = {
-    aries: "🐏", taurus: "🐂", gemini: "👯", cancer: "🦀",
-    leo: "🦁", virgo: "👧", libra: "⚖️", scorpio: "🦂",
-    sagittarius: "🏹", capricorn: "🐐", aquarius: "🏺", pisces: "🐟",
-}
-
 export default function ZodiacPage() {
     const { t } = useTranslation()
     const [signs, setSigns] = useState<ZodiacSign[]>([])
@@ -125,10 +119,10 @@ export default function ZodiacPage() {
         <div className="container mx-auto px-4 py-8 max-w-5xl">
             {/* 页面标题 */}
             <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 mb-4">
+                <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary to-cta">
                     <Star className="w-8 h-8 text-white" />
                 </div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                <h1 className="bg-gradient-to-r from-primary to-cta bg-clip-text text-3xl font-bold text-transparent">
                     {t("pages.zodiac.title")}
                 </h1>
                 <p className="text-muted-foreground mt-2">
@@ -144,7 +138,7 @@ export default function ZodiacPage() {
                             <button
                                 type="button"
                                 className={cn(
-                                    "w-full cursor-pointer transition-all hover:scale-105 hover:shadow-lg text-left",
+                                    "w-full cursor-pointer text-left transition-[box-shadow,border-color,transform] duration-200 hover:-translate-y-px hover:shadow-lg",
                                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                                 )}
                                 onClick={() => fetchFortune(sign)}
@@ -177,10 +171,12 @@ export default function ZodiacPage() {
                         <CardHeader>
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-4">
-                                    <div className="text-6xl">{zodiacPatterns[selectedSign.id]}</div>
+                                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/16 text-4xl">
+                                        {selectedSign.symbol}
+                                    </div>
                                     <div>
                                         <CardTitle className="text-2xl flex items-center gap-2">
-                                            {selectedSign.symbol} {selectedSign.name}
+                                            {selectedSign.name}
                                         </CardTitle>
                                         <CardDescription className="text-white/80">
                                             {selectedSign.dates} · {selectedSign.element}{t("pages.zodiac.elementSuffix")}
@@ -216,7 +212,7 @@ export default function ZodiacPage() {
                             ) : fortune ? (
                                 <div className="space-y-6">
                                     {/* 综合运势 */}
-                                    <Card className="bg-gradient-to-r from-primary/10 to-purple-500/10">
+                                    <Card className="bg-gradient-to-r from-primary/10 to-cta/10">
                                         <CardHeader>
                                             <div className="flex items-center justify-between">
                                                 <div className="flex items-center gap-2">

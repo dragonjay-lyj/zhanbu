@@ -115,7 +115,7 @@ export function DayunSwitcher({
                                         key={index}
                                         onClick={() => onDayunChange(index)}
                                         className={cn(
-                                            "flex-shrink-0 px-3 py-2 rounded-lg border transition-all",
+                                            "flex-shrink-0 rounded-lg border px-3 py-2 transition-[background-color,border-color,box-shadow,color] duration-200",
                                             "hover:border-primary/50 hover:bg-primary/5 cursor-pointer",
                                             isSelected && "border-primary bg-primary/10",
                                             isActive && !isSelected && "border-secondary/50 bg-secondary/5",

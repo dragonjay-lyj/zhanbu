@@ -86,6 +86,7 @@ export default function QianwenPage() {
             shakeAndDraw(selectedType)
         }
     }
+    const getTypeMark = (type: SignType) => type.name.slice(0, 1)
 
     // 返回选择
     const goBack = () => {
@@ -97,10 +98,10 @@ export default function QianwenPage() {
         <div className="container mx-auto px-4 py-8 max-w-4xl">
             {/* 页面标题 */}
             <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-amber-500 to-red-500 mb-4">
-                    <span className="text-3xl">🎋</span>
+                <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary to-cta">
+                    <Sparkles className="h-8 w-8 text-white" />
                 </div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-red-600 bg-clip-text text-transparent">
+                <h1 className="bg-gradient-to-r from-primary to-cta bg-clip-text text-3xl font-bold text-transparent">
                     {t("pages.qianwen.title")}
                 </h1>
                 <p className="text-muted-foreground mt-2">
@@ -112,24 +113,25 @@ export default function QianwenPage() {
             {!selectedType && (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {signTypes.map((type) => (
-                        <Card
-                            key={type.id}
-                            className={cn(
-                                "cursor-pointer transition-all hover:scale-105 hover:shadow-lg",
-                                "border-2 border-transparent hover:border-primary/50"
-                            )}
-                            onClick={() => shakeAndDraw(type)}
-                        >
-                            <CardContent className="p-6 text-center">
-                                <div className="text-5xl mb-3">{type.icon}</div>
-                                <h3 className="font-bold text-lg">{type.name}</h3>
-                                <p className="text-xs text-muted-foreground mt-1">
-                                    {type.description}
-                                </p>
-                                <p className="text-xs text-muted-foreground mt-2">
-                                    {formatMessage(t("pages.qianwen.count"), { total: type.total })}
-                                </p>
-                            </CardContent>
+                        <Card key={type.id} className="overflow-hidden border-2 border-transparent hover:border-primary/50">
+                            <button
+                                type="button"
+                                className="w-full cursor-pointer text-left transition-[box-shadow,border-color,transform] duration-200 hover:-translate-y-px hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                                onClick={() => shakeAndDraw(type)}
+                            >
+                                <CardContent className="p-6 text-center">
+                                    <div className="mb-3 inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-2xl font-serif font-semibold text-primary">
+                                        {getTypeMark(type)}
+                                    </div>
+                                    <h3 className="text-lg font-bold">{type.name}</h3>
+                                    <p className="mt-1 text-xs text-muted-foreground">
+                                        {type.description}
+                                    </p>
+                                    <p className="mt-2 text-xs text-muted-foreground">
+                                        {formatMessage(t("pages.qianwen.count"), { total: type.total })}
+                                    </p>
+                                </CardContent>
+                            </button>
                         </Card>
                     ))}
                 </div>
@@ -139,7 +141,9 @@ export default function QianwenPage() {
             {selectedType && isShaking && (
                 <div className="flex flex-col items-center justify-center py-16">
                     <div className="relative">
-                        <div className="text-8xl animate-bounce">{selectedType.icon}</div>
+                        <div className="flex h-28 w-28 animate-bounce items-center justify-center rounded-full bg-primary/10 text-5xl font-serif font-semibold text-primary">
+                            {getTypeMark(selectedType)}
+                        </div>
                         <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                             <Sparkles className="w-8 h-8 text-yellow-500 animate-pulse" />
                         </div>
@@ -166,7 +170,9 @@ export default function QianwenPage() {
                             "p-6 text-center",
                             levelColors[sign.level] || "bg-gradient-to-r from-gray-400 to-gray-500"
                         )}>
-                            <div className="text-6xl mb-2">{selectedType.icon}</div>
+                            <div className="mb-2 inline-flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-full bg-white/14 text-4xl font-serif font-semibold">
+                                {getTypeMark(selectedType)}
+                            </div>
                             <h2 className="text-2xl font-bold">{selectedType.name}</h2>
                             <div className="text-4xl font-bold mt-2">
                                 {formatMessage(t("pages.qianwen.result.number"), { number: sign.number })}
@@ -218,7 +224,7 @@ export default function QianwenPage() {
                         </Button>
                         <Button
                             onClick={redraw}
-                            className="bg-gradient-to-r from-amber-500 to-red-500 hover:from-amber-600 hover:to-red-600"
+                            className="bg-gradient-to-r from-primary to-cta text-white hover:from-primary hover:to-cta"
                         >
                             <RotateCcw className="w-4 h-4 mr-2" />
                             {t("pages.qianwen.actions.redraw")}

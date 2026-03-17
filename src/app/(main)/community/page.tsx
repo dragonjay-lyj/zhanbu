@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { MessageSquare, Plus, Loader2, Heart, Eye, MessageCircle, Search, User } from "lucide-react"
+import { Filter, MessageSquare, Plus, Loader2, Heart, Eye, MessageCircle, Search, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -164,7 +164,7 @@ export default function CommunityPage() {
                 </div>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
-                        <Button className="bg-gradient-to-r from-purple-500 to-pink-500">
+                        <Button>
                             <Plus className="w-4 h-4 mr-2" />
                             {t("pages.community.postButton")}
                         </Button>
@@ -198,7 +198,7 @@ export default function CommunityPage() {
                                     <SelectContent>
                                         {categories.map((cat) => (
                                             <SelectItem key={cat.id} value={cat.id}>
-                                                {cat.icon} {cat.name}
+                                                {cat.name}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
@@ -240,7 +240,8 @@ export default function CommunityPage() {
                                 className="w-full justify-start"
                                 onClick={() => setActiveCategory("all")}
                             >
-                                📋 {t("pages.community.allPosts")}
+                                <Filter className="mr-2 h-4 w-4" />
+                                {t("pages.community.allPosts")}
                             </Button>
                             {categories.map((cat) => (
                                 <Button
@@ -249,7 +250,7 @@ export default function CommunityPage() {
                                     className="w-full justify-start"
                                     onClick={() => setActiveCategory(cat.id)}
                                 >
-                                    {cat.icon} {cat.name}
+                                    {cat.name}
                                 </Button>
                             ))}
                         </CardContent>

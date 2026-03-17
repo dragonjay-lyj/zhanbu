@@ -10,7 +10,7 @@ const homePageSteps: DriveStep[] = [
     {
         element: "#sidebar-nav",
         popover: {
-            title: "📚 功能导航",
+            title: "功能导航",
             description: "这里是所有占卜功能的入口，包括八字、塔罗、紫微等多种占卜方式。",
             side: "right",
             align: "start",
@@ -19,7 +19,7 @@ const homePageSteps: DriveStep[] = [
     {
         element: "#feature-cards",
         popover: {
-            title: "✨ 快捷入口",
+            title: "快捷入口",
             description: "点击这些卡片可以快速进入对应的占卜功能，开始您的命理探索之旅。",
             side: "bottom",
             align: "center",
@@ -28,7 +28,7 @@ const homePageSteps: DriveStep[] = [
     {
         element: "#user-menu",
         popover: {
-            title: "👤 个人中心",
+            title: "个人中心",
             description: "登录后可以保存您的占卜记录，随时查看历史分析结果。",
             side: "bottom",
             align: "end",
@@ -37,7 +37,7 @@ const homePageSteps: DriveStep[] = [
     {
         element: "#membership-btn",
         popover: {
-            title: "👑 会员升级",
+            title: "会员升级",
             description: "升级会员可以解锁更多高级功能，享受无限次占卜服务和AI深度解读。",
             side: "left",
             align: "center",
@@ -50,7 +50,7 @@ const divinationSteps: DriveStep[] = [
     {
         element: "#input-form",
         popover: {
-            title: "📝 输入信息",
+            title: "输入信息",
             description: "请在这里填写您的生辰八字或相关信息，系统将为您进行分析。",
             side: "bottom",
             align: "center",
@@ -59,7 +59,7 @@ const divinationSteps: DriveStep[] = [
     {
         element: "#submit-btn",
         popover: {
-            title: "🔮 开始占卜",
+            title: "开始占卜",
             description: "填写完信息后，点击此按钮开始占卜分析。",
             side: "top",
             align: "center",
@@ -68,7 +68,7 @@ const divinationSteps: DriveStep[] = [
     {
         element: "#result-area",
         popover: {
-            title: "📊 结果展示",
+            title: "结果展示",
             description: "分析结果将在这里展示，包括命理解读、运势预测等内容。",
             side: "top",
             align: "center",

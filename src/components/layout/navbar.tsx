@@ -30,17 +30,18 @@ export function Navbar() {
     const { signOut } = useClerk()
     const creditsContext = useCreditsOptional()
     const { t } = useTranslation()
+    const navLinkClass = "rounded-full px-3 py-2 text-sm font-medium text-foreground/72 transition-[background-color,color,box-shadow] duration-200 hover:bg-primary/8 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-lg supports-[backdrop-filter]:bg-background/60">
-            <div className="container flex h-16 items-center justify-between px-4">
+        <header className="sticky top-0 z-50 w-full border-b border-primary/10 bg-background/78 shadow-[var(--shadow-sm)] backdrop-blur-xl supports-[backdrop-filter]:bg-background/72">
+            <div className="container flex h-[4.5rem] items-center justify-between px-4">
                 {/* 移动端菜单按钮 */}
                 <Sheet>
                     <SheetTrigger asChild>
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="md:hidden cursor-pointer"
+                            className="md:hidden"
                             aria-label={t("nav.menuOpen")}
                         >
                             <Menu className="h-5 w-5" />
@@ -52,11 +53,11 @@ export function Navbar() {
                 </Sheet>
 
                 {/* Logo */}
-                <Link href="/" className="flex items-center gap-2">
-                    <div className="relative">
-                        <Sparkles className="h-8 w-8 text-primary animate-pulse-glow" />
+                <Link href="/" className="flex items-center gap-3 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30">
+                    <div className="glass flex h-11 w-11 items-center justify-center rounded-2xl border-primary/12">
+                        <Sparkles className="h-5 w-5 text-primary" />
                     </div>
-                    <span className="font-serif text-xl font-bold text-gradient hidden sm:inline-block">
+                    <span className="hidden font-serif text-xl font-semibold text-gradient sm:inline-block">
                         ZhanBu 占卜
                     </span>
                 </Link>
@@ -65,25 +66,25 @@ export function Navbar() {
                 <nav className="hidden md:flex items-center gap-6">
                     <Link
                         href="/bazi"
-                        className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                        className={navLinkClass}
                     >
                         {t("nav.bazi")}
                     </Link>
                     <Link
                         href="/ziwei"
-                        className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                        className={navLinkClass}
                     >
                         {t("nav.ziwei")}
                     </Link>
                     <Link
                         href="/tarot"
-                        className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                        className={navLinkClass}
                     >
                         {t("nav.tarot")}
                     </Link>
                     <Link
                         href="/daily"
-                        className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                        className={navLinkClass}
                     >
                         {t("nav.daily")}
                     </Link>
@@ -107,7 +108,7 @@ export function Navbar() {
                                         <Link href="/pricing">
                                             <Badge
                                                 variant="secondary"
-                                                className="gap-1 cursor-pointer hover:bg-amber-500/20 hover:text-amber-500 transition-colors"
+                                                className="gap-1 rounded-full border border-cta/20 bg-cta/10 px-3 py-1 text-cta transition-[background-color,color] duration-200 hover:bg-cta/16 hover:text-cta"
                                             >
                                                 <Coins className="h-3 w-3" />
                                                 <span>{creditsContext.credits.balance}</span>
@@ -118,7 +119,7 @@ export function Navbar() {
                                     {/* 用户下拉菜单 */}
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" className="gap-2 px-2 cursor-pointer">
+                                            <Button variant="ghost" className="gap-2 rounded-full px-2">
                                                 <Avatar className="h-8 w-8">
                                                     <AvatarImage src={user?.imageUrl} alt={user?.fullName || t("nav.userFallback")} />
                                                     <AvatarFallback>
@@ -139,26 +140,26 @@ export function Navbar() {
                                             </DropdownMenuLabel>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem asChild>
-                                                <Link href="/profile" className="cursor-pointer">
+                                                <Link href="/profile">
                                                     <User className="mr-2 h-4 w-4" />
                                                     {t("nav.profile")}
                                                 </Link>
                                             </DropdownMenuItem>
                                             <DropdownMenuItem asChild>
-                                                <Link href="/history" className="cursor-pointer">
+                                                <Link href="/history">
                                                     <History className="mr-2 h-4 w-4" />
                                                     {t("nav.history")}
                                                 </Link>
                                             </DropdownMenuItem>
                                             <DropdownMenuItem asChild>
-                                                <Link href="/pricing" className="cursor-pointer">
-                                                    <Crown className="mr-2 h-4 w-4 text-amber-500" />
+                                                <Link href="/pricing">
+                                                    <Crown className="mr-2 h-4 w-4 text-cta" />
                                                     {t("nav.pricing")}
                                                 </Link>
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem asChild>
-                                                <Link href="/admin" className="cursor-pointer">
+                                                <Link href="/admin">
                                                     <Settings className="mr-2 h-4 w-4" />
                                                     {t("nav.admin")}
                                                 </Link>
@@ -177,12 +178,12 @@ export function Navbar() {
                             ) : (
                                 <div className="flex items-center gap-2">
                                     <SignInButton mode="modal">
-                                        <Button variant="ghost" size="sm" className="cursor-pointer hidden sm:inline-flex">
+                                        <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
                                             {t("nav.signIn")}
                                         </Button>
                                     </SignInButton>
                                     <SignUpButton mode="modal">
-                                        <Button size="sm" className="cursor-pointer">
+                                        <Button size="sm">
                                             {t("nav.signUp")}
                                         </Button>
                                     </SignUpButton>

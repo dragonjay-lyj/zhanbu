@@ -113,11 +113,11 @@ export function DivinationLoader({ message = "正在占卜中..." }: { message?:
             <div className="relative w-24 h-24">
                 <div className="absolute inset-0 rounded-full border-4 border-primary/20" />
                 <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-primary animate-spin" />
-                <div className="absolute inset-2 rounded-full border-4 border-transparent border-b-purple-500 animate-spin" style={{ animationDirection: "reverse", animationDuration: "1.5s" }} />
-                <div className="absolute inset-4 rounded-full border-4 border-transparent border-t-pink-500 animate-spin" style={{ animationDuration: "2s" }} />
+                <div className="absolute inset-2 rounded-full border-4 border-transparent border-b-cta animate-spin" style={{ animationDirection: "reverse", animationDuration: "1.5s" }} />
+                <div className="absolute inset-4 rounded-full border-4 border-transparent border-t-secondary animate-spin" style={{ animationDuration: "2s" }} />
                 {/* 中心 */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-2xl animate-pulse">☯</div>
+                    <div className="text-lg font-serif font-semibold text-primary animate-pulse">占</div>
                 </div>
             </div>
 

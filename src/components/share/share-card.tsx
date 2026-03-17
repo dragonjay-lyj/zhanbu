@@ -37,11 +37,11 @@ export function ShareCard({
     }
 
     const icons = {
-        bazi: "☰",
-        tarot: "🔮",
-        ziwei: "✨",
-        liuyao: "☯",
-        general: "🌟",
+        bazi: "命",
+        tarot: "塔",
+        ziwei: "紫",
+        liuyao: "卦",
+        general: "占",
     }
 
     return (

@@ -251,7 +251,7 @@ export default function TarotPage() {
                                         type="button"
                                         key={style.id}
                                         className={cn(
-                                            "p-4 rounded-lg border cursor-pointer transition-all text-left",
+                                            "cursor-pointer rounded-lg border p-4 text-left transition-[background-color,border-color,box-shadow,color] duration-200",
                                             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                                             selectedStyle.id === style.id
                                                 ? "border-primary bg-primary/5"
@@ -297,7 +297,7 @@ export default function TarotPage() {
                                     type="button"
                                     key={spread.id}
                                     className={cn(
-                                        "p-6 rounded-xl border cursor-pointer transition-all text-center",
+                                        "cursor-pointer rounded-xl border p-6 text-center transition-[background-color,border-color,box-shadow,color,transform] duration-200",
                                         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                                         selectedSpread.id === spread.id
                                             ? "border-primary bg-primary/5 shadow-lg shadow-primary/10"
@@ -306,8 +306,8 @@ export default function TarotPage() {
                                     onClick={() => setSelectedSpreadId(spread.id)}
                                     aria-pressed={selectedSpread.id === spread.id}
                                 >
-                                    <div className="text-3xl mb-2">
-                                        {spread.count === 1 ? "🃏" : spread.count === 3 ? "🎴🎴🎴" : "🎴🎴🎴🎴"}
+                                    <div className="mb-2 inline-flex rounded-full border border-primary/12 bg-primary/8 px-3 py-1 text-sm font-semibold text-primary">
+                                        {spread.count} Cards
                                     </div>
                                     <div className="font-semibold text-lg">{spread.name}</div>
                                     <div className="text-sm text-muted-foreground mt-1">
@@ -443,7 +443,7 @@ export default function TarotPage() {
                                 <button
                                     type="button"
                                     className={cn(
-                                        "inline-block cursor-pointer transition-transform hover:scale-105",
+                                        "inline-block cursor-pointer transition-[transform,opacity] duration-200 hover:-translate-y-1",
                                         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                                         isShuffling && "animate-pulse",
                                         drawnCards.length >= selectedSpread.count && "opacity-50 cursor-not-allowed"

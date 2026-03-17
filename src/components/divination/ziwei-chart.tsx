@@ -1,5 +1,6 @@
 "use client"
 
+import { Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 // 宫位数据类型
@@ -57,8 +58,8 @@ function ZiweiPalace({ palace, position, isActive }: ZiweiPalaceProps) {
     return (
         <div
             className={cn(
-                "relative p-2 rounded-lg border-2 transition-all duration-200",
-                "hover:shadow-lg hover:scale-[1.02] cursor-pointer",
+                "relative cursor-pointer rounded-lg border-2 p-2 transition-[background-color,border-color,box-shadow,transform] duration-200",
+                "hover:-translate-y-px hover:shadow-lg",
                 bgColor,
                 isActive && "ring-2 ring-primary ring-offset-2"
             )}
@@ -145,7 +146,7 @@ export function ZiweiChart({
     return (
         <div className={cn("space-y-4", className)}>
             {title && (
-                <h3 className="text-xl font-bold text-center bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                <h3 className="bg-gradient-to-r from-primary to-cta bg-clip-text text-center text-xl font-bold text-transparent">
                     {title}
                 </h3>
             )}
@@ -158,11 +159,13 @@ export function ZiweiChart({
                             return (
                                 <div
                                     key={i}
-                                    className="col-span-2 row-span-2 rounded-lg border-2 border-dashed border-purple-200 dark:border-purple-800 bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/20 flex items-center justify-center"
+                                    className="col-span-2 row-span-2 flex items-center justify-center rounded-lg border-2 border-dashed border-primary/20 bg-gradient-to-br from-primary/6 to-cta/8"
                                 >
                                     <div className="text-center space-y-2">
-                                        <div className="text-3xl">☯</div>
-                                        <div className="text-sm font-bold text-purple-600 dark:text-purple-400">
+                                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+                                            <Sparkles className="h-6 w-6" />
+                                        </div>
+                                        <div className="text-sm font-bold text-primary">
                                             紫微斗数命盘
                                         </div>
                                     </div>

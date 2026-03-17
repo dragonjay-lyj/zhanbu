@@ -389,7 +389,7 @@ export default function RelationshipPage({ defaultType }: RelationshipPageProps)
                                         onClick={() => setAnalysisType(type.id)}
                                         aria-pressed={analysisType === type.id}
                                         className={cn(
-                                            "p-4 rounded-lg border cursor-pointer transition-all text-center",
+                                            "cursor-pointer rounded-lg border p-4 text-center transition-[background-color,border-color,box-shadow,color] duration-200",
                                             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                                             analysisType === type.id
                                                 ? "border-primary bg-primary/5"

@@ -6,7 +6,10 @@ import {
     Moon,
     Star,
     Calendar,
+    Compass,
     Heart,
+    Hash,
+    Palette,
     Briefcase,
     Wallet,
     Activity,
@@ -333,21 +336,27 @@ export default function DailyFortunePage() {
                     <div className="grid grid-cols-3 gap-4">
                         <Card>
                             <CardContent className="pt-6 text-center">
-                                <div className="text-2xl mb-2">🎨</div>
+                                <div className="mb-2 inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                                    <Palette className="h-5 w-5" />
+                                </div>
                                 <div className="text-sm text-muted-foreground">{t("pages.daily.lucky.color")}</div>
                                 <div className="font-semibold">{fortune.luckyColor}</div>
                             </CardContent>
                         </Card>
                         <Card>
                             <CardContent className="pt-6 text-center">
-                                <div className="text-2xl mb-2">🔢</div>
+                                <div className="mb-2 inline-flex h-10 w-10 items-center justify-center rounded-full bg-cta/12 text-cta">
+                                    <Hash className="h-5 w-5" />
+                                </div>
                                 <div className="text-sm text-muted-foreground">{t("pages.daily.lucky.number")}</div>
                                 <div className="font-semibold">{fortune.luckyNumber}</div>
                             </CardContent>
                         </Card>
                         <Card>
                             <CardContent className="pt-6 text-center">
-                                <div className="text-2xl mb-2">🧭</div>
+                                <div className="mb-2 inline-flex h-10 w-10 items-center justify-center rounded-full bg-secondary/18 text-primary">
+                                    <Compass className="h-5 w-5" />
+                                </div>
                                 <div className="text-sm text-muted-foreground">{t("pages.daily.lucky.direction")}</div>
                                 <div className="font-semibold">{fortune.luckyDirection}</div>
                             </CardContent>
